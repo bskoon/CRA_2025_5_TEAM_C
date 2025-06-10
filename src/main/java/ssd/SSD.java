@@ -14,8 +14,23 @@ public class SSD {
     }
 
     public String read(int lba) {
-        String ssdData = "";
         checkLBARange(lba);
+        String ssdData = getDataFromSSD(lba);
+        writeDataOnOutFile(ssdData);
+        return ssdData;
+    }
+
+    private static void writeDataOnOutFile(String ssdData) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("ssd_nand.txt"))) {
+            bw.write(ssdData);
+            bw.newLine();
+        } catch (Exception e) {
+            System.out.println("Read Exception");
+        }
+    }
+
+    private static String getDataFromSSD(int lba) {
+        String ssdData = "";
 
         try (BufferedReader br = new BufferedReader(new FileReader("ssd_nand.txt"))) {
             String line;
@@ -29,14 +44,6 @@ public class SSD {
         } catch (Exception e) {
             System.out.println("Read Exception");
         }
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("ssd_nand.txt"))) {
-            bw.write(ssdData);
-            bw.newLine();
-        } catch (Exception e) {
-            System.out.println("Read Exception");
-        }
-
         return ssdData;
     }
 
