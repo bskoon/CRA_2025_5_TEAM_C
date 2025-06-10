@@ -61,7 +61,7 @@ public class TestShell_exit_help_test {
     }
     
     @Test
-    void testHelpWriteCommandDescription() {
+    void Help_Write_설명_확인() {
         // Act: help 함수 호출
         testShell.help();
         
@@ -79,7 +79,7 @@ public class TestShell_exit_help_test {
     }
     
     @Test
-    void testHelpReadCommandDescription() {
+    void Help_Read_설명_확인() {
         // Act: help 함수 호출
         testShell.help();
         
