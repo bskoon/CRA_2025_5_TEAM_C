@@ -4,6 +4,7 @@ import java.io.*;
 
 public class SSD {
 
+    public static final int DEFAULT_ARG_COUNT = 1;
     public static final int READ_ARG_COUNT = 2;
     public static final int WRITE_ARG_COUNT = 3;
     public static final char READ = 'R';
@@ -18,15 +19,6 @@ public class SSD {
         String ssdData = getDataFromSSD(lba);
         writeDataOnOutFile(ssdData);
         return ssdData;
-    }
-
-    private static void writeDataOnOutFile(String ssdData) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("ssd_nand.txt"))) {
-            bw.write(ssdData);
-            bw.newLine();
-        } catch (Exception e) {
-            System.out.println("Read Exception");
-        }
     }
 
     private static String getDataFromSSD(int lba) {
@@ -45,6 +37,15 @@ public class SSD {
             System.out.println("Read Exception");
         }
         return ssdData;
+    }
+
+    private static void writeDataOnOutFile(String ssdData) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("ssd_nand.txt"))) {
+            bw.write(ssdData);
+            bw.newLine();
+        } catch (Exception e) {
+            System.out.println("Read Exception");
+        }
     }
 
     private static void checkLBARange(int i) {
@@ -71,35 +72,45 @@ public class SSD {
 
     private void checkArgument(String[] args) {
         checkValidCommand(args);
-
-        int count;
-        char command = args[0].charAt(0);
-        switch (command) {
-            case READ:
-                count = 2;
-                break;
-            case WRITE:
-                count = 3;
-                break;
-            default:
-                count = 1;
-                break;
-        }
-
-        checkArgumentCount(args, count);
+        checkArgumentCount(args, getCommandArgumentCount(args));
         isLBAInteger(args[1]);
     }
 
-    private static void checkValidCommand(String[] args) {
+    private void checkValidCommand(String[] args) {
+        isArgumentHaveCommand(args);
+        isArgumentValidValue(args);
+    }
+
+    private void isArgumentHaveCommand(String[] args) {
         if (args[0].length() > 1) {
             throw new RuntimeException();
         }
+    }
+
+    private void isArgumentValidValue(String[] args) {
         if (args[0].charAt(0) < 'A' || args[0].charAt(0) > 'Z') {
             throw new RuntimeException();
         }
     }
 
-    private static void checkArgumentCount(String[] args, int count) {
+    private static int getCommandArgumentCount(String[] args) {
+        int count;
+        char command = args[0].charAt(0);
+        switch (command) {
+            case READ:
+                count = READ_ARG_COUNT;
+                break;
+            case WRITE:
+                count = WRITE_ARG_COUNT;
+                break;
+            default:
+                count = DEFAULT_ARG_COUNT;
+                break;
+        }
+        return count;
+    }
+
+    private void checkArgumentCount(String[] args, int count) {
         if (args.length != count) {
             throw new RuntimeException();
         }
