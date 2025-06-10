@@ -9,7 +9,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 public class TestShell_exit_help_test {
-
     private TestShell testShell;
     private ByteArrayOutputStream outputStream;
     private PrintStream originalOut;
