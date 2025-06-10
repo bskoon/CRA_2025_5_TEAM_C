@@ -10,6 +10,8 @@ import java.util.List;
 public class SSD {
 
     public static final String SSD_NAND = "ssd_nand.txt";
+    public static final int MIN_LBA = 0;
+    public static final int MAX_LBA = 99;
 
     public SSD() {
         if (new File(SSD_NAND).exists()) return;
@@ -19,21 +21,21 @@ public class SSD {
     private static void initSsdNandFile() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(SSD_NAND))) {
             StringBuilder sb = new StringBuilder();
-            for (int i=0 ; i<100 ; i++)
+            for (int i = MIN_LBA; i <= MAX_LBA; i++)
                 sb.append(i + " " + "0x00000000" + '\n');
             bw.write(sb.toString());
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException();
         }
     }
 
     public boolean write(int lba, String newData) {
-        checkArgument(lba, newData);
+        checkWriteDataArgument(lba, newData);
         writeDataOnSsd(lba, newData, getCurrentSsdData());
         return true;
     }
 
-    private static void checkArgument(int lba, String newData) {
+    private static void checkWriteDataArgument(int lba, String newData) {
         checkValidLBA(lba);
         checkDataStartWith0x(newData);
         checkDataLength(newData);
@@ -41,7 +43,7 @@ public class SSD {
     }
 
     private static void checkValidLBA(int lba) {
-        if (lba < 0 || lba > 99) throw new RuntimeException();
+        if (lba < MIN_LBA || lba > MAX_LBA) throw new RuntimeException();
     }
 
     private static void checkDataStartWith0x(String newData) {
@@ -54,8 +56,9 @@ public class SSD {
 
     private static void checkValidData(String newData) {
         char[] strArr = newData.toCharArray();
-        for (int j = 2 ; j<strArr.length ; j++){
-            if (!((strArr[j] >= '0' && strArr[j] <= '9') || (strArr[j] >= 'A' && strArr[j] <= 'F'))) throw new RuntimeException();
+        for (int j = 2; j < strArr.length; j++) {
+            if (!((strArr[j] >= '0' && strArr[j] <= '9') || (strArr[j] >= 'A' && strArr[j] <= 'F')))
+                throw new RuntimeException();
         }
     }
 
@@ -72,12 +75,12 @@ public class SSD {
     private static void writeDataOnSsd(int targetLba, String newData, List<String> curData) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(SSD_NAND))) {
             StringBuilder sb = new StringBuilder();
-            for (int lba=0 ; lba<100 ; lba++){
+            for (int lba = MIN_LBA; lba <= MAX_LBA; lba++) {
                 if (lba == targetLba) sb.append(lba + " " + newData + '\n');
                 else sb.append(curData.get(lba) + '\n');
             }
             bw.write(sb.toString());
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException();
         }
     }
