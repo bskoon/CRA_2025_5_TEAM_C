@@ -1,0 +1,128 @@
+# .github/workflows/gemini-review.yml
+name: Gemini Flash-Lite 기반 코드 리뷰
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Authenticate to GCP
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up gcloud CLI
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: "norse-appliance-462503-h4"
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        version: "latest"
+
+    - name: Generate PR diff
+      run: |
+        git fetch origin $GITHUB_BASE_REF
+        git diff origin/${GITHUB_BASE_REF}...HEAD -- > diff.txt
+        if [ ! -s diff.txt ]; then
+          echo "변경사항이 없습니다." > diff.txt
+        fi
+        if [ $(wc -c < diff.txt) -gt 30000 ]; then
+          head -c 30000 diff.txt > diff_short.txt
+          echo -e "\n... (내용이 길어서 일부만 표시)" >> diff_short.txt
+          mv diff_short.txt diff.txt
+        fi
+
+    - name: Create Python script
+      run: |
+        cat > review_script.py << 'EOF'
+        import json
+        import requests
+        import os
+        import subprocess
+
+        # diff 파일 읽기
+        with open('diff.txt', 'r', encoding='utf-8') as f:
+            diff_content = f.read()
+
+        # Access token 가져오기
+        access_token = subprocess.check_output(['gcloud', 'auth', 'print-access-token']).decode('utf-8').strip()
+
+        # API 요청 데이터
+        request_data = {
+            "contents": [{
+                "role": "user",
+                "parts": [{
+                    "text": "다음 코드 변경사항에 대해 리팩토링이 필요한 부분이 있으면 한국어로 리뷰해주세요. :\n\n" + diff_content
+                }]
+            }],
+            "generationConfig": {
+                "temperature": 0.2,
+                "maxOutputTokens": 2000
+            }
+        }
+
+        # API 호출
+        url = "https://us-central1-aiplatform.googleapis.com/v1/projects/norse-appliance-462503-h4/locations/us-central1/publishers/google/models/gemini-2.0-flash-lite:generateContent"
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(url, json=request_data, headers=headers)
+        
+        # 응답 저장
+        with open('response.json', 'w', encoding='utf-8') as f:
+            json.dump(response.json(), f, ensure_ascii=False, indent=2)
+
+        print("API 호출 완료")
+        EOF
+
+    - name: Call Gemini API
+      run: python3 review_script.py
+
+    - name: Post review comment
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          try {
+            const response = fs.readFileSync('response.json', 'utf8');
+            const resp = JSON.parse(response);
+            
+            let reviewText = '';
+            if (resp.candidates && resp.candidates[0] && resp.candidates[0].content && resp.candidates[0].content.parts && resp.candidates[0].content.parts[0]) {
+              reviewText = resp.candidates[0].content.parts[0].text;
+            } else if (resp.error) {
+              reviewText = `API 오류: ${resp.error.message}`;
+            } else {
+              reviewText = '예상치 못한 응답 구조입니다.';
+            }
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### 🤖 AI 코드 리뷰 (Gemini Flash-Lite)\n\n${reviewText}\n\n---\n*이 리뷰는 AI가 자동으로 생성한 것입니다.*`
+            });
+          } catch (error) {
+            console.error('Error:', error);
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### ⚠️ AI 코드 리뷰 오류\n코드 리뷰 중 오류가 발생했습니다: ${error.message}`
+            });
+          }
