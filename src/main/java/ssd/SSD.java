@@ -9,6 +9,8 @@ public class SSD {
     public static final int WRITE_ARG_COUNT = 3;
     public static final char READ = 'R';
     public static final char WRITE = 'W';
+    public static final String SSD_NAND = "ssd_nand.txt";
+    public static final String SSD_OUTPUT = "ssd_output.txt";
 
     public boolean write(int i, String s) {
         return false;
@@ -24,7 +26,7 @@ public class SSD {
     private static String getDataFromSSD(int lba) {
         String ssdData = "";
 
-        try (BufferedReader br = new BufferedReader(new FileReader("ssd_nand.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(SSD_NAND))) {
             String line;
             while((line = br.readLine()) != null ) {
                 String[] ssdRawData = line.split(" ");
@@ -40,7 +42,7 @@ public class SSD {
     }
 
     private static void writeDataOnOutFile(String ssdData) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter("ssd_nand.txt"))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(SSD_OUTPUT))) {
             bw.write(ssdData);
             bw.newLine();
         } catch (Exception e) {
