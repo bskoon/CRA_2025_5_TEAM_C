@@ -29,24 +29,7 @@ public class SSD {
 
     public boolean write(int lba, String newData) {
         checkArgument(lba, newData);
-        List<String> lines;
-        try {
-            lines = Files.readAllLines(Paths.get(SSD_NAND));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(SSD_NAND))) {
-            StringBuilder sb = new StringBuilder();
-            for (int j=0 ; j<100 ; j++){
-                if (j == lba) sb.append(j + " " + newData + '\n');
-                else sb.append(lines.get(j) + '\n');
-            }
-            bw.write(sb.toString());
-        } catch (Exception e){
-            throw new RuntimeException();
-        }
-
+        writeDataOnSsd(lba, newData, getCurrentSsdData());
         return true;
     }
 
@@ -57,6 +40,18 @@ public class SSD {
         checkValidData(newData);
     }
 
+    private static void checkValidLBA(int lba) {
+        if (lba < 0 || lba > 99) throw new RuntimeException();
+    }
+
+    private static void checkDataStartWith0x(String newData) {
+        if (!newData.startsWith("0x")) throw new RuntimeException();
+    }
+
+    private static void checkDataLength(String newData) {
+        if (newData.length() != 10) throw new RuntimeException();
+    }
+
     private static void checkValidData(String newData) {
         char[] strArr = newData.toCharArray();
         for (int j = 2 ; j<strArr.length ; j++){
@@ -64,16 +59,27 @@ public class SSD {
         }
     }
 
-    private static void checkDataLength(String newData) {
-        if (newData.length() != 10) throw new RuntimeException();
+    private static List<String> getCurrentSsdData() {
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(Paths.get(SSD_NAND));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return lines;
     }
 
-    private static void checkValidLBA(int lba) {
-        if (lba < 0 || lba > 99) throw new RuntimeException();
-    }
-
-    private static void checkDataStartWith0x(String newData) {
-        if (!newData.startsWith("0x")) throw new RuntimeException();
+    private static void writeDataOnSsd(int targetLba, String newData, List<String> curData) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(SSD_NAND))) {
+            StringBuilder sb = new StringBuilder();
+            for (int lba=0 ; lba<100 ; lba++){
+                if (lba == targetLba) sb.append(lba + " " + newData + '\n');
+                else sb.append(curData.get(lba) + '\n');
+            }
+            bw.write(sb.toString());
+        } catch (Exception e){
+            throw new RuntimeException();
+        }
     }
 
     public String read(int i) {
