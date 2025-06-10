@@ -1,10 +1,12 @@
 package shell;
 
+import java.util.Random;
+
 public class TestScenario {
     TestShell testShell;
 
     public TestScenario(TestShell testShell) {
-        testShell = testShell;
+        this.testShell = testShell;
     }
 
 
@@ -14,11 +16,13 @@ public class TestScenario {
         return "PASS";
     }
 
-    public String fullWriteAndReadCompare() {
+    public String fullWriteAndReadCompare(long seed) {
+        Random rand = new Random(seed);
         for(int i=0;i<20;i++){
             for(int j=0;j<5;j++){
-                testShell.write(i*5+j,"0xFFFFFFFF");
-                String result = readCompare(i*5+j,"0xFFFFFFFF");
+                String hexString = getRandomHexString(rand);
+                testShell.write(i*5+j,hexString);
+                String result = readCompare(i*5+j,hexString);
                 if(result.equals("FAIL")) return result;
             }
         }
@@ -40,16 +44,26 @@ public class TestScenario {
         return "PASS";
     }
 
-    public String writeReadAging() {
+    public String writeReadAging(long seed) {
+        Random rand = new Random(seed);
 
         for(int i=0;i<200;i++){
-            testShell.write(0,"0xFFFFFFFF");
-            String result = readCompare(0,"0xFFFFFFFF");
+            String hexString = getRandomHexString(rand);
+            testShell.write(0,hexString);
+            String result = readCompare(0,hexString);
             if(result.equals("FAIL")) return result;
-            testShell.write(99,"0xFFFFFFFF");
-            result = readCompare(0,"0xFFFFFFFF");
+            hexString = getRandomHexString(rand);
+            testShell.write(99,hexString);
+            result = readCompare(0,hexString);
             if(result.equals("FAIL")) return result;
         }
         return "PASS";
+    }
+
+    private String getRandomHexString(Random rand) {
+        // 32비트 난수 생성 (0 ~ 0xFFFFFFFF)
+        int randomValue = rand.nextInt(); // 기본적으로 -2^31 ~ 2^31-1 범위의 값
+        // 16진수로 출력
+        return "0x"+String.format("%08X", randomValue);
     }
 }
