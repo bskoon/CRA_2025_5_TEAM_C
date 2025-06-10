@@ -12,7 +12,40 @@ public class TestShell {
         if (args.length == 0) {
             launchShell();
             return;
-        }       
+        }
+
+        if (args.length < 2) {
+            writeOutput("ERROR");
+            return;
+        }
+
+        String command = args[0];
+
+        switch (command) {
+            case "W":
+                if (args.length != 3 || !isValidLBA(args[1]) || !isValidValue(args[2])) {
+                    writeOutput("ERROR");
+                    return;
+                }
+                int writeLBA = Integer.parseInt(args[1]);
+                String value = args[2].substring(2); // Remove '0x'
+                writeLBA(writeLBA, value);
+                break;
+
+            case "R":
+                if (!isValidLBA(args[1])) {
+                    writeOutput("ERROR");
+                    return;
+                }
+                int readLBA = Integer.parseInt(args[1]);
+                String result = readLBA(readLBA);
+                writeOutput(result);
+                break;
+
+            default:
+                writeOutput("ERROR");
+                break;
+        }
     }
 
     public static void launchShell() throws IOException {
@@ -64,18 +97,18 @@ public class TestShell {
     }
 
     public static boolean isValidValue(String val) {
-        return val.matches("0x[0-9A-F]{8}");
+        return val.matches("0x[0-9A-Fa-f]{8}");
     }
 
     public static void writeLBA(int lba, String hexValue) throws IOException {
-       // String[] nand = loadNand();
-        // nand[lba] = hexValue.toUpperCase();
-        // saveNand(nand);
+        String[] nand = loadNand();
+        nand[lba] = hexValue.toUpperCase();
+        saveNand(nand);
     }
 
     public static String readLBA(int lba) throws IOException {
-       // String[] nand = loadNand();
-       // return nand[lba];
+        String[] nand = loadNand();
+        return nand[lba];
     }
 
     public static String[] loadNand() throws IOException {
