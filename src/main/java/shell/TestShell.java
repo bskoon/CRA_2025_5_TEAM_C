@@ -96,6 +96,12 @@ public class TestShell {
         System.out.println("TestShell Help");
         System.out.println("==========================================");
         System.out.println("제작자: TEAM_C");
+        System.out.println("김범석 bskoon");
+        System.out.println("김상윤 huihihet");
+        System.out.println("김창지 Chang-ji");
+        System.out.println("최재형 jae637");
+        System.out.println("김태엽 taeyeob-kim-09");
+        System.out.println("노웅규 nohog94");
         System.out.println();
         System.out.println("사용 가능한 명령어:");
         System.out.println();
