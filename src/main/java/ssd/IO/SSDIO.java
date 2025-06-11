@@ -37,13 +37,16 @@ public class SSDIO extends IOHandler {
 
     @Override
     public void write(int targetLine, String newData) {
-        List<String> curData = getCurrentSsdData();
+        List<String> curSSDData = getCurrentSsdData();
+        swapDataOnSSD(targetLine, newData, curSSDData);
+    }
 
+    private void swapDataOnSSD(int targetLBA, String dataForSpecificLBA, List<String> currentSSDData) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
             StringBuilder sb = new StringBuilder();
-            for (int line = 0; line < curData.size(); line++) {
-                if (line == targetLine) sb.append(line + " " + newData + '\n');
-                else sb.append(curData.get(line) + '\n');
+            for (int line = 0; line < currentSSDData.size(); line++) {
+                if (line == targetLBA) sb.append(line + " " + dataForSpecificLBA + '\n');
+                else sb.append(currentSSDData.get(line) + '\n');
             }
             bw.write(sb.toString());
         } catch (Exception e) {
