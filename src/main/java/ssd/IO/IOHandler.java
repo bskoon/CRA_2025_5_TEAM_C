@@ -1,12 +1,7 @@
 package ssd.IO;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 
 public abstract class IOHandler {
     public String path;
@@ -30,7 +25,7 @@ public abstract class IOHandler {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Read Exception");
+            throw new RuntimeException();
         }
         return ssdData;
     }
