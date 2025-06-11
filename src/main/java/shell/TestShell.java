@@ -1,12 +1,14 @@
 package shell;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class TestShell {
 
     private TestScenario testScenario;
-    private Scanner scanner;
+    public Scanner scanner;
     private boolean isRunning;
     private static final int MAX_LBA = 100;
     private static final String JAR_FILE_PATH = "SSD.jar";
