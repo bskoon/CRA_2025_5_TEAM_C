@@ -1,10 +1,10 @@
 package ssd;
 
-public static class SSDConstant {
-    public static char READ = 'R';
-    public static char WRITE = 'W';
-    public static String SSD_FILE_PATH = "ssd_nand.txt";
-    public static String OUTPUT_FILE_PATH = "ssd_output.txt";
-    public static int MIN_LBA = 0;
-    public static int MAX_LBA = 99;
+public class SSDConstant {
+    public static final char READ = 'R';
+    public static final char WRITE = 'W';
+    public static final String SSD_FILE_PATH = "ssd_nand.txt";
+    public static final String OUTPUT_FILE_PATH = "ssd_output.txt";
+    public static final int MIN_LBA = 0;
+    public static final int MAX_LBA = 99;
 }

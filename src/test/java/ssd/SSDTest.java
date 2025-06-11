@@ -7,8 +7,7 @@ import ssd.IO.SSDIO;
 import ssd.logic.SSDAppLogic;
 import ssd.logic.SSDCommandLogic;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class SSDTest {
     private SSDIO mockSSDIo;
@@ -21,7 +20,7 @@ class SSDTest {
         mockSSDIo = mock(SSDIO.class);
         mockOutputIo = mock(OutputIO.class);
         ssdAppLogic = new SSDAppLogic(mockOutputIo, mockSSDIo);
-        ssdCommandLogic = new SSDCommandLogic(ssdAppLogic, mockSSDIo);
+        ssdCommandLogic = new SSDCommandLogic(ssdAppLogic, mockOutputIo);
     }
 
     @Test
@@ -135,6 +134,7 @@ class SSDTest {
     @Test
     void Read_테스트() {
         // when
+        when(mockSSDIo.read(5)).thenReturn("0xABCDEF01");
         ssdAppLogic.write(5, "0xABCDEF01");
         ssdAppLogic.read(5);
 
@@ -147,6 +147,7 @@ class SSDTest {
     @Test
     void Read_Write_설정하지_않은값() {
         // when
+        when(mockSSDIo.read(5)).thenReturn("0x00000000");
         ssdAppLogic.read(5);
 
         // then

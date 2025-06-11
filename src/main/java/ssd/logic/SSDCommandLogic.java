@@ -1,39 +1,40 @@
 package ssd.logic;
 
 import ssd.IO.IOHandler;
-import ssd.SSDConstant;
+import ssd.IO.OutputIO;
+
+import static ssd.SSDConstant.*;
 
 public class SSDCommandLogic {
     private final SSDAppLogic ssdAppLogic;
-    private final IOHandler ioHandler;
+    private final OutputIO outputIO;
 
     public static int DEFAULT_ARG_COUNT = 1;
     public static int READ_ARG_COUNT = 2;
     public static int WRITE_ARG_COUNT = 3;
 
-    public SSDCommandLogic(SSDAppLogic ssdAppLogic, IOHandler ioHandler) {
+    public SSDCommandLogic(SSDAppLogic ssdAppLogic, OutputIO outputIO) {
         this.ssdAppLogic = ssdAppLogic;
-        this.ioHandler = ioHandler;
+        this.outputIO = outputIO;
     }
 
     public void run(String[] args) {
-        // todo :: main 로직 여기로 이동
-        // todo :: rw 만 판단 다음 로직은 SsdAppLogic 처리
-    }
+        try {
+            checkArgument(args);
+            char command = args[0].charAt(0);
 
-    public static void main(String[] args) {
-        checkArgument(args);
-        char command = args[0].charAt(0);
-
-        switch (command) {
-            case SSDConstant.READ:
-                read(Integer.parseInt(args[1]));
-                break;
-            case SSDConstant.WRITE:
-                write(Integer.parseInt(args[1]), args[2]);
-                break;
-            default:
-                throw new RuntimeException();
+            switch (command) {
+                case READ:
+                    ssdAppLogic.read(Integer.parseInt(args[1]));
+                    break;
+                case WRITE:
+                    ssdAppLogic.write(Integer.parseInt(args[1]), args[2]);
+                    break;
+                default:
+                    throw new RuntimeException();
+            }
+        } catch (RuntimeException e) {
+            outputIO.write(0, "ERROR");
         }
     }
 

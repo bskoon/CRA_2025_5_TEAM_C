@@ -10,7 +10,8 @@ public class IOHandler {
     public void write(int lba, String value){
         // todo :: write 기능
     }
-    public void read(int lba){
+    public String read(int lba){
         // todo :: read 기능
+        return "";
     }
 }
