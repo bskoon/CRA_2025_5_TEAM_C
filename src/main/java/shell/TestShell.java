@@ -137,7 +137,10 @@ public class TestShell {
         // 프로세스 실행
         try {
             Process process = processBuilder.start();
+            process.waitFor();
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
