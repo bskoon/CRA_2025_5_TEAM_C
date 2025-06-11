@@ -72,7 +72,7 @@ class SSDTest {
     @Test
     void WriteValidLBA_100이상_예외처리() {
         // when
-        ssdAppLogic.handler("W",100, "0x12345678");
+        ssdAppLogic.write(100, "0x12345678");
 
         // then
         verify(mockOutputIo).write(0,"ERROR");
@@ -81,7 +81,7 @@ class SSDTest {
     @Test
     void WriteValidValue_Ox없을때_예외처리() {
         // when
-        ssdAppLogic.handler("W",10, "12345678");
+        ssdAppLogic.write(10, "12345678");
 
         // then
         verify(mockOutputIo).write(0,"ERROR");
@@ -90,7 +90,7 @@ class SSDTest {
     @Test
     void WriteValidValue_헥사벗어났을때_예외처리() {
         // when
-        ssdAppLogic.handler("W",10, "0xZZZZZZZZ");
+        ssdAppLogic.write(10, "0xZZZZZZZZ");
 
         // then
         verify(mockOutputIo).write(0,"ERROR");
@@ -99,7 +99,7 @@ class SSDTest {
     @Test
     void WriteValidValue_10자리아닐때_예외처리() {
         // when
-        ssdAppLogic.handler("W",10, "0x123");
+        ssdAppLogic.write(10, "0x123");
 
         // then
         verify(mockOutputIo).write(0,"ERROR");
@@ -108,7 +108,7 @@ class SSDTest {
     @Test
     void Write_테스트() {
         // when
-        ssdAppLogic.handler("W",10, "0xABCDEF01");
+        ssdAppLogic.write(10, "0xABCDEF01");
 
         // then
         verify(mockSSDIo).write(10,"0xABCDEF01");
@@ -117,7 +117,7 @@ class SSDTest {
     @Test
     void ReadValidLBA_마이너스_예외처리() {
         // when
-        ssdAppLogic.handler("R",-1, null);
+        ssdAppLogic.read(-1);
 
         // then
         verify(mockOutputIo).write(0,"ERROR");
@@ -126,7 +126,7 @@ class SSDTest {
     @Test
     void ReadValidLBA_100이상_예외처리() {
         // when
-        ssdAppLogic.handler("R",100, null);
+        ssdAppLogic.read(100);
 
         // then
         verify(mockOutputIo).write(0,"ERROR");
@@ -135,8 +135,8 @@ class SSDTest {
     @Test
     void Read_테스트() {
         // when
-        ssdAppLogic.handler("W",5, "0xABCDEF01");
-        ssdAppLogic.handler("R",5, null);
+        ssdAppLogic.write(5, "0xABCDEF01");
+        ssdAppLogic.read(5);
 
         // then
         verify(mockSSDIo).write(5,"0xABCDEF01");
@@ -147,7 +147,7 @@ class SSDTest {
     @Test
     void Read_Write_설정하지_않은값() {
         // when
-        ssdAppLogic.handler("R",5, null);
+        ssdAppLogic.read(5);
 
         // then
         verify(mockOutputIo).write(0,"0x00000000");
