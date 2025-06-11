@@ -136,14 +136,10 @@ class SSDTest {
     void Read_테스트() {
         // when
         ssdAppLogic.handler("W",5, "0xABCDEF01");
-
-        // then
-        verify(mockSSDIo).write(5,"0xABCDEF01");
-
-        // when
         ssdAppLogic.handler("R",5, null);
 
         // then
+        verify(mockSSDIo).write(5,"0xABCDEF01");
         verify(mockSSDIo).read(5);
         verify(mockOutputIo).write(0,"0xABCDEF01");
     }
