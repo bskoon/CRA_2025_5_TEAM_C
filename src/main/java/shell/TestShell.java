@@ -29,7 +29,7 @@ public class TestShell {
         Scanner scanner = new Scanner(System.in);
         System.out.println("SSD Test Shell 시작 (명령어 입력: write/read)");
 
-        while (isRunning && scanner.hasNextLine()) {
+        while (isRunning) {
             System.out.print("> ");
             String line = scanner.nextLine().trim();
             String[] tokens = line.split("\\s+");
