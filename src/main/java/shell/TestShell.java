@@ -61,8 +61,7 @@ public class TestShell {
                         System.out.println("INVALID COMMAND");
                         break;
                     }
-                    String hexValue = tokens[1].substring(2); // 0x 제거
-                    fullWrite(hexValue);
+                    fullWrite(tokens[1]);
                     break;
 
                 case "fullread":
