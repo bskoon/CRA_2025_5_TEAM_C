@@ -1,7 +1,6 @@
 package shell;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
 
 public class TestShell {
@@ -10,6 +9,7 @@ public class TestShell {
     private Scanner scanner;
     private boolean isRunning;
     private static final int MAX_LBA = 100;
+    private static final String JAR_FILE_PATH = "SSD.jar";
 
 
     public TestShell() {
@@ -124,13 +124,12 @@ public class TestShell {
     }
 
     private void callSsdWriteProcess(int lba, String hexValue){
-        // 실행할 .jar 파일 경로와 명령어 인자를 설정
-        String jarFilePath = "ssd-1.0-SNAPSHOT.jar";  // .jar 파일의 경로
+        // 실행할 명령어 인자를 설정
         String lbaString = lba+ "";  // 입력할 명령어
 
         // ProcessBuilder 생성
         ProcessBuilder processBuilder = new ProcessBuilder(
-                "java", "-jar", jarFilePath,"W", lbaString,hexValue
+                "java", "-jar", JAR_FILE_PATH,"W", lbaString,hexValue
         );
 
         // 프로세스 실행
@@ -160,13 +159,12 @@ public class TestShell {
     }
 
     private String callSsdReadProcess(int lba) {
-        // 실행할 .jar 파일 경로와 명령어 인자를 설정
-        String jarFilePath = "ssd-1.0-SNAPSHOT.jar";  // .jar 파일의 경로
+        // 실행할 명령어 인자를 설정
         String inputCommand = lba+"";  // 입력할 명령어
 
         // ProcessBuilder 생성
         ProcessBuilder processBuilder = new ProcessBuilder(
-                "java", "-jar", jarFilePath, "R", inputCommand
+                "java", "-jar", JAR_FILE_PATH, "R", inputCommand
         );
 
         String result = "";
