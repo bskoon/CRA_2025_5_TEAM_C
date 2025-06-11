@@ -7,6 +7,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +34,7 @@ public class TestScenarioTest {
 
     @BeforeEach
     void setUp() {
-        testScenario = new TestScenario(testShell);
+        testScenario = new TestScenario(testShell,new Random(1234));
         random = new Random(1234);
 
     }
@@ -43,7 +45,7 @@ public class TestScenarioTest {
             when(testShell.readLBA(i)).thenReturn(getRandomHexString(random));
         }
 
-        assertEquals("PASS",testScenario.fullWriteAndReadCompare(1234));
+        assertEquals("PASS",testScenario.fullWriteAndReadCompare());
     }
 
     @Test
@@ -60,12 +62,15 @@ public class TestScenarioTest {
 
     @Test
     void WriteReadAging_세번째_시나리오테스트() throws IOException {
-        for(int i=0;i<200;i++){
-            when(testShell.readLBA(0)).thenReturn(getRandomHexString(random));
-            when(testShell.readLBA(99)).thenReturn(getRandomHexString(random));
+        List<String> values = new ArrayList<>();
+        for(int i=0;i<400;i++){
+            values.add(getRandomHexString(random));
         }
 
-        assertEquals("PASS",testScenario.writeReadAging(1234));
-
+        for(int i=0;i<200;i++){
+            when(testShell.readLBA(0)).thenReturn(values.get(i*2));
+            when(testShell.readLBA(99)).thenReturn(values.get(i*2+1));
+            assertEquals(true,testScenario.writeReadAgingOnce());
+        }
     }
 }
