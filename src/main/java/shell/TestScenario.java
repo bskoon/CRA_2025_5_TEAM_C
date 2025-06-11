@@ -53,6 +53,13 @@ public class TestScenario {
         return "0x"+String.format("%08X", randomValue);
     }
 
+    public String writeReadAging() throws IOException {
+        for(int i=0;i<200;i++){
+            if(!writeReadAgingOnce()) return "FAIL";
+        }
+        return "PASS";
+    }
+
     public boolean writeReadAgingOnce() throws IOException {
         String hexString = getRandomHexString(rand);
         testShell.writeLBA(0,hexString);
