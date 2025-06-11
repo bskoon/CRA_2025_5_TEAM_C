@@ -49,17 +49,17 @@ class OutputIOTest {
     }
 
     @Test
-    void testOutputFileExists() {
+    void outputFile_생성_확인() {
         assertTrue(Files.exists(outputPath));
     }
 
     @Test
-    void testSsdFileExists() {
+    void ssdFile_생성_확인() {
         assertTrue(Files.exists(ssdPath));
     }
 
     @Test
-    void testSsdWriteZero() throws IOException {
+    void ssd_0번에_쓰기_정상_확인() throws IOException {
         ssdIO.write(0, "0xABCDEF12");
 
         List<String> lines = Files.readAllLines(ssdPath);
@@ -67,7 +67,7 @@ class OutputIOTest {
     }
 
     @Test
-    void testSsdWriteFifty() throws IOException {
+    void ssd_50번에_쓰기_정상_확인() throws IOException {
         ssdIO.write(50, "0xABCDEF12");
 
         List<String> lines = Files.readAllLines(ssdPath);
@@ -75,7 +75,7 @@ class OutputIOTest {
     }
 
     @Test
-    void testOutputWriteError() throws IOException {
+    void output_0번에_ERROR_쓰기_확인() throws IOException {
         outputIO.write(0,"ERROR");
 
         List<String> lines = Files.readAllLines(outputPath);
@@ -83,7 +83,7 @@ class OutputIOTest {
     }
 
     @Test
-    void testOutputWriteValue() throws IOException {
+    void output_0번에_VALUE_쓰기_확인() throws IOException {
         outputIO.write(0,"0xABCDEF12");
 
         List<String> lines = Files.readAllLines(outputPath);
