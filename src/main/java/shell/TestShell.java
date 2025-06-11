@@ -6,10 +6,9 @@ import java.util.*;
 
 public class TestShell {
 
-    private static Scanner scanner;
-    private static boolean isRunning;
+    private Scanner scanner;
+    private boolean isRunning;
     private static final int MAX_LBA = 100;
-
 
     public TestShell() {
         this.scanner = new Scanner(System.in);
@@ -18,11 +17,10 @@ public class TestShell {
 
     public static void main(String[] args) {
         TestShell shell = new TestShell();
-        launchShell();
+        shell.launchShell();
     }
 
-    public static void launchShell() {
-        Scanner scanner = new Scanner(System.in);
+    public void launchShell() {
         System.out.println("SSD Test Shell 시작 (명령어 입력: write/read)");
 
         while (isRunning) {
@@ -51,22 +49,25 @@ public class TestShell {
                     }
                     int lbaR = Integer.parseInt(tokens[1]);
                     String readVal = readLBA(lbaR);
-                    System.out.println("읽은 값: 0x" + readVal);
+                    System.out.println("읽은 값: " + readVal);
                     break;
+                    
                 case "exit":
                     exit();
                     break;
+                    
                 case "fullwrite":
                     if (tokens.length != 2 || !isValidValue(tokens[1])) {
-                        System.out.println("INVALID COMMAND");
+                        System.out.println("ERROR: 잘못된 입력 (사용법: fullwrite 0xABCDFFFF)");
                         break;
                     }
-                    fullWrite(tokens[1]);
+                    String hexValue = tokens[1].substring(2); // 0x 제거
+                    fullWrite(hexValue);
                     break;
 
                 case "fullread":
                     if (tokens.length != 1) {
-                        System.out.println("INVALID COMMAND");
+                        System.out.println("ERROR: fullread는 추가 인자가 필요하지 않습니다");
                         break;
                     }
                     fullRead();
@@ -81,7 +82,7 @@ public class TestShell {
         }
     }
 
-    public static boolean isValidLBA(String arg) {
+    public boolean isValidLBA(String arg) {
         try {
             int lba = Integer.parseInt(arg);
             return lba >= 0 && lba < MAX_LBA;
@@ -90,18 +91,18 @@ public class TestShell {
         }
     }
 
-    public static boolean isValidValue(String val) {
+    public boolean isValidValue(String val) {
         return val.matches("0x[0-9A-F]{8}");
     }
 
-    public static void writeLBA(int lba, String hexValue) {
-        callSsdWriteProcess(lba,hexValue);
+    public void writeLBA(int lba, String hexValue) {
+        callSsdWriteProcess(lba, hexValue);
     }
 
-    private static void callSsdWriteProcess(int lba, String hexValue){
+    private void callSsdWriteProcess(int lba, String hexValue) {
         // 실행할 .jar 파일 경로와 명령어 인자를 설정
-        String jarFilePath = "/C:/SSD.jar";  // .jar 파일의 경로
-        String inputCommand = "W "+lba+ " "+ hexValue;  // 입력할 명령어
+        String jarFilePath = "C:/SSD.jar";  // .jar 파일의 경로
+        String inputCommand = "W " + lba + " 0x" + hexValue;  // 입력할 명령어
 
         // ProcessBuilder 생성
         ProcessBuilder processBuilder = new ProcessBuilder(
@@ -111,33 +112,62 @@ public class TestShell {
         // 프로세스 실행
         try {
             Process process = processBuilder.start();
-        } catch (IOException e) {
+            process.waitFor(); // 프로세스 완료 대기
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static String readLBA(int lba) {
+    public String readLBA(int lba) {
         return callSsdReadProcess(lba);
     }
 
-    public static void fullWrite(String hexValue) {
+    /**
+     * fullwrite 명령어 구현
+     * 모든 LBA 영역(0~99)에 대해 Write를 수행한다.
+     * 
+     * @param hexValue 16진수 값 (8자리, 예: ABCDFFFF)
+     */
+    public void fullWrite(String hexValue) {
+        System.out.println("Full write 시작...");
+        System.out.println("모든 LBA에 0x" + hexValue + " 저장 중...");
+        
+        // LBA 0번부터 99번까지 모든 영역에 쓰기
         for (int lba = 0; lba < MAX_LBA; lba++) {
             writeLBA(lba, hexValue);
+            
+            // 진행상황 출력 (10개씩)
+            if ((lba + 1) % 10 == 0) {
+                System.out.println("Write 진행: " + (lba + 1) + "/" + MAX_LBA + " LBA 완료");
+            }
         }
-        System.out.println("[Write] Done");
+        
+        System.out.println("Full write 완료: 모든 LBA에 0x" + hexValue + " 저장됨");
     }
 
-    public static void fullRead() {
+    /**
+     * fullread 명령어 구현
+     * LBA 0번부터 99번까지 Read를 수행하고 모든 값을 화면에 출력한다.
+     */
+    public void fullRead() {
+        System.out.println("Full read 시작...");
+        System.out.println("==========================================");
+        
+        // LBA 0번부터 99번까지 모든 영역 읽기
         for (int lba = 0; lba < MAX_LBA; lba++) {
             String value = readLBA(lba);
+            // 출력 형식: LBA XX: 값
             System.out.println("LBA " + String.format("%02d", lba) + ": " + value);
         }
+        
+        System.out.println("==========================================");
+        System.out.println("Full read 완료");
     }
 
-    private static String callSsdReadProcess(int lba) {
+    private String callSsdReadProcess(int lba) {
         // 실행할 .jar 파일 경로와 명령어 인자를 설정
         String jarFilePath = "C:\\SSD.jar";  // .jar 파일의 경로
-        String inputCommand = "R "+ lba;  // 입력할 명령어
+        String inputCommand = "R " + lba;  // 입력할 명령어
 
         // ProcessBuilder 생성
         ProcessBuilder processBuilder = new ProcessBuilder(
@@ -150,9 +180,8 @@ public class TestShell {
         processBuilder.redirectErrorStream(true);
 
         StringBuilder output = new StringBuilder();
-        Process process = null;
         try {
-            process = processBuilder.start();
+            Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
@@ -160,16 +189,14 @@ public class TestShell {
             }
             // 프로세스가 종료될 때까지 대기
             int exitCode = process.waitFor();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
 
-        return output.toString().trim();  // 결과 반환;
+        return output.toString().trim();  // 결과 반환
     }
 
-    public static void exit() {
+    public void exit() {
         System.out.println("Exiting TestShell...");
         isRunning = false;
         if (scanner != null) {
@@ -177,7 +204,7 @@ public class TestShell {
         }
     }
 
-    public static void help() {
+    public void help() {
         System.out.println("==========================================");
         System.out.println("TestShell Help");
         System.out.println("==========================================");
@@ -195,20 +222,24 @@ public class TestShell {
         System.out.println("  - 설명: SSD의 특정 LBA 영역에 데이터를 저장합니다.");
         System.out.println("  - 사용법: write [LBA] [DATA]");
         System.out.println("  - 예시: write 3 0x1298CDEF");
+        System.out.println("  - 설명: 3번 LBA 영역에 값 0x1298CDEF를 저장합니다.");
         System.out.println();
         System.out.println("• read");
         System.out.println("  - 설명: SSD의 특정 LBA 영역에서 데이터를 읽어옵니다.");
         System.out.println("  - 사용법: read [LBA]");
         System.out.println("  - 예시: read 2");
+        System.out.println("  - 출력결과: 읽은 값: 0xAAAABBBB");
         System.out.println();
         System.out.println("• fullwrite");
         System.out.println("  - 설명: 모든 LBA 영역(0~99)에 동일한 데이터를 저장합니다.");
         System.out.println("  - 사용법: fullwrite [DATA]");
         System.out.println("  - 예시: fullwrite 0xABCDFFFF");
+        System.out.println("  - 설명: 모든 LBA에 값 0xABCDFFFF를 저장합니다.");
         System.out.println();
         System.out.println("• fullread");
         System.out.println("  - 설명: LBA 0번부터 99번까지 모든 데이터를 읽어 출력합니다.");
         System.out.println("  - 사용법: fullread");
+        System.out.println("  - 출력결과: 모든 LBA의 값들이 화면에 출력됩니다.");
         System.out.println();
         System.out.println("• exit");
         System.out.println("  - 설명: TestShell을 종료합니다.");
