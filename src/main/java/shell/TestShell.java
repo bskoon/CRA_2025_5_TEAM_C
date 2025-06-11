@@ -125,12 +125,12 @@ public class TestShell {
 
     private void callSsdWriteProcess(int lba, String hexValue){
         // 실행할 .jar 파일 경로와 명령어 인자를 설정
-        String jarFilePath = "/C:/SSD.jar";  // .jar 파일의 경로
-        String inputCommand = "W "+lba+ " "+ hexValue;  // 입력할 명령어
+        String jarFilePath = "ssd-1.0-SNAPSHOT.jar";  // .jar 파일의 경로
+        String lbaString = lba+ "";  // 입력할 명령어
 
         // ProcessBuilder 생성
         ProcessBuilder processBuilder = new ProcessBuilder(
-                "java", "-jar", jarFilePath, inputCommand
+                "java", "-jar", jarFilePath,"W", lbaString,hexValue
         );
 
         // 프로세스 실행
@@ -161,15 +161,13 @@ public class TestShell {
 
     private String callSsdReadProcess(int lba) {
         // 실행할 .jar 파일 경로와 명령어 인자를 설정
-        String jarFilePath = "C:\\SSD.jar";  // .jar 파일의 경로
-        String inputCommand = "R "+ lba;  // 입력할 명령어
+        String jarFilePath = "ssd-1.0-SNAPSHOT.jar";  // .jar 파일의 경로
+        String inputCommand = lba+"";  // 입력할 명령어
 
         // ProcessBuilder 생성
         ProcessBuilder processBuilder = new ProcessBuilder(
-                "java", "-jar", jarFilePath, inputCommand
+                "java", "-jar", jarFilePath, "R", inputCommand
         );
-        // 실행 디렉토리를 C:\ 로 설정
-        processBuilder.directory(new File("C:\\"));
 
         // 오류도 출력에 포함
         processBuilder.redirectErrorStream(true);
