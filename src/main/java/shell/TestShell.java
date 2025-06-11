@@ -1,5 +1,7 @@
 package shell;
 
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 
 public class TestShell {
@@ -77,10 +79,64 @@ public class TestShell {
     }
 
     public static void writeLBA(int lba, String hexValue) {
+        callSsdWriteProcess(lba,hexValue);
+    }
+
+    private static void callSsdWriteProcess(int lba, String hexValue){
+        // 실행할 .jar 파일 경로와 명령어 인자를 설정
+        String jarFilePath = "/C:/SSD.jar";  // .jar 파일의 경로
+        String inputCommand = "W "+lba+ " "+ hexValue;  // 입력할 명령어
+
+        // ProcessBuilder 생성
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "java", "-jar", jarFilePath, inputCommand
+        );
+
+        // 프로세스 실행
+        try {
+            Process process = processBuilder.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String readLBA(int lba) {
-        return "";
+        return callSsdReadProcess(lba);
+    }
+
+    private static String callSsdReadProcess(int lba) {
+        // 실행할 .jar 파일 경로와 명령어 인자를 설정
+        String jarFilePath = "C:\\SSD.jar";  // .jar 파일의 경로
+        String inputCommand = "R "+ lba;  // 입력할 명령어
+
+        // ProcessBuilder 생성
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "java", "-jar", jarFilePath, inputCommand
+        );
+        // 실행 디렉토리를 C:\ 로 설정
+        processBuilder.directory(new File("C:\\"));
+
+        // 오류도 출력에 포함
+        processBuilder.redirectErrorStream(true);
+
+        StringBuilder output = new StringBuilder();
+        Process process = null;
+        try {
+            process = processBuilder.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append(System.lineSeparator());
+            }
+            // 프로세스가 종료될 때까지 대기
+            int exitCode = process.waitFor();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return output.toString().trim();  // 결과 반환;
     }
 
     public static void exit() {
