@@ -62,31 +62,32 @@ class OutputIOTest {
     void ssd_0번에_쓰기_정상_확인() throws IOException {
         ssdIO.write(0, "0xABCDEF12");
 
-        List<String> lines = Files.readAllLines(ssdPath);
-        assertEquals("0xABCDEF12", lines.get(0));
+        assertFileLineEquals(ssdPath, "0xABCDEF12", 0);
     }
 
     @Test
     void ssd_50번에_쓰기_정상_확인() throws IOException {
         ssdIO.write(50, "0xABCDEF12");
 
-        List<String> lines = Files.readAllLines(ssdPath);
-        assertEquals("0xABCDEF12", lines.get(50));
+        assertFileLineEquals(ssdPath, "0xABCDEF12", 50);
     }
 
     @Test
     void output_0번에_ERROR_쓰기_확인() throws IOException {
         outputIO.write(0,"ERROR");
 
-        List<String> lines = Files.readAllLines(outputPath);
-        assertEquals("ERROR", lines.get(0));
+        assertFileLineEquals(outputPath, "ERROR", 0);
     }
 
     @Test
     void output_0번에_VALUE_쓰기_확인() throws IOException {
         outputIO.write(0,"0xABCDEF12");
 
-        List<String> lines = Files.readAllLines(outputPath);
-        assertEquals("0xABCDEF12", lines.get(0));
+        assertFileLineEquals(outputPath, "0xABCDEF12", 0);
+    }
+
+    private void assertFileLineEquals(Path path, String value, int index) throws IOException {
+        List<String> lines = Files.readAllLines(path);
+        assertEquals(value, lines.get(index));
     }
 }
