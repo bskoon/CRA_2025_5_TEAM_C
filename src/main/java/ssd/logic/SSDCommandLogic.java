@@ -1,19 +1,19 @@
 package ssd.logic;
 
 import ssd.IO.IOHandler;
-import ssd.IO.OutputIO;
 
-import static ssd.SSDConstant.*;
+import static ssd.SSDConstant.READ;
+import static ssd.SSDConstant.WRITE;
 
 public class SSDCommandLogic {
     private final SSDAppLogic ssdAppLogic;
-    private final OutputIO outputIO;
+    private final IOHandler outputIO;
 
     public static int DEFAULT_ARG_COUNT = 1;
     public static int READ_ARG_COUNT = 2;
     public static int WRITE_ARG_COUNT = 3;
 
-    public SSDCommandLogic(SSDAppLogic ssdAppLogic, OutputIO outputIO) {
+    public SSDCommandLogic(SSDAppLogic ssdAppLogic, IOHandler outputIO) {
         this.ssdAppLogic = ssdAppLogic;
         this.outputIO = outputIO;
     }
@@ -61,6 +61,12 @@ public class SSDCommandLogic {
         }
     }
 
+    private static void checkArgumentCount(String[] args, int count) {
+        if (args.length != count) {
+            throw new RuntimeException();
+        }
+    }
+
     private static int getCommandArgumentCount(String[] args) {
         int count;
         char command = args[0].charAt(0);
@@ -76,12 +82,6 @@ public class SSDCommandLogic {
                 break;
         }
         return count;
-    }
-
-    private static void checkArgumentCount(String[] args, int count) {
-        if (args.length != count) {
-            throw new RuntimeException();
-        }
     }
 
     private static void isLBAInteger(String lbaString) {

@@ -8,41 +8,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class IOHandler {
+public abstract class IOHandler {
     public String path;
 
     public IOHandler(String path) {
         this.path = path;
     }
 
-    public void write(int targetLine, String newData) {
-        List<String> curData = getCurrentSsdData();
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
-            StringBuilder sb = new StringBuilder();
-            if (curData.isEmpty())
-                sb.append(newData);
-            else {
-                for (int line = 0; line < curData.size(); line++) {
-                    if (line == targetLine) sb.append(line + " " + newData + '\n');
-                    else sb.append(curData.get(line) + '\n');
-                }
-            }
-            bw.write(sb.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private List<String> getCurrentSsdData() {
-        List<String> lines;
-        try {
-            lines = Files.readAllLines(Paths.get(path));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return lines;
-    }
+    public abstract void write(int targetLine, String newData);
 
     public String read(int lba) {
         String ssdData = "";
