@@ -6,6 +6,7 @@ import java.util.*;
 
 public class TestShell {
 
+    private TestScenario testScenario;
     private Scanner scanner;
     private boolean isRunning;
     private static final int MAX_LBA = 100;
@@ -14,6 +15,7 @@ public class TestShell {
     public TestShell() {
         this.scanner = new Scanner(System.in);
         this.isRunning = true;
+        this.testScenario = new TestScenario(this,new Random());
     }
 
     public static void main(String[] args) {
@@ -73,6 +75,30 @@ public class TestShell {
 
                 case "help":
                     help();
+                    break;
+                case "1_":
+                case "1_fullwriteandreadcompare":
+                    try{
+                        System.out.println(testScenario.fullWriteAndReadCompare());
+                    }catch (IOException e){
+
+                    }
+                    break;
+                case "2_":
+                case "2_partiallbawrite":
+                    try{
+                        System.out.println(testScenario.partialLBAWrite());
+                    }catch (IOException e){
+
+                    }
+                    break;
+                case "3_":
+                case "3_writereadaging":
+                    try{
+                        System.out.println(testScenario.writeReadAging());
+                    }catch (IOException e){
+
+                    }
                     break;
                 default:
                     System.out.println("INVALID COMMAND");
