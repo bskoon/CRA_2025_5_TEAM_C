@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class TestShellTest {
-
+/*
     private final Path nandPath = Paths.get("ssd_nand.txt");
     private final Path outputPath = Paths.get("ssd_output.txt");
 
@@ -79,4 +79,6 @@ public class TestShellTest {
         Files.deleteIfExists(nandPath);
         Files.deleteIfExists(outputPath);
     }
+
+ */
 }

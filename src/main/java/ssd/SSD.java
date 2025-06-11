@@ -12,11 +12,11 @@ public class SSD {
     public static final String SSD_NAND = "ssd_nand.txt";
     public static final String SSD_OUTPUT = "ssd_output.txt";
 
-    public boolean write(int i, String s) {
+    public static boolean write(int i, String s) {
         return false;
     }
 
-    public String read(int lba) {
+    public static String read(int lba) {
         checkLBARange(lba);
         String ssdData = getDataFromSSD(lba);
         writeDataOnOutFile(ssdData);
@@ -56,7 +56,7 @@ public class SSD {
         }
     }
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
         checkArgument(args);
         char command = args[0].charAt(0);
 
@@ -72,24 +72,24 @@ public class SSD {
         }
     }
 
-    private void checkArgument(String[] args) {
+    private static void checkArgument(String[] args) {
         checkValidCommand(args);
         checkArgumentCount(args, getCommandArgumentCount(args));
         isLBAInteger(args[1]);
     }
 
-    private void checkValidCommand(String[] args) {
+    private static void checkValidCommand(String[] args) {
         isArgumentHaveCommand(args);
         isArgumentValidValue(args);
     }
 
-    private void isArgumentHaveCommand(String[] args) {
+    private static void isArgumentHaveCommand(String[] args) {
         if (args[0].length() > 1) {
             throw new RuntimeException();
         }
     }
 
-    private void isArgumentValidValue(String[] args) {
+    private static void isArgumentValidValue(String[] args) {
         if (args[0].charAt(0) < 'A' || args[0].charAt(0) > 'Z') {
             throw new RuntimeException();
         }
@@ -112,13 +112,13 @@ public class SSD {
         return count;
     }
 
-    private void checkArgumentCount(String[] args, int count) {
+    private static void checkArgumentCount(String[] args, int count) {
         if (args.length != count) {
             throw new RuntimeException();
         }
     }
 
-    private void isLBAInteger(String lbaString) {
+    private static void isLBAInteger(String lbaString) {
         try {
             int lba = Integer.parseInt(lbaString);
         } catch (Exception e) {
