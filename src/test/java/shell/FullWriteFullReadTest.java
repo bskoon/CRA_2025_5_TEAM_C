@@ -57,19 +57,12 @@ public class FullWriteFullReadTest {
     void fullRead_outputs_correct_LBA_values() {
         // Arrange
         try (MockedStatic<TestShell> mockedTestShell = mockStatic(TestShell.class, CALLS_REAL_METHODS)) {
+            // readLBA가 실제처럼 0x를 포함한 값을 반환하도록 수정
             mockedTestShell.when(() -> TestShell.readLBA(anyInt()))
                     .thenAnswer(invocation -> {
                         int lba = invocation.getArgument(0);
-                        return testData.get(lba);
+                        return "0x" + testData.get(lba); // 0x 추가
                     });
-
-            mockedTestShell.when(() -> TestShell.fullRead()).thenAnswer(invocation -> {
-                for (int lba = 0; lba < MAX_LBA; lba++) {
-                    String value = TestShell.readLBA(lba);
-                    System.out.println("LBA " + lba + ": 0x" + value);
-                }
-                return null;
-            });
 
             // Act
             TestShell.fullRead();
@@ -83,11 +76,19 @@ public class FullWriteFullReadTest {
         String output = outputStream.toString();
         String[] lines = output.split(System.lineSeparator());
 
-        assertEquals(MAX_LBA, lines.length, "100개의 LBA 값이 출력되어야 함");
+        // 실제 fullRead()는 시작/종료 메시지와 구분선도 출력하므로 해당 라인들을 제외하고 검증
+        List<String> dataLines = new ArrayList<>();
+        for (String line : lines) {
+            if (line.startsWith("LBA ")) {
+                dataLines.add(line);
+            }
+        }
+
+        assertEquals(MAX_LBA, dataLines.size(), "100개의 LBA 값이 출력되어야 함");
 
         for (int i = 0; i < MAX_LBA; i++) {
-            String expectedLine = "LBA " + i + ": 0x" + testData.get(i);
-            assertEquals(expectedLine, lines[i], "LBA " + i + "의 출력 형식이 올바르지 않음");
+            String expectedLine = "LBA " + String.format("%02d", i) + ": 0x" + testData.get(i);
+            assertEquals(expectedLine, dataLines.get(i), "LBA " + i + "의 출력 형식이 올바르지 않음");
         }
     }
 }

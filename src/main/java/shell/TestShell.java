@@ -56,6 +56,23 @@ public class TestShell {
                 case "exit":
                     exit();
                     break;
+                case "fullwrite":
+                    if (tokens.length != 2 || !isValidValue(tokens[1])) {
+                        System.out.println("INVALID COMMAND");
+                        break;
+                    }
+                    String hexValue = tokens[1].substring(2); // 0x 제거
+                    fullWrite(hexValue);
+                    break;
+
+                case "fullread":
+                    if (tokens.length != 1) {
+                        System.out.println("INVALID COMMAND");
+                        break;
+                    }
+                    fullRead();
+                    break;
+
                 case "help":
                     help();
                     break;
@@ -102,6 +119,20 @@ public class TestShell {
 
     public static String readLBA(int lba) {
         return callSsdReadProcess(lba);
+    }
+
+    public static void fullWrite(String hexValue) {
+        for (int lba = 0; lba < MAX_LBA; lba++) {
+            writeLBA(lba, hexValue);
+        }
+        System.out.println("[Write] Done");
+    }
+
+    public static void fullRead() {
+        for (int lba = 0; lba < MAX_LBA; lba++) {
+            String value = readLBA(lba);
+            System.out.println("LBA " + String.format("%02d", lba) + ": " + value);
+        }
     }
 
     private static String callSsdReadProcess(int lba) {
@@ -163,15 +194,26 @@ public class TestShell {
         System.out.println();
         System.out.println("• write");
         System.out.println("  - 설명: SSD의 특정 LBA 영역에 데이터를 저장합니다.");
-        System.out.println("  - 사용법: ssd W [LBA] [DATA]");
-        System.out.println("  - 예시: ssd W 3 0x1298CDEF");
-        System.out.println("  - 설명: 3번 LBA 영역에 값 0x1298CDEF를 저장한다.");
+        System.out.println("  - 사용법: write [LBA] [DATA]");
+        System.out.println("  - 예시: write 3 0x1298CDEF");
+        System.out.println("  - 설명: 3번 LBA 영역에 값 0x1298CDEF를 저장합니다.");
         System.out.println();
         System.out.println("• read");
         System.out.println("  - 설명: SSD의 특정 LBA 영역에서 데이터를 읽어옵니다.");
-        System.out.println("  - 사용법: ssd R [LBA]");
-        System.out.println("  - 예시: ssd R 2");
-        System.out.println("  - 출력결과: 0xAAAABBBB");
+        System.out.println("  - 사용법: read [LBA]");
+        System.out.println("  - 예시: read 2");
+        System.out.println("  - 출력결과: 읽은 값: 0xAAAABBBB");
+        System.out.println();
+        System.out.println("• fullwrite");
+        System.out.println("  - 설명: 모든 LBA 영역(0~99)에 동일한 데이터를 저장합니다.");
+        System.out.println("  - 사용법: fullwrite [DATA]");
+        System.out.println("  - 예시: fullwrite 0xABCDFFFF");
+        System.out.println("  - 설명: 모든 LBA에 값 0xABCDFFFF를 저장합니다.");
+        System.out.println();
+        System.out.println("• fullread");
+        System.out.println("  - 설명: LBA 0번부터 99번까지 모든 데이터를 읽어 출력합니다.");
+        System.out.println("  - 사용법: fullread");
+        System.out.println("  - 출력결과: 모든 LBA의 값들이 화면에 출력됩니다.");
         System.out.println();
         System.out.println("• exit");
         System.out.println("  - 설명: TestShell을 종료합니다.");
