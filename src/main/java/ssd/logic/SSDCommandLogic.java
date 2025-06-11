@@ -40,7 +40,7 @@ public class SSDCommandLogic {
 
     private static void checkArgument(String[] args) {
         checkValidCommand(args);
-        checkArgumentCount(args, getCommandArgumentCount(args));
+        checkArgumentCountForCommand(args, getCommandArgumentCount(args));
         isLBAInteger(args[1]);
     }
 
@@ -61,7 +61,7 @@ public class SSDCommandLogic {
         }
     }
 
-    private static void checkArgumentCount(String[] args, int count) {
+    private static void checkArgumentCountForCommand(String[] args, int count) {
         if (args.length != count) {
             throw new RuntimeException();
         }

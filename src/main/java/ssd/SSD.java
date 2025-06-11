@@ -12,7 +12,8 @@ public class SSD {
     public static void main(String[] args) {
         IOHandler ssdIO = new SSDIO(SSD_FILE_PATH);
         IOHandler outputIO = new OutputIO(OUTPUT_FILE_PATH);
-        SSDCommandLogic ssdCommandLogic = new SSDCommandLogic(new SSDAppLogic(outputIO, ssdIO), outputIO);
+        SSDAppLogic ssdAppLogic = new SSDAppLogic(outputIO, ssdIO);
+        SSDCommandLogic ssdCommandLogic = new SSDCommandLogic(ssdAppLogic, outputIO);
         ssdCommandLogic.run(args);
     }
 }

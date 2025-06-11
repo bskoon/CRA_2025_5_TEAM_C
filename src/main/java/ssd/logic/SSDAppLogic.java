@@ -16,7 +16,7 @@ public class SSDAppLogic {
 
     public void write(int lba, String newData) {
         try {
-            checkWriteDataArgument(lba, newData);
+            checkValidWriteArgument(lba, newData);
             ssdIO.write(lba, newData);
         } catch (RuntimeException e) {
             outputIO.write(0, "ERROR");
@@ -33,8 +33,12 @@ public class SSDAppLogic {
         }
     }
 
-    private void checkWriteDataArgument(int lba, String newData) {
+    private void checkValidWriteArgument(int lba, String newData) {
         checkValidLBA(lba);
+        checkValidNewData(newData);
+    }
+
+    private void checkValidNewData(String newData) {
         checkDataStartWith0x(newData);
         checkDataLength(newData);
         checkValidData(newData);
