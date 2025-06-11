@@ -19,10 +19,18 @@ public class SSD {
     public static final String SSD_OUTPUT = "ssd_output.txt";
     public static final int MIN_LBA = 0;
     public static final int MAX_LBA = 99;
+    public static final int VALID_SSD_SIZE = 1390;
 
     public SSD() {
-        if (new File(SSD_NAND).exists()) return;
+        if (isValidSSDExist()) {
+            return;
+        }
         initSsdNandFile();
+    }
+
+    private static boolean isValidSSDExist() {
+        File ssdFile = new File(SSD_NAND);
+        return ssdFile.exists() && ssdFile.length() == VALID_SSD_SIZE;
     }
 
     private static void initSsdNandFile() {
