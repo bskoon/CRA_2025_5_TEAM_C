@@ -1,6 +1,8 @@
 package shell;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class TestShell {
@@ -167,27 +169,34 @@ public class TestShell {
                 "java", "-jar", JAR_FILE_PATH, "R", inputCommand
         );
 
-        // 오류도 출력에 포함
-        processBuilder.redirectErrorStream(true);
-
-        StringBuilder output = new StringBuilder();
-        Process process = null;
+        String result = "";
         try {
-            process = processBuilder.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append(System.lineSeparator());
-            }
-            // 프로세스가 종료될 때까지 대기
-            int exitCode = process.waitFor();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Process process = processBuilder.start();
+            process.waitFor();
+            // 파일 경로
+            String filePath = "ssd_output.txt";
+            result = readFileToString(filePath);
+
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        return output.toString().trim();  // 결과 반환;
+        return result;  // 결과 반환;
+    }
+
+    public String readFileToString(String filePath) throws IOException {
+        BufferedReader reader = Files.newBufferedReader(Paths.get(filePath));
+        StringBuilder stringBuilder = new StringBuilder();
+
+        String line;
+        while ((line = reader.readLine()) != null) {
+            stringBuilder.append(line).append(System.lineSeparator());  // 각 줄마다 줄바꿈 추가
+        }
+
+        reader.close();
+        return stringBuilder.toString();
     }
 
     public void exit() {
