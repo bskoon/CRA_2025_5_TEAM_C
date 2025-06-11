@@ -186,7 +186,7 @@ public class TestShell {
             throw new RuntimeException(e);
         }
 
-        return result;  // 결과 반환;
+        return result.replace("\n","").trim();  // 결과 반환;
     }
 
     public String readFileToString(String filePath) throws IOException {
