@@ -15,6 +15,7 @@ import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static ssd.SSDConstant.*;
 
 class OutputIOTest {
     @TempDir
@@ -28,17 +29,17 @@ class OutputIOTest {
 
     @BeforeEach
     void setUp() {
-        outputIO = new OutputIO(SSDConstant.OUTPUT_FILE_PATH);
-        ssdIO = new SSDIO(SSDConstant.SSD_FILE_PATH);
+        outputIO = new OutputIO(OUTPUT_FILE_PATH);
+        ssdIO = new SSDIO(SSD_FILE_PATH);
 
-        outputPath = Path.of(SSDConstant.OUTPUT_FILE_PATH);
-        ssdPath = Path.of(SSDConstant.SSD_FILE_PATH);
+        outputPath = Path.of(OUTPUT_FILE_PATH);
+        ssdPath = Path.of(SSD_FILE_PATH);
     }
 
     @AfterEach
     void tearDown() {
-        deleteFileIfExists(SSDConstant.OUTPUT_FILE_PATH);
-        deleteFileIfExists(SSDConstant.SSD_FILE_PATH);
+        deleteFileIfExists(OUTPUT_FILE_PATH);
+        deleteFileIfExists(SSD_FILE_PATH);
     }
 
     private void deleteFileIfExists(String path) {
@@ -62,14 +63,14 @@ class OutputIOTest {
     void ssd_0번에_쓰기_정상_확인() throws IOException {
         ssdIO.write(0, "0xABCDEF12");
 
-        assertFileLineEquals(ssdPath, "0xABCDEF12", 0);
+        assertFileLineEquals(ssdPath, "0 0xABCDEF12", 0);
     }
 
     @Test
     void ssd_50번에_쓰기_정상_확인() throws IOException {
         ssdIO.write(50, "0xABCDEF12");
 
-        assertFileLineEquals(ssdPath, "0xABCDEF12", 50);
+        assertFileLineEquals(ssdPath, "50 0xABCDEF12", 50);
     }
 
     @Test

@@ -1,14 +1,18 @@
 package ssd;
 
-import java.io.*;
+import ssd.IO.IOHandler;
+import ssd.IO.OutputIO;
+import ssd.IO.SSDIO;
+import ssd.logic.SSDAppLogic;
+import ssd.logic.SSDCommandLogic;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
+import static ssd.SSDConstant.*;
 
 public class SSD {
-
+    public static void main(String[] args) {
+        IOHandler ssdIO = new SSDIO(SSD_FILE_PATH);
+        IOHandler outputIO = new OutputIO(OUTPUT_FILE_PATH);
+        SSDCommandLogic ssdCommandLogic = new SSDCommandLogic(new SSDAppLogic(outputIO, ssdIO), outputIO);
+        ssdCommandLogic.run(args);
+    }
 }

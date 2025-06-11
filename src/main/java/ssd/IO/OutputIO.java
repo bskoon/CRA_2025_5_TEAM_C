@@ -1,9 +1,27 @@
 package ssd.IO;
 
-public class OutputIO extends IOHandler{
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
+import static ssd.SSDConstant.*;
+
+public class OutputIO extends IOHandler {
     public OutputIO(String path) {
         super(path);
 
-        // todo :: 존재 하는지 확인 하고 생성
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(OUTPUT_FILE_PATH))) {
+            bw.write("");
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void write(int targetLine, String newData) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
+            bw.write(newData);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
 }

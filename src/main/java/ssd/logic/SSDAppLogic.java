@@ -1,15 +1,15 @@
 package ssd.logic;
 
-import ssd.IO.OutputIO;
-import ssd.IO.SSDIO;
+import ssd.IO.IOHandler;
 
-import static ssd.SSDConstant.*;
+import static ssd.SSDConstant.MAX_LBA;
+import static ssd.SSDConstant.MIN_LBA;
 
 public class SSDAppLogic {
-    private final OutputIO outputIO;
-    private final SSDIO ssdIO;
+    private final IOHandler outputIO;
+    private final IOHandler ssdIO;
 
-    public SSDAppLogic(OutputIO outputIO, SSDIO ssdIO) {
+    public SSDAppLogic(IOHandler outputIO, IOHandler ssdIO) {
         this.outputIO = outputIO;
         this.ssdIO = ssdIO;
     }
@@ -25,7 +25,7 @@ public class SSDAppLogic {
 
     public void read(int lba) {
         try {
-            checkLBARange(lba);
+            checkValidLBA(lba);
             String ssdData = ssdIO.read(lba);
             outputIO.write(0, ssdData);
         } catch (RuntimeException e) {
@@ -59,12 +59,6 @@ public class SSDAppLogic {
         for (int j = 2; j < strArr.length; j++) {
             if (!((strArr[j] >= '0' && strArr[j] <= '9') || (strArr[j] >= 'A' && strArr[j] <= 'F')))
                 throw new RuntimeException();
-        }
-    }
-
-    private static void checkLBARange(int i) {
-        if (i < 0 || i >= 100) {
-            throw new RuntimeException("Error");
         }
     }
 }
