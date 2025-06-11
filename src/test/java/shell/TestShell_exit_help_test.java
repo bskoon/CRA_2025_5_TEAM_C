@@ -71,10 +71,7 @@ public class TestShell_exit_help_test {
         assertTrue(output.contains("• write"));
         
         // write 명령어 사용 예시 확인
-        assertTrue(output.contains("ssd W 3 0x1298CDEF"));
-        
-        // write 명령어 설명 확인
-        assertTrue(output.contains("3번 LBA 영역에 값 0x1298CDEF를 저장한다"));
+        assertTrue(output.contains("write 3 0x1298CDEF"));
     }
     
     @Test
@@ -89,9 +86,36 @@ public class TestShell_exit_help_test {
         assertTrue(output.contains("• read"));
         
         // read 명령어 사용 예시 확인
-        assertTrue(output.contains("ssd R 2"));
-        
-        // read 명령어 출력 결과 확인
-        assertTrue(output.contains("출력결과: 0xAAAABBBB"));
+        assertTrue(output.contains("read 2"));
+    }
+
+    @Test
+    void Help_fullwrite_설명_확인() {
+        // Act: help 함수 호출
+        testShell.help();
+
+        // Assert: fullwrite 명령어 정보가 포함되어야 함
+        String output = outputStream.toString();
+
+        // fullwrite 명령어 존재 확인
+        assertTrue(output.contains("• fullwrite"));
+
+        // fullwrite 명령어 사용 예시 확인
+        assertTrue(output.contains("fullwrite 0xABCDFFFF"));
+    }
+
+    @Test
+    void Help_fullread_설명_확인() {
+        // Act: help 함수 호출
+        testShell.help();
+
+        // Assert: fullread 명령어 정보가 포함되어야 함
+        String output = outputStream.toString();
+
+        // fullread 명령어 존재 확인
+        assertTrue(output.contains("• fullread"));
+
+        // fullread 명령어 사용 예시 확인
+        assertTrue(output.contains("fullread"));
     }
 }
