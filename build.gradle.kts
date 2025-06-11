@@ -26,8 +26,6 @@ tasks.test {
 // Shell JAR 생성 task
 tasks.register<Jar>("shellJar") {
     dependsOn(tasks.compileJava)
-    archiveBaseName.set("shell")
-    archiveVersion.set("1.0-SNAPSHOT")
     archiveFileName.set("SHELL.jar")
     
     from(sourceSets.main.get().output) {
@@ -44,8 +42,6 @@ tasks.register<Jar>("shellJar") {
 // SSD JAR 생성 task
 tasks.register<Jar>("ssdJar") {
     dependsOn(tasks.compileJava)
-    archiveBaseName.set("ssd")
-    archiveVersion.set("1.0-SNAPSHOT")
     archiveFileName.set("SSD.jar")
     
     from(sourceSets.main.get().output) {
