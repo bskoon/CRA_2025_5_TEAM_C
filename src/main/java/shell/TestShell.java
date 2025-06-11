@@ -1,58 +1,29 @@
-import java.io.*;
-import java.nio.file.*;
+package shell;
+
 import java.util.*;
 
 public class TestShell {
-    private static final String NAND_FILE = "ssd_nand.txt";
-    private static final String OUTPUT_FILE = "ssd_output.txt";
-    private static final int LBA_SIZE = 4;
+
+    private static Scanner scanner;
+    private static boolean isRunning;
     private static final int MAX_LBA = 100;
 
-    public static void main(String[] args) throws IOException {
-        if (args.length == 0) {
-            launchShell();
-            return;
-        }
 
-        if (args.length < 2) {
-            writeOutput("ERROR");
-            return;
-        }
-
-        String command = args[0];
-
-        switch (command) {
-            case "W":
-                if (args.length != 3 || !isValidLBA(args[1]) || !isValidValue(args[2])) {
-                    writeOutput("ERROR");
-                    return;
-                }
-                int writeLBA = Integer.parseInt(args[1]);
-                String value = args[2].substring(2); // Remove '0x'
-                writeLBA(writeLBA, value);
-                break;
-
-            case "R":
-                if (!isValidLBA(args[1])) {
-                    writeOutput("ERROR");
-                    return;
-                }
-                int readLBA = Integer.parseInt(args[1]);
-                String result = readLBA(readLBA);
-                writeOutput(result);
-                break;
-
-            default:
-                writeOutput("ERROR");
-                break;
-        }
+    public TestShell() {
+        this.scanner = new Scanner(System.in);
+        this.isRunning = true;
     }
 
-    public static void launchShell() throws IOException {
+    public static void main(String[] args) {
+        TestShell shell = new TestShell();
+        launchShell();
+    }
+
+    public static void launchShell() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("SSD Test Shell 시작 (명령어 입력: write/read)");
 
-        while (true) {
+        while (isRunning) {
             System.out.print("> ");
             String line = scanner.nextLine().trim();
             String[] tokens = line.split("\\s+");
@@ -80,7 +51,12 @@ public class TestShell {
                     String readVal = readLBA(lbaR);
                     System.out.println("읽은 값: 0x" + readVal);
                     break;
-
+                case "exit":
+                    exit();
+                    break;
+                case "help":
+                    help();
+                    break;
                 default:
                     System.out.println("INVALID COMMAND");
             }
@@ -97,54 +73,59 @@ public class TestShell {
     }
 
     public static boolean isValidValue(String val) {
-        return val.matches("0x[0-9A-Fa-f]{8}");
+        return val.matches("0x[0-9A-F]{8}");
     }
 
-    public static void writeLBA(int lba, String hexValue) throws IOException {
-        String[] nand = loadNand();
-        nand[lba] = hexValue.toUpperCase();
-        saveNand(nand);
+    public static void writeLBA(int lba, String hexValue) {
     }
 
-    public static String readLBA(int lba) throws IOException {
-        String[] nand = loadNand();
-        return nand[lba];
+    public static String readLBA(int lba) {
+        return "";
     }
 
-    public static String[] loadNand() throws IOException {
-        Path path = Paths.get(NAND_FILE);
-        String[] data = new String[MAX_LBA];
-        Arrays.fill(data, "00000000");
-
-        if (!Files.exists(path)) {
-            return data;
+    public static void exit() {
+        System.out.println("Exiting TestShell...");
+        isRunning = false;
+        if (scanner != null) {
+            scanner.close();
         }
-
-        List<String> lines = Files.readAllLines(path);
-        for (int i = 0; i < Math.min(lines.size(), MAX_LBA); i++) {
-            if (lines.get(i).matches("[0-9A-Fa-f]{8}")) {
-                data[i] = lines.get(i).toUpperCase();
-            }
-        }
-        return data;
     }
 
-    public static void saveNand(String[] data) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(NAND_FILE));
-        for (String line : data) {
-            writer.write(line);
-            writer.newLine();
-        }
-        writer.close();
+    public static void help() {
+        System.out.println("==========================================");
+        System.out.println("TestShell Help");
+        System.out.println("==========================================");
+        System.out.println("제작자: TEAM_C");
+        System.out.println("김범석 bskoon");
+        System.out.println("김상윤 huihihet");
+        System.out.println("김창지 Chang-ji");
+        System.out.println("최재형 jae637");
+        System.out.println("김태엽 taeyeob-kim-09");
+        System.out.println("노웅규 nohog94");
+        System.out.println();
+        System.out.println("사용 가능한 명령어:");
+        System.out.println();
+        System.out.println("• write");
+        System.out.println("  - 설명: SSD의 특정 LBA 영역에 데이터를 저장합니다.");
+        System.out.println("  - 사용법: ssd W [LBA] [DATA]");
+        System.out.println("  - 예시: ssd W 3 0x1298CDEF");
+        System.out.println("  - 설명: 3번 LBA 영역에 값 0x1298CDEF를 저장한다.");
+        System.out.println();
+        System.out.println("• read");
+        System.out.println("  - 설명: SSD의 특정 LBA 영역에서 데이터를 읽어옵니다.");
+        System.out.println("  - 사용법: ssd R [LBA]");
+        System.out.println("  - 예시: ssd R 2");
+        System.out.println("  - 출력결과: 0xAAAABBBB");
+        System.out.println();
+        System.out.println("• exit");
+        System.out.println("  - 설명: TestShell을 종료합니다.");
+        System.out.println();
+        System.out.println("• help");
+        System.out.println("  - 설명: 이 도움말을 표시합니다.");
+        System.out.println("==========================================");
     }
 
-    public static void writeOutput(String content) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(OUTPUT_FILE));
-        if (content.equals("ERROR")) {
-            writer.write("ERROR");
-        } else {
-            writer.write("0x" + content);
-        }
-        writer.close();
+    public boolean isRunning() {
+        return this.isRunning;
     }
 }
