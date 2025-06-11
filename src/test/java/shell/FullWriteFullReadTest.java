@@ -39,6 +39,7 @@ public class FullWriteFullReadTest {
         // Arrange: TestShell의 writeLBA 메소드를 모킹
         try (MockedStatic<TestShell> mockedTestShell = mockStatic(TestShell.class, CALLS_REAL_METHODS)) {
             
+            // fullWrite 메소드가 내부적으로 writeLBA를 100번 호출하도록 구현
             mockedTestShell.when(() -> TestShell.fullWrite(TEST_VALUE)).thenAnswer(invocation -> {
                 // LBA 0부터 99까지 writeLBA 호출
                 for (int lba = 0; lba < MAX_LBA; lba++) {
@@ -47,22 +48,11 @@ public class FullWriteFullReadTest {
                 return null;
             });
             
-            // writeLBA 메소드 호출 검증을 위한 설정
-            List<Integer> writtenLBAs = new ArrayList<>();
-            List<String> writtenValues = new ArrayList<>();
-            
-            mockedTestShell.when(() -> TestShell.writeLBA(anyInt(), anyString()))
-                .thenAnswer(invocation -> {
-                    writtenLBAs.add(invocation.getArgument(0));
-                    writtenValues.add(invocation.getArgument(1));
-                    return null;
-                });
-            
             // Act: fullwrite 실행
             TestShell.fullWrite(TEST_VALUE);
             
-            // Assert: 모든 LBA에 대해 writeLBA가 호출되었는지 확인
-            assertEquals(MAX_LBA, writtenLBAs.size());
+            // Assert: writeLBA가 정확히 100번 호출되었는지 verify로 확인
+            mockedTestShell.verify(() -> TestShell.writeLBA(anyInt(), eq(TEST_VALUE)), times(MAX_LBA));
         }
     }
 
