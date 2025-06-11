@@ -1,5 +1,6 @@
 package shell;
 
+import java.io.IOException;
 import java.util.Random;
 
 public class TestScenario {
@@ -10,18 +11,18 @@ public class TestScenario {
     }
 
 
-    private String readCompare(int i, String s) {
-        String result = testShell.read(i);
+    private String readCompare(int i, String s) throws IOException {
+        String result = testShell.readLBA(i);
         if(!result.equals(s)) return "FAIL";
         return "PASS";
     }
 
-    public String fullWriteAndReadCompare(long seed) {
+    public String fullWriteAndReadCompare(long seed) throws IOException {
         Random rand = new Random(seed);
         for(int i=0;i<20;i++){
             for(int j=0;j<5;j++){
                 String hexString = getRandomHexString(rand);
-                testShell.write(i*5+j,hexString);
+                testShell.writeLBA(i*5+j,hexString);
                 String result = readCompare(i*5+j,hexString);
                 if(result.equals("FAIL")) return result;
             }
@@ -29,13 +30,13 @@ public class TestScenario {
         return "PASS";
     }
 
-    public String partialLBAWrite() {
+    public String partialLBAWrite() throws IOException {
         for(int i=0;i<30;i++){
-            testShell.write(4,"0xFFFFFFFF");
-            testShell.write(0,"0xFFFFFFFF");
-            testShell.write(3,"0xFFFFFFFF");
-            testShell.write(1,"0xFFFFFFFF");
-            testShell.write(2,"0xFFFFFFFF");
+            testShell.writeLBA(4,"0xFFFFFFFF");
+            testShell.writeLBA(0,"0xFFFFFFFF");
+            testShell.writeLBA(3,"0xFFFFFFFF");
+            testShell.writeLBA(1,"0xFFFFFFFF");
+            testShell.writeLBA(2,"0xFFFFFFFF");
             for(int j=0;j<5;j++){
                 String result = readCompare(j,"0xFFFFFFFF");
                 if(result.equals("FAIL")) return result;
@@ -44,16 +45,16 @@ public class TestScenario {
         return "PASS";
     }
 
-    public String writeReadAging(long seed) {
+    public String writeReadAging(long seed) throws IOException {
         Random rand = new Random(seed);
 
         for(int i=0;i<200;i++){
             String hexString = getRandomHexString(rand);
-            testShell.write(0,hexString);
+            testShell.writeLBA(0,hexString);
             String result = readCompare(0,hexString);
             if(result.equals("FAIL")) return result;
             hexString = getRandomHexString(rand);
-            testShell.write(99,hexString);
+            testShell.writeLBA(99,hexString);
             result = readCompare(0,hexString);
             if(result.equals("FAIL")) return result;
         }

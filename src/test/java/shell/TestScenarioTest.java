@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,19 +38,19 @@ public class TestScenarioTest {
     }
 
     @Test
-    void FullWriteAndReadCompare_첫번째_시나리오테스트(){
+    void FullWriteAndReadCompare_첫번째_시나리오테스트() throws IOException{
         for(int i=0;i<100;i++){
-            when(testShell.read(i)).thenReturn(getRandomHexString(random));
+            when(testShell.readLBA(i)).thenReturn(getRandomHexString(random));
         }
 
         assertEquals("PASS",testScenario.fullWriteAndReadCompare(1234));
     }
 
     @Test
-    void PartialLBAWrite_두번째_시나리오테스트(){
+    void PartialLBAWrite_두번째_시나리오테스트() throws IOException{
         for(int i=0;i<150;i++){
             // write를 0xFFFFFFFF 로 고정해놓음
-            when(testShell.read(i%5)).thenReturn("0xFFFFFFFF");
+            when(testShell.readLBA(i%5)).thenReturn("0xFFFFFFFF");
         }
 
         assertEquals("PASS", testScenario.partialLBAWrite());
@@ -58,10 +59,10 @@ public class TestScenarioTest {
     }
 
     @Test
-    void WriteReadAging_세번째_시나리오테스트(){
+    void WriteReadAging_세번째_시나리오테스트() throws IOException {
         for(int i=0;i<200;i++){
-            when(testShell.read(0)).thenReturn(getRandomHexString(random));
-            when(testShell.read(99)).thenReturn(getRandomHexString(random));
+            when(testShell.readLBA(0)).thenReturn(getRandomHexString(random));
+            when(testShell.readLBA(99)).thenReturn(getRandomHexString(random));
         }
 
         assertEquals("PASS",testScenario.writeReadAging(1234));
