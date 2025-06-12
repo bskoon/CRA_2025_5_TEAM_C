@@ -7,9 +7,11 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandBufferIO extends IOHandler {
-
+    private final String[] prefixes = {"1_", "2_", "3_", "4_", "5_"};
     private final String DEFUALT_FILE_NAME = "empty.txt";
 
     public CommandBufferIO(String path) {
@@ -25,6 +27,29 @@ public class CommandBufferIO extends IOHandler {
         } catch (Exception e) {
             throw new RuntimeException();
         }
+    }
+
+    public List<String> readBuffer() throws IOException {
+        // 폴더 경로를 Path 객체로 변환
+        Path dirPath = Paths.get(path);
+
+        // 파일 이름을 저장할 리스트
+        List<String> createdFiles = new ArrayList<>();
+
+        // 각 접두어에 대해 파일이 있는지 확인
+        for (String prefix : prefixes) {
+
+            // 'prefix'로 시작하는 파일이 있는지 확인
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, prefix + "*")) {
+                for (Path entry : stream) {
+                    if (Files.isRegularFile(entry)) {
+                        createdFiles.add(entry.getFileName().toString());
+                        break;
+                    }
+                }
+            }
+        }
+        return createdFiles;
     }
 
     // 폴더가 없으면 폴더를 생성하는 함수
@@ -47,9 +72,6 @@ public class CommandBufferIO extends IOHandler {
         Path dirPath = Paths.get(directoryPath);
 
         try {
-            // 확인할 파일 접두어 배열
-            String[] prefixes = {"1_", "2_", "3_", "4_", "5_"};
-
             // 각 접두어에 대해 파일이 있는지 확인
             for (String prefix : prefixes) {
                 boolean exists = false;
