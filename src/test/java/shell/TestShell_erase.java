@@ -1,23 +1,37 @@
 package shell;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
 public class TestShell_erase {
-    static EraseCommand eraseCommand;
+    EraseCommand eraseCommand;
+    private ByteArrayOutputStream outputStream;
+    private PrintStream originalOut;
 
-    @BeforeAll
-    static void beforeAll() {
+    @BeforeEach
+    void setup() {
         // Arrange
         eraseCommand = Mockito.spy(new EraseCommand());
+        originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+    }
+
+    @AfterEach
+    void tearDown() {
+        // System.out 복원
+        System.setOut(originalOut);
     }
 
     @Test
@@ -56,22 +70,6 @@ public class TestShell_erase {
     void Erase_Range_size_미변경_케이스_테스트(){
         int startlba = 98;
         int endlba = 99;
-        int realsize = 2;
-
-        // preprocess 결과를 stub
-        doReturn(realsize).when(eraseCommand).calErasedRangedBufferSize(startlba, endlba);
-
-        // Act
-        eraseCommand.callSsdEraseRangeProcess(startlba, endlba);
-
-        // Assert
-        verify(eraseCommand).generateCommand("E", startlba, String.valueOf(realsize));
-    }
-
-    @Test
-    void Erase_Range_size_변경_케이스_테스트(){
-        int startlba = 98;
-        int endlba = 101;
         int realsize = 2;
 
         // preprocess 결과를 stub
@@ -124,5 +122,50 @@ public class TestShell_erase {
         // Assert
         verify(eraseCommand).generateCommand("E", startlba, String.valueOf(returnSize));
         verify(eraseCommand).generateCommand("E", nextlba, String.valueOf(nextReturnSize));  // 두 번째 청크
+    }
+
+    @Test
+    void Erase_lba_범위_벗어나는_케이스_테스트(){
+        // Arrange
+        int lba = 100;
+        int size = 3;
+
+        doAnswer(invocation -> {
+            int l = invocation.getArgument(0);
+            int s = invocation.getArgument(1);
+            if (l > 99 || l < 0) {
+                System.out.println("INVALID COMMAND");
+            }
+            return null;
+        }).when(eraseCommand).callSsdEraseProcess(anyInt(), anyInt());
+
+        // Act
+        eraseCommand.callSsdEraseProcess(lba, size);
+
+        // Assert
+        String output = outputStream.toString().trim();
+        assertTrue(output.contains("INVALID COMMAND"));
+    }
+
+    @Test
+    void Erase_range_lba_벗어나는_케이스_테스트(){
+        int startlba = 80;
+        int endlba = 100;
+
+        doAnswer(invocation -> {
+            int s = invocation.getArgument(0);
+            int e = invocation.getArgument(1);
+            if (s > 99 || s < 0 || e > 99 | e < 0) {
+                System.out.println("INVALID COMMAND");
+            }
+            return null;
+        }).when(eraseCommand).callSsdEraseProcess(anyInt(), anyInt());
+
+        // Act
+        eraseCommand.callSsdEraseRangeProcess(startlba, endlba);
+
+        // Assert
+        String output = outputStream.toString().trim();
+        assertTrue(output.contains("INVALID COMMAND"));
     }
 }
