@@ -54,36 +54,34 @@ class LoggerTest {
 
     @Test
     void Logger_10KB_이상시_Roll() {
-        for (int i = 0; i < 200; i++)
-            log.log("TestShell.launchShell()", "Shell Start");
+        logging200Line();
 
         File[] logFiles = LOG_DIR.listFiles((dir, name) -> name.endsWith(".log"));
-
         assertTrue(logFiles != null && logFiles.length > 0);
     }
 
     @Test
     void Logger_Roll_파일_10KB_이상인지() {
-        for (int i = 0; i < 200; i++)
-            log.log("TestShell.launchShell()", "Shell Start");
+        logging200Line();
 
         File[] logFiles = LOG_DIR.listFiles((dir, name) -> name.endsWith(".log"));
-
         assertTrue(logFiles[0].length() > MAX_LOG_SIZE);
     }
 
     @Test
     void Logger_log파일_2개_이상시_ZIP() throws InterruptedException {
-        for (int i = 0; i < 200; i++)
-            log.log("TestShell.launchShell()", "Shell Start");
+        logging200Line();
 
         Thread.sleep(1000);
 
-        for (int i = 0; i < 200; i++)
-            log.log("TestShell.launchShell()", "Shell Start");
+        logging200Line();
 
         File[] zipFiles = LOG_DIR.listFiles((dir, name) -> name.endsWith(".zip"));
-
         assertTrue(zipFiles != null && zipFiles.length > 0);
+    }
+
+    private static void logging200Line() {
+        for (int i = 0; i < 200; i++)
+            log.log("TestShell.launchShell()", "Shell Start");
     }
 }
