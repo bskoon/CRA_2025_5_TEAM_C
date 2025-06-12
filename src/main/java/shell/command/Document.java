@@ -3,9 +3,6 @@ package shell.command;
 import shell.util.TestScenario;
 import shell.util.SSDCaller;
 
-import java.io.IOException;
-import java.util.Random;
-
 public class Document {
     private SSDCaller ssdCaller;
     private TestScenario testScenario;
