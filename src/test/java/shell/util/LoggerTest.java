@@ -88,7 +88,7 @@ class LoggerTest {
 
     @Test
     void Logger_RunnerMode아닐시_정상Print() {
-        log.isRunner = false;
+        log.setRunner(false);
         StringBuilder sb = new StringBuilder();
         sb.append("HAHAHA").append("\r\n");
 
@@ -98,7 +98,7 @@ class LoggerTest {
 
     @Test
     void Logger_RunnerMode일시_Print금지() {
-        log.isRunner = true;
+        log.setRunner(true);
 
         ByteArrayOutputStream outContent = getSysoutMessage();
         assertEquals("", outContent.toString());

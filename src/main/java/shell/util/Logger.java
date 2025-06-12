@@ -19,7 +19,7 @@ public class Logger {
     private static final SimpleDateFormat logDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm");
     private static final SimpleDateFormat fileDateFormat = new SimpleDateFormat("yyMMdd_HH'h'_mm'm'_ss's'");
 
-    public boolean isRunner = false;
+    private boolean isRunner = false;
 
     public static Logger getLogger() {
         if (instance == null) instance = new Logger();
@@ -86,5 +86,9 @@ public class Logger {
 
     public void print(String message) {
         if (!isRunner) System.out.println(message);
+    }
+
+    public void setRunner(boolean runner) {
+        isRunner = runner;
     }
 }
