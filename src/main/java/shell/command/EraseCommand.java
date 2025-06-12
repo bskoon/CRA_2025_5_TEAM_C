@@ -7,7 +7,7 @@ public class EraseCommand implements Command {
         this.document = document;
     }
     public boolean isValidLBA(int lba) {
-        return lba >= 0 && lba < MAX_LBA;
+        return lba >= 0 && lba <= MAX_LBA;
     }
 
     @Override
