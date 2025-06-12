@@ -41,7 +41,7 @@ public class WriteCommand implements Command {
 
         if (!isFull) {
             lba = Integer.parseInt(args[1]);
-            size = MAX_SSD_BLOCK;
+            size = 1;
             updateData = args[2];
         }
 
