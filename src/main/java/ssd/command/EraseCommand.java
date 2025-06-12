@@ -18,12 +18,12 @@ public class EraseCommand implements Command {
 
     @Override
     public void execute(String[] args) {
-        int lba = Integer.parseInt(args[1]);
-        int size = Integer.parseInt(args[2]);
-
-        validCheck(lba,size);
-
         try {
+            int lba = Integer.parseInt(args[1]);
+            int size = Integer.parseInt(args[2]);
+
+            validCheck(lba,size);
+
             for(int i=0;i<size;i++){
                 ssdio.write(lba+i, "0x00000000");
             }
