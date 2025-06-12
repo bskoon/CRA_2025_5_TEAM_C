@@ -1,8 +1,5 @@
 package shell.command;
 
-import shell.Command;
-import shell.Document;
-
 public class ReadCommand implements Command {
     private static final int READ_ARG_COUNT = 2;
     private static final int FULLREAD_ARG_COUNT = 1;

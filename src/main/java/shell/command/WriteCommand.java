@@ -1,8 +1,5 @@
 package shell.command;
 
-import shell.Command;
-import shell.Document;
-
 public class WriteCommand implements Command {
     private static final int WRITE_ARG_COUNT = 3;
     private static final int FULLWRITE_ARG_COUNT = 2;

@@ -1,8 +1,5 @@
 package shell.command;
 
-import shell.Command;
-import shell.Document;
-
 public class EraseCommand implements Command {
     private static final int MAX_LBA = 99;
     private Document document;

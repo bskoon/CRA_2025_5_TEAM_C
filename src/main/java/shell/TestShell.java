@@ -1,13 +1,7 @@
 package shell;
 
-import shell.command.EraseCommand;
-import shell.command.ReadCommand;
-import shell.command.ScenarioCommand;
-import shell.command.WriteCommand;
+import shell.command.*;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class TestShell {
