@@ -11,8 +11,9 @@ import shell.command.FlushCommand;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -49,5 +50,19 @@ public class TestShell_flush {
 
         // Then
         verify(mockDocument).flush();
+    }
+
+    @Test
+    void Flush_파라미터_오류_테스트(){
+        // Given
+        String[] args = {"flush","asdasd"};
+
+        // When
+        flushCommand.execute(args);
+
+        // Then
+        String output = outputStream.toString().trim();
+        assertTrue(output.contains("INVALID COMMAND"));
+        verify(mockDocument, never()).flush();
     }
 }
