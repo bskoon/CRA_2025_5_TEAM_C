@@ -19,6 +19,11 @@ public class FlushCommand implements Command {
 
     @Override
     public void execute(String[] args) {
+        if (!isArgumentValid(args.length)) {
+            System.out.println("INVALID COMMAND");
+            return;
+        }
+
         document.flush();
     }
 }
