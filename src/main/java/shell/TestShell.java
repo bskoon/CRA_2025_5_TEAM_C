@@ -1,18 +1,35 @@
 package shell;
 
+import shell.command.EraseCommand;
+import shell.command.ReadCommand;
+import shell.command.ScenarioCommand;
+import shell.command.WriteCommand;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
 public class TestShell {
+    private static final int MAX_LBA = 100;
+
+    public static final String READ = "read";
+    public static final String WRITE = "write";
+    public static final String ERASE = "erase";
+    public static final String FULLREAD = "fullread";
+    public static final String FULLWRITE = "fullwrite";
+    public static final String ERASERANGE = "erase_range";
+    public static final String SCENARIO_1 = "1_fullwriteandreadcompare";
+    public static final String SCENARIO_2 = "2_partiallbawrite";
+    public static final String SCENARIO_3 = "3_writereadaging";
+    public static final String EXIT = "exit";
+    public static final String HELP = "help";
 
     private TestScenario testScenario;
-    public Scanner scanner;
+    private Scanner scanner;
     private boolean isRunning;
-    private static final int MAX_LBA = 100;
-    private static final String JAR_FILE_PATH = "SSD.jar";
 
+    public static CommandExecutor executor;
 
     public TestShell() {
         this.scanner = new Scanner(System.in);
@@ -20,7 +37,28 @@ public class TestShell {
         this.testScenario = new TestScenario(this,new Random());
     }
 
+    public boolean isRunning() {
+        return this.isRunning;
+    }
+
     public static void main(String[] args) {
+        Document document = new Document();
+        Command readCommand = new ReadCommand(document);
+        Command writeCommand = new WriteCommand(document);
+        Command eraseCommand = new EraseCommand(document);
+        Command scenarioCommand = new ScenarioCommand(document);
+
+        executor = new CommandExecutor();
+        executor.setCommand(READ, readCommand);
+        executor.setCommand(WRITE, writeCommand);
+        executor.setCommand(ERASE, eraseCommand);
+        executor.setCommand(FULLREAD, readCommand);
+        executor.setCommand(FULLWRITE, writeCommand);
+        executor.setCommand(ERASERANGE, eraseCommand);
+        executor.setCommand(SCENARIO_1, scenarioCommand);
+        executor.setCommand(SCENARIO_2, scenarioCommand);
+        executor.setCommand(SCENARIO_3, scenarioCommand);
+
         TestShell shell = new TestShell();
         shell.launchShell();
     }
@@ -31,175 +69,23 @@ public class TestShell {
 
         while (isRunning) {
             System.out.print("> ");
-            String line = scanner.nextLine().trim();
-            String[] tokens = line.split("\\s+");
+            String shellCommand = scanner.nextLine().trim();
+            String[] commandParameters = shellCommand.split("\\s+");
 
-            if (tokens.length == 0) continue;
-            String cmd = tokens[0].toLowerCase();
+            if (commandParameters.length == 0) continue;
 
-            switch (cmd) {
-                case "write":
-                    if (tokens.length != 3 || !isValidLBA(tokens[1]) || !isValidValue(tokens[2])) {
-                        System.out.println("INVALID COMMAND");
-                        break;
-                    }
-                    int lbaW = Integer.parseInt(tokens[1]);
-                    writeLBA(lbaW, tokens[2]);
-                    break;
-
-                case "read":
-                    if (tokens.length != 2 || !isValidLBA(tokens[1])) {
-                        System.out.println("INVALID COMMAND");
-                        break;
-                    }
-                    int lbaR = Integer.parseInt(tokens[1]);
-                    String readVal = readLBA(lbaR);
-                    System.out.println("LBA " + String.format("%02d", lbaR) + ": " + readVal);
-                    break;
-                case "exit":
-                    exit();
-                    break;
-                case "fullwrite":
-                    if (tokens.length != 2 || !isValidValue(tokens[1])) {
-                        System.out.println("INVALID COMMAND");
-                        break;
-                    }
-                    fullWrite(tokens[1]);
-                    break;
-
-                case "fullread":
-                    if (tokens.length != 1) {
-                        System.out.println("INVALID COMMAND");
-                        break;
-                    }
-                    fullRead();
-                    break;
-
-                case "help":
-                    help();
-                    break;
-                case "1_":
-                case "1_fullwriteandreadcompare":
-                    try{
-                        System.out.println(testScenario.fullWriteAndReadCompare());
-                    }catch (IOException e){
-
-                    }
-                    break;
-                case "2_":
-                case "2_partiallbawrite":
-                    try{
-                        System.out.println(testScenario.partialLBAWrite());
-                    }catch (IOException e){
-
-                    }
-                    break;
-                case "3_":
-                case "3_writereadaging":
-                    try{
-                        System.out.println(testScenario.writeReadAging());
-                    }catch (IOException e){
-
-                    }
-                    break;
-                default:
-                    System.out.println("INVALID COMMAND");
-            }
+            executeCommand(commandParameters);
         }
     }
 
-    public boolean isValidLBA(String arg) {
-        try {
-            int lba = Integer.parseInt(arg);
-            return lba >= 0 && lba < MAX_LBA;
-        } catch (NumberFormatException e) {
-            return false;
+    private void executeCommand(String[] commandParameters) {
+        if (commandParameters[0].equals(EXIT)) {
+            exit();
+        } else if (commandParameters[0].equals(HELP)) {
+            help();
+        } else {
+            executor.executeCommand(commandParameters);
         }
-    }
-
-    public boolean isValidValue(String val) {
-        return val.matches("0x[0-9A-F]{8}");
-    }
-
-    public void writeLBA(int lba, String hexValue) {
-        callSsdWriteProcess(lba,hexValue);
-    }
-
-    private void callSsdWriteProcess(int lba, String hexValue){
-        // 실행할 명령어 인자를 설정
-        String lbaString = lba+ "";  // 입력할 명령어
-
-        // ProcessBuilder 생성
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                "java", "-jar", JAR_FILE_PATH,"W", lbaString,hexValue
-        );
-
-        // 프로세스 실행
-        try {
-            Process process = processBuilder.start();
-            process.waitFor();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String readLBA(int lba) {
-        return callSsdReadProcess(lba);
-    }
-
-    public void fullWrite(String hexValue) {
-        for (int lba = 0; lba < MAX_LBA; lba++) {
-            writeLBA(lba, hexValue);
-        }
-        System.out.println("[Write] Done");
-    }
-
-    public void fullRead() {
-        for (int lba = 0; lba < MAX_LBA; lba++) {
-            String value = readLBA(lba);
-            System.out.println("LBA " + String.format("%02d", lba) + ": " + value);
-        }
-    }
-
-    private String callSsdReadProcess(int lba) {
-        // 실행할 명령어 인자를 설정
-        String inputCommand = lba+"";  // 입력할 명령어
-
-        // ProcessBuilder 생성
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                "java", "-jar", JAR_FILE_PATH, "R", inputCommand
-        );
-
-        String result = "";
-        try {
-            Process process = processBuilder.start();
-            process.waitFor();
-            // 파일 경로
-            String filePath = "ssd_output.txt";
-            result = readFileToString(filePath);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        return result.replace("\n","").trim();  // 결과 반환;
-    }
-
-    public String readFileToString(String filePath) throws IOException {
-        BufferedReader reader = Files.newBufferedReader(Paths.get(filePath));
-        StringBuilder stringBuilder = new StringBuilder();
-
-        String line;
-        while ((line = reader.readLine()) != null) {
-            stringBuilder.append(line).append(System.lineSeparator());  // 각 줄마다 줄바꿈 추가
-        }
-
-        reader.close();
-        return stringBuilder.toString();
     }
 
     public void exit() {
@@ -249,9 +135,5 @@ public class TestShell {
         System.out.println("• help");
         System.out.println("  - 설명: 이 도움말을 표시합니다.");
         System.out.println("==========================================");
-    }
-
-    public boolean isRunning() {
-        return this.isRunning;
     }
 }
