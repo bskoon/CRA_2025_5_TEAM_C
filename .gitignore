@@ -46,3 +46,5 @@ bin/
 ### Data Files ###
 *.txt
 *.jar
+*.zip
+*.log
