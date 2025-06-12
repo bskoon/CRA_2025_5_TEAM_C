@@ -9,38 +9,22 @@ import java.util.List;
 import java.util.Random;
 
 public class Document {
-    private static final int MAX_LBA = 99;
     private static final String JAR_FILE_PATH = "SSD.jar";
     private static final List<String> EXECUTE_JAR = new ArrayList<>(List.of("java", "-jar", JAR_FILE_PATH));
+    private static final String OUTPUT_FILE = "ssd_output.txt";
 
-    Random rand = new Random();
+    private Random rand = new Random();
 
-    public void read(int lba, boolean isFull) {
-        int startLBA = 0;
-        int endLBA = MAX_LBA;
-
-        if (!isFull) {
-            startLBA = lba;
-            endLBA = lba;
-        }
-
-        for (int address = startLBA; address <= endLBA; address++) {
-            String readVal = readLBA(address);
-            System.out.println("LBA " + String.format("%02d", address) + ": " + readVal);
+    public void read(int lba, int size) {
+        for (int idx = 0; idx < size; idx++) {
+            String readVal = readLBA(lba + size);
+            System.out.println("LBA " + String.format("%02d", lba + size) + ": " + readVal);
         }
     }
 
-    public void write(int lba, String updateData, boolean isFull) {
-        int startLBA = 0;
-        int endLBA = MAX_LBA;
-
-        if (!isFull) {
-            startLBA = lba;
-            endLBA = lba;
-        }
-
-        for (int address = startLBA; address <= endLBA; address++) {
-            writeLBA(address, updateData);
+    public void write(int lba, int size, String updateData) {
+        for (int idx = 0; idx < size; idx++) {
+            writeLBA(lba + size, updateData);
         }
     }
 
@@ -49,59 +33,54 @@ public class Document {
     }
 
     public void scenario(int scenarioNum) {
+        String scenarioResult = "";
         try {
             switch (scenarioNum) {
                 case 1:
-                    System.out.println(fullWriteAndReadCompare());
+                    scenarioResult = fullWriteAndReadCompare();
                     break;
                 case 2:
-                    System.out.println(partialLBAWrite());
+                    scenarioResult = partialLBAWrite();
                     break;
                 case 3:
-                    System.out.println(writeReadAging());
+                    scenarioResult = writeReadAging();
                     break;
                 case 4:
-                    System.out.println(eraseAndWriteAging());
+                    scenarioResult = eraseAndWriteAging();
                     break;
                 default:
-
+                    scenarioResult = "INVLIAD ARGUMENT";
+                    break;
             }
         } catch (Exception e) {
 
         }
-    }
-
-    public void writeLBA(int lba, String hexValue) {
-        callSsdWriteProcess(lba,hexValue);
+        System.out.println(scenarioResult);
     }
 
     public String readLBA(int lba) {
-        return callSsdReadProcess(lba);
+        List<String> readArgument = new ArrayList<>();
+        readArgument.add("R");
+        readArgument.add(Integer.toString(lba));
+
+        callSSDAPI(readArgument);
+
+        return readSSDDataFromOutputFile();
     }
 
-    private void callSsdWriteProcess(int lba, String hexValue){
-        // 실행할 명령어 인자를 설정
-        List<String> executableCommand = generateCommand("W", lba, hexValue);
-        callSSD(executableCommand);
+    public void writeLBA(int lba, String hexValue) {
+        List<String> writeArgument = new ArrayList<>();
+        writeArgument.add("W");
+        writeArgument.add(Integer.toString(lba));
+        writeArgument.add(hexValue);
+
+        callSSDAPI(writeArgument);
     }
 
-    private String callSsdReadProcess(int lba) {
-        List<String> executableCommand = generateCommand("R", lba, "");
-        callSSD(executableCommand);
-
-        return readSSDDataFromOutputFile();  // 결과 반환;
-    }
-
-    private static List<String> generateCommand(String type, int lba, String hexValue) {
+    public void callSSDAPI(List<String> args) {
         List<String> executableCommand = new ArrayList<>(EXECUTE_JAR);
-
-        String lbaString = Integer.toString(lba);
-
-        executableCommand.add(type);
-        executableCommand.add(lbaString);
-        if (type.equals("W")) executableCommand.add(hexValue);
-
-        return executableCommand;
+        executableCommand.addAll(args);
+        callSSD(executableCommand);
     }
 
     private static void callSSD(List<String> executableCommand) {
@@ -120,12 +99,11 @@ public class Document {
     private String readSSDDataFromOutputFile() {
         String result = "";
         try {
-            // 파일 경로
-            String filePath = "ssd_output.txt";
-            result = readFileToString(filePath);
+            result = readFileToString(OUTPUT_FILE);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
         return result.replace("\n","").trim();
     }
 
@@ -144,6 +122,7 @@ public class Document {
 
     private String readCompare(int i, String s) throws IOException {
         String result = readLBA(i);
+
         if(!result.equals(s)) return "FAIL";
         return "PASS";
     }
