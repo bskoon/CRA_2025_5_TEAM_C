@@ -10,10 +10,23 @@ public class EraseCommand implements Command {
         this.document = document;
     }
 
+    public boolean isArgumentValid(int argLength, boolean isFull, int lba) {
+        return true;
+    }
+
+    public boolean isValidParameter(int argLength, boolean isFull) {
+        return false;
+    }
+
+    public boolean isValidLBA(int lba) {
+        return false;
+    }
+
     @Override
     public void execute(String[] args) {
-        int lba = Integer.parseInt(args[1]);
-        int size = Integer.parseInt(args[2]);
-        document.erase(lba, size);
+        int startLBA = 0;
+        int endLBA = 0;
+
+        document.erase(startLBA, endLBA);
     }
 }
