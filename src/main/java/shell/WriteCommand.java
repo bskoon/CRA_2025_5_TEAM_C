@@ -1,4 +1,4 @@
 package shell;
 
-public class WriteCommand {
+public class WriteCommand implements Command {
 }

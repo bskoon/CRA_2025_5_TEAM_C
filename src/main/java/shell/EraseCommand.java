@@ -1,4 +1,4 @@
 package shell;
 
-public class EraseCommand {
+public class EraseCommand implements Command {
 }

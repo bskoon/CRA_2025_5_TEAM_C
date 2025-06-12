@@ -1,4 +1,4 @@
 package shell;
 
-public class ReadCommand {
+public class ReadCommand implements Command {
 }

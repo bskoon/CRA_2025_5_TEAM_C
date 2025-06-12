@@ -1,5 +1,5 @@
 package shell;
 
-public class ShellCommand {
+public class CommandExecutor {
 
 }

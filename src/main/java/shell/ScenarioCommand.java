@@ -1,4 +1,4 @@
 package shell;
 
-public class ScenarioCommand {
+public class ScenarioCommand implements Command{
 }
