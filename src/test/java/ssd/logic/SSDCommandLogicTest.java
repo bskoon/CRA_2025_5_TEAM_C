@@ -24,7 +24,7 @@ class SSDCommandLogicTest {
     @BeforeEach
     void setUp() {
         ssdAppLogic = new SSDAppLogic(mockOutputIo, mockSSDIo);
-        ssdCommandLogic = new SSDCommandLogic(ssdAppLogic, mockOutputIo);
+        ssdCommandLogic = new SSDCommandLogic(ssdAppLogic, mockOutputIo, mockSSDIo);
     }
 
     @Test
