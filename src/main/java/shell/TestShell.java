@@ -11,6 +11,7 @@ public class TestShell {
     private static final String FULLREAD = "fullread";
     private static final String FULLWRITE = "fullwrite";
     private static final String ERASERANGE = "erase_range";
+    private static final String FLUSH = "flush";
     private static final String SCENARIO_1 = "1_fullwriteandreadcompare";
     private static final String SCENARIO_2 = "2_partiallbawrite";
     private static final String SCENARIO_3 = "3_writereadaging";
@@ -30,6 +31,7 @@ public class TestShell {
         Command readCommand = new ReadCommand(document);
         Command writeCommand = new WriteCommand(document);
         Command eraseCommand = new EraseCommand(document);
+        Command flushCommand = new FlushCommand(document);
         Command scenarioCommand = new ScenarioCommand(document);
 
         executor = new CommandExecutor();
@@ -39,6 +41,7 @@ public class TestShell {
         executor.setCommand(FULLREAD, readCommand);
         executor.setCommand(FULLWRITE, writeCommand);
         executor.setCommand(ERASERANGE, eraseCommand);
+        executor.setCommand(FLUSH, flushCommand);
         executor.setCommand(SCENARIO_1, scenarioCommand);
         executor.setCommand(SCENARIO_2, scenarioCommand);
         executor.setCommand(SCENARIO_3, scenarioCommand);

@@ -29,6 +29,10 @@ public class Document {
         ssdCaller.eraseOnSSD(lba, size);
     }
 
+    public void flush() {
+        ssdCaller.flushSSD();
+    }
+
     public void scenario(int scenarioNum) {
         String scenarioResult = "";
         try {
