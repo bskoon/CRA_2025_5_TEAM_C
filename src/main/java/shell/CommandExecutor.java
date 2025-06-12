@@ -26,7 +26,7 @@ public class CommandExecutor {
             case SCRIPT_3:
                 return SCRIPT_3;
             default:
-                return "";
+                return rawCommand;
         }
     }
 
