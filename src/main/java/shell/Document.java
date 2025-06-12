@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Document {
+    private static final int MAX_LBA = 99;
     private static final String JAR_FILE_PATH = "SSD.jar";
     private static final List<String> EXECUTE_JAR = new ArrayList<>(List.of("java", "-jar", JAR_FILE_PATH));
     private static final String OUTPUT_FILE = "ssd_output.txt";
@@ -28,8 +29,8 @@ public class Document {
         }
     }
 
-    public void erase(int startLBA, int endLBA) {
-        // ToDo. implement erase
+    public void erase(int lba, int size) {
+        eraseLBA(lba, size);
     }
 
     public void scenario(int scenarioNum) {
@@ -77,9 +78,31 @@ public class Document {
         callSSDAPI(writeArgument);
     }
 
+    public void eraseLBA(int lba, int size) {
+        callSsdEraseProcess(lba,size);
+    }
+
+    private static List<String> generateEraseCommand(String type, int lba, int size) {
+        List<String> executableCommand = new ArrayList<>(EXECUTE_JAR);
+
+        String lbaString = Integer.toString(lba);
+        String sizeString = Integer.toString(size);
+
+        executableCommand.add(type);
+        executableCommand.add(lbaString);
+        executableCommand.add(sizeString);
+
+        return executableCommand;
+    }
+
     public void callSSDAPI(List<String> args) {
         List<String> executableCommand = new ArrayList<>(EXECUTE_JAR);
         executableCommand.addAll(args);
+        callSSD(executableCommand);
+    }
+
+    private void callSsdEraseProcess(int lba, int size) {
+        List<String> executableCommand = generateEraseCommand("E", lba, size);
         callSSD(executableCommand);
     }
 

@@ -1,22 +1,26 @@
 package ssd.logic;
 
 import ssd.IO.IOHandler;
+import ssd.IO.OutputIO;
+import ssd.IO.SSDIO;
 import ssd.command.CommandExecutor;
 
-import static ssd.SSDConstant.READ;
-import static ssd.SSDConstant.WRITE;
+import static ssd.SSDConstant.*;
 
 public class SSDCommandLogic {
     private final SSDAppLogic ssdAppLogic;
-    private final IOHandler outputIO;
+    private final OutputIO outputIO;
+    private final SSDIO ssdIO;
 
     public static int DEFAULT_ARG_COUNT = 1;
     public static int READ_ARG_COUNT = 2;
+    public static int ERASE_ARG_COUNT = 3;
     public static int WRITE_ARG_COUNT = 3;
 
-    public SSDCommandLogic(SSDAppLogic ssdAppLogic, IOHandler outputIO) {
+    public SSDCommandLogic(SSDAppLogic ssdAppLogic, OutputIO outputIO, SSDIO ssdio) {
         this.ssdAppLogic = ssdAppLogic;
         this.outputIO = outputIO;
+        this.ssdIO = ssdio;
     }
 
     public void run(String[] args) {
@@ -24,7 +28,7 @@ public class SSDCommandLogic {
             checkArgument(args);
             char command = args[0].charAt(0);
 
-            CommandExecutor executor = new CommandExecutor(ssdAppLogic);
+            CommandExecutor executor = new CommandExecutor(ssdAppLogic, ssdIO, outputIO);
             executor.execute(command, args);
         } catch (RuntimeException e) {
             outputIO.write(0, "ERROR");
@@ -69,6 +73,9 @@ public class SSDCommandLogic {
                 break;
             case WRITE:
                 count = WRITE_ARG_COUNT;
+                break;
+            case ERASE:
+                count = ERASE_ARG_COUNT;
                 break;
             default:
                 count = DEFAULT_ARG_COUNT;

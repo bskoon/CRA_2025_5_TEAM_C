@@ -4,29 +4,57 @@ import shell.Command;
 import shell.Document;
 
 public class EraseCommand implements Command {
+    private static final int MAX_LBA = 99;
     private Document document;
-
     public EraseCommand (Document document) {
         this.document = document;
     }
-
-    public boolean isArgumentValid(int argLength, boolean isFull, int lba) {
-        return true;
-    }
-
-    public boolean isValidParameter(int argLength, boolean isFull) {
-        return false;
-    }
-
     public boolean isValidLBA(int lba) {
-        return false;
+        return lba >= 0 && lba < MAX_LBA;
     }
 
     @Override
     public void execute(String[] args) {
-        int startLBA = 0;
-        int endLBA = 0;
+        int lba;
+        int size;
+        if (isEraseRange(args)) {
+            int startLBA = Integer.parseInt(args[1]);
+            int endLBA = Integer.parseInt(args[2]);
+            if (!isValidLBA(startLBA) || !isValidLBA(endLBA)) {
+                System.out.println("INVALID COMMAND");
+                return;
+            }
+            lba = startLBA;
+            size = endLBA - startLBA + 1;
+        } else { // erase
+            lba = Integer.parseInt(args[1]);
+            size = Integer.parseInt(args[2]);
+            if (!isValidLBA(lba)) {
+                System.out.println("INVALID COMMAND");
+                return;
+            }
+        }
+        size = adjustSizeWithinBounds(lba, size);
+        performEraseInChunks(lba, size);
+    }
 
-        document.erase(startLBA, endLBA);
+    private boolean isEraseRange(String[] args) {
+        return args[0].equalsIgnoreCase("erase_range");
+    }
+
+    private int adjustSizeWithinBounds(int lba, int size) {
+        int maxLbaLimit = 100;
+        return Math.min(size, maxLbaLimit - lba);
+    }
+
+    private void performEraseInChunks(int lba, int size) {
+        final int MAX_CHUNK = 10;
+
+        while (size > 0) {
+            int chunk = Math.min(size, MAX_CHUNK);
+            document.erase(lba, chunk);
+            lba += chunk;
+            size -= chunk;
+        }
     }
 }

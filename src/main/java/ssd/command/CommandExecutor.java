@@ -1,5 +1,7 @@
 package ssd.command;
 
+import ssd.IO.OutputIO;
+import ssd.IO.SSDIO;
 import ssd.logic.SSDAppLogic;
 
 import java.util.HashMap;
@@ -8,10 +10,10 @@ import java.util.Map;
 public class CommandExecutor {
     private final Map<Character, Command> commandMap = new HashMap<>();
 
-    public CommandExecutor(SSDAppLogic logic) {
+    public CommandExecutor(SSDAppLogic logic, SSDIO ssdio, OutputIO outputIO) {
         commandMap.put('R', new ReadCommand(logic));
         commandMap.put('W', new WriteCommand(logic));
-        commandMap.put('E', new EraseCommand(logic));
+        commandMap.put('E', new EraseCommand(logic, ssdio, outputIO));
     }
 
     public void execute(char commandKey, String[] args) {
