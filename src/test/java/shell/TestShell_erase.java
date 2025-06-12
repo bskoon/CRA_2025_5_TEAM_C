@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import shell.command.Document;
 import shell.command.EraseCommand;
 
 import java.io.ByteArrayOutputStream;
