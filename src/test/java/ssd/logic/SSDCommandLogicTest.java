@@ -18,13 +18,11 @@ class SSDCommandLogicTest {
     @Mock
     private OutputIO mockOutputIo;
 
-    private SSDAppLogic ssdAppLogic;
     private SSDCommandLogic ssdCommandLogic;
 
     @BeforeEach
     void setUp() {
-        ssdAppLogic = new SSDAppLogic(mockOutputIo, mockSSDIo);
-        ssdCommandLogic = new SSDCommandLogic(ssdAppLogic, mockOutputIo, mockSSDIo);
+        ssdCommandLogic = new SSDCommandLogic(mockOutputIo, mockSSDIo);
     }
 
     @Test
