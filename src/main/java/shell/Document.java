@@ -44,8 +44,8 @@ public class Document {
         }
     }
 
-    public void erase(int startLBA, int endLBA) {
-        // ToDo. implement erase
+    public void erase(int lba, int size) {
+        eraseLBA(lba, size);
     }
 
     public void scenario(int scenarioNum) {
@@ -79,6 +79,10 @@ public class Document {
         return callSsdReadProcess(lba);
     }
 
+    public void eraseLBA(int lba, int size) {
+        callSsdEraseProcess(lba,size);
+    }
+
     private void callSsdWriteProcess(int lba, String hexValue){
         // 실행할 명령어 인자를 설정
         List<String> executableCommand = generateCommand("W", lba, hexValue);
@@ -92,6 +96,11 @@ public class Document {
         return readSSDDataFromOutputFile();  // 결과 반환;
     }
 
+    private void callSsdEraseProcess(int lba, int size) {
+        List<String> executableCommand = generateEraseCommand("E", lba, size);
+        callSSD(executableCommand);
+    }
+
     private static List<String> generateCommand(String type, int lba, String hexValue) {
         List<String> executableCommand = new ArrayList<>(EXECUTE_JAR);
 
@@ -99,7 +108,20 @@ public class Document {
 
         executableCommand.add(type);
         executableCommand.add(lbaString);
-        if (type.equals("W")) executableCommand.add(hexValue);
+        executableCommand.add(hexValue);
+
+        return executableCommand;
+    }
+
+    private static List<String> generateEraseCommand(String type, int lba, int size) {
+        List<String> executableCommand = new ArrayList<>(EXECUTE_JAR);
+
+        String lbaString = Integer.toString(lba);
+        String sizeString = Integer.toString(size);
+
+        executableCommand.add(type);
+        executableCommand.add(lbaString);
+        executableCommand.add(sizeString);
 
         return executableCommand;
     }
