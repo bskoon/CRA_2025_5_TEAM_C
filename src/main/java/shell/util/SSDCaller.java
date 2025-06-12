@@ -48,6 +48,12 @@ public class SSDCaller {
         callSSD(eraseArgument);
     }
 
+    public void flushSSD() {
+        List<String> flushArgument = new ArrayList<>();
+        flushArgument.add("F");
+        callSSD(flushArgument);
+    }
+
     private String readSSDDataFromOutputFile() {
         String result = "";
         try {
