@@ -6,7 +6,6 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class TestShell {
-
     private static final int MAX_LBA = 100;
     private static final String JAR_FILE_PATH = "SSD.jar";
     private static final List<String> EXECUTE_JAR = new ArrayList<>(List.of("java", "-jar", JAR_FILE_PATH));

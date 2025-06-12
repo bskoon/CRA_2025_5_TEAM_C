@@ -1,4 +1,7 @@
-package shell;
+package shell.command;
+
+import shell.Command;
+import shell.Document;
 
 public class ReadCommand implements Command {
     private Document document;
@@ -8,7 +11,8 @@ public class ReadCommand implements Command {
     }
 
     @Override
-    public void execute() {
-        document.read();
+    public void execute(String[] args) {
+        int lba = Integer.parseInt(args[1]);
+        document.read(lba);
     }
 }
