@@ -9,6 +9,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CommandBufferIO extends IOHandler {
+
+    private final String DEFUALT_FILE_NAME = "empty.txt";
+
     public CommandBufferIO(String path) {
         super(path);
         createFolderIfNotExists(path);
@@ -63,7 +66,7 @@ public class CommandBufferIO extends IOHandler {
 
                 // 파일이 없다면 생성
                 if (!exists) {
-                    Path newFile = Paths.get(directoryPath, prefix + "empty.txt");
+                    Path newFile = Paths.get(directoryPath, prefix + DEFUALT_FILE_NAME);
                     Files.createFile(newFile);
                 }
             }
