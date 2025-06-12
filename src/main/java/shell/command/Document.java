@@ -19,14 +19,14 @@ public class Document {
 
     public void read(int lba, int size) {
         for (int idx = 0; idx < size; idx++) {
-            String readVal = ssdCaller.readOnSSD(lba + size);
-            System.out.println("LBA " + String.format("%02d", lba + size) + ": " + readVal);
+            String readVal = ssdCaller.readOnSSD(lba + idx);
+            System.out.println("LBA " + String.format("%02d", lba + idx) + ": " + readVal);
         }
     }
 
     public void write(int lba, int size, String updateData) {
         for (int idx = 0; idx < size; idx++) {
-            ssdCaller.writeOnSSD(lba + size, updateData);
+            ssdCaller.writeOnSSD(lba + idx, updateData);
         }
     }
 
