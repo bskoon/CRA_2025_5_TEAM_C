@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Document {
-    private static final int MAX_LBA = 99;
-
     private SSDCaller ssdCaller;
     private TestScenario testScenario;
 
