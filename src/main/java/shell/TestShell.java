@@ -1,47 +1,31 @@
 package shell;
 
-import shell.command.EraseCommand;
-import shell.command.ReadCommand;
-import shell.command.ScenarioCommand;
-import shell.command.WriteCommand;
+import shell.command.*;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class TestShell {
-    private static final int MAX_LBA = 100;
+    private static final String READ = "read";
+    private static final String WRITE = "write";
+    private static final String ERASE = "erase";
+    private static final String FULLREAD = "fullread";
+    private static final String FULLWRITE = "fullwrite";
+    private static final String ERASERANGE = "erase_range";
+    private static final String SCENARIO_1 = "1_fullwriteandreadcompare";
+    private static final String SCENARIO_2 = "2_partiallbawrite";
+    private static final String SCENARIO_3 = "3_writereadaging";
+    private static final String EXIT = "exit";
+    private static final String HELP = "help";
 
-    public static final String READ = "read";
-    public static final String WRITE = "write";
-    public static final String ERASE = "erase";
-    public static final String FULLREAD = "fullread";
-    public static final String FULLWRITE = "fullwrite";
-    public static final String ERASERANGE = "erase_range";
-    public static final String SCENARIO_1 = "1_fullwriteandreadcompare";
-    public static final String SCENARIO_2 = "2_partiallbawrite";
-    public static final String SCENARIO_3 = "3_writereadaging";
-    public static final String EXIT = "exit";
-    public static final String HELP = "help";
-
-    private TestScenario testScenario;
     private Scanner scanner;
     private boolean isRunning;
 
-    public static CommandExecutor executor;
+    private static CommandExecutor executor;
 
     public TestShell() {
         this.scanner = new Scanner(System.in);
         this.isRunning = true;
-        this.testScenario = new TestScenario(this,new Random());
-    }
 
-    public boolean isRunning() {
-        return this.isRunning;
-    }
-
-    public static void main(String[] args) {
         Document document = new Document();
         Command readCommand = new ReadCommand(document);
         Command writeCommand = new WriteCommand(document);
@@ -58,12 +42,18 @@ public class TestShell {
         executor.setCommand(SCENARIO_1, scenarioCommand);
         executor.setCommand(SCENARIO_2, scenarioCommand);
         executor.setCommand(SCENARIO_3, scenarioCommand);
+    }
 
+    public boolean isRunning() {
+        return this.isRunning;
+    }
+
+    public static void main(String[] args) {
         TestShell shell = new TestShell();
         shell.launchShell();
     }
 
-    public void launchShell() {
+    private void launchShell() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("SSD Test Shell 시작 (명령어 입력: write/read)");
 
@@ -88,7 +78,7 @@ public class TestShell {
         }
     }
 
-    public void exit() {
+    private void exit() {
         System.out.println("Exiting TestShell...");
         isRunning = false;
         if (scanner != null) {
@@ -96,7 +86,7 @@ public class TestShell {
         }
     }
 
-    public void help() {
+    private void help() {
         System.out.println("==========================================");
         System.out.println("TestShell Help");
         System.out.println("==========================================");

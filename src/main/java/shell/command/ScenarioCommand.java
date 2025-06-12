@@ -1,8 +1,5 @@
 package shell.command;
 
-import shell.Command;
-import shell.Document;
-
 public class ScenarioCommand implements Command {
     private Document document;
 

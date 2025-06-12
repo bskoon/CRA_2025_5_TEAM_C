@@ -1,12 +1,9 @@
 package shell.command;
 
-import shell.Command;
-import shell.Document;
-
 public class WriteCommand implements Command {
     private static final int WRITE_ARG_COUNT = 3;
     private static final int FULLWRITE_ARG_COUNT = 2;
-    private static final int MAX_LBA = 99;
+    private static final int MAX_SSD_BLOCK = 100;
 
     private Document document;
 
@@ -27,7 +24,7 @@ public class WriteCommand implements Command {
     }
 
     public boolean isValidLBA(int lba) {
-        return lba >= 0 && lba < MAX_LBA;
+        return lba >= 0 && lba < MAX_SSD_BLOCK;
     }
 
     public boolean isValidUpdateData(String updateData) {
@@ -36,14 +33,23 @@ public class WriteCommand implements Command {
 
     @Override
     public void execute(String[] args) {
-        int lba = Integer.parseInt(args[1]);
         boolean isFull = args[0].equals("fullwrite");
 
-        if (!isArgumentValid(args.length, isFull, lba, args[2])) {
+        int lba = 0;
+        int size = MAX_SSD_BLOCK;
+        String updateData = args[1];
+
+        if (!isFull) {
+            lba = Integer.parseInt(args[1]);
+            size = 1;
+            updateData = args[2];
+        }
+
+        if (!isArgumentValid(args.length, isFull, lba, updateData)) {
             System.out.println("INVALID COMMAND");
             return;
         }
 
-        document.write(lba, args[2], isFull);
+        document.write(lba, size, updateData);
     }
 }

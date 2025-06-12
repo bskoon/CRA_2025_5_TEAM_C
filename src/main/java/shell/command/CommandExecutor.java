@@ -1,4 +1,4 @@
-package shell;
+package shell.command;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +32,8 @@ public class CommandExecutor {
 
     public void executeCommand(String[] args) {
         String key = args[0].toLowerCase();
-        Command command = commandMap.get(getExactCommand(key));
+        args[0] = getExactCommand(key);
+        Command command = commandMap.get(args[0]);
 
         if (command != null) {
             command.execute(args);

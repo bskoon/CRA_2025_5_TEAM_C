@@ -1,8 +1,5 @@
 package shell.command;
 
-import shell.Command;
-import shell.Document;
-
 public class EraseCommand implements Command {
     private static final int MAX_LBA = 99;
     private Document document;
@@ -10,7 +7,7 @@ public class EraseCommand implements Command {
         this.document = document;
     }
     public boolean isValidLBA(int lba) {
-        return lba >= 0 && lba < MAX_LBA;
+        return lba >= 0 && lba <= MAX_LBA;
     }
 
     @Override
