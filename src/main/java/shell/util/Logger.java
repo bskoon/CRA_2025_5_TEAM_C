@@ -19,6 +19,8 @@ public class Logger {
     private static final SimpleDateFormat logDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm");
     private static final SimpleDateFormat fileDateFormat = new SimpleDateFormat("yyMMdd_HH'h'_mm'm'_ss's'");
 
+    public boolean isRunner = false;
+
     public static Logger getLogger() {
         if (instance == null) instance = new Logger();
         return instance;
@@ -80,5 +82,9 @@ public class Logger {
         } else {
             return String.format("%-" + width + "s", input);  // 왼쪽 정렬 + 공백 채움
         }
+    }
+
+    public void print(String message) {
+        if (!isRunner) System.out.println(message);
     }
 }
