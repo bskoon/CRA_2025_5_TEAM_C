@@ -20,7 +20,7 @@ class SSDTest {
         mockSSDIo = mock(SSDIO.class);
         mockOutputIo = mock(OutputIO.class);
         ssdAppLogic = new SSDAppLogic(mockOutputIo, mockSSDIo);
-        ssdCommandLogic = new SSDCommandLogic(ssdAppLogic, mockOutputIo);
+        ssdCommandLogic = new SSDCommandLogic(ssdAppLogic, mockOutputIo,mockSSDIo);
     }
 
     @Test
