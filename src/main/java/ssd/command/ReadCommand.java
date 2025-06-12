@@ -2,17 +2,15 @@ package ssd.command;
 
 import ssd.IO.OutputIO;
 import ssd.IO.SSDIO;
+import ssd.buffer.CommandBuffer;
 import ssd.common.ValidCheck;
 
 public class ReadCommand implements Command {
-    private final SSDIO ssdio;
-    private final OutputIO outputIO;
-
     private int lba;
+    private CommandBuffer commandBuffer;
 
-    public ReadCommand(SSDIO ssdio, OutputIO outputIO) {
-        this.ssdio = ssdio;
-        this.outputIO = outputIO;
+    public ReadCommand(CommandBuffer commandBuffer) {
+        this.commandBuffer = commandBuffer;
     }
 
     @Override
@@ -28,7 +26,6 @@ public class ReadCommand implements Command {
 
     @Override
     public void execute(String[] args) {
-        String ssdData = ssdio.read(lba);
-        outputIO.write(0, ssdData);
+        commandBuffer.read(lba);
     }
 }

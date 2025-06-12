@@ -1,7 +1,6 @@
 package ssd.command;
 
-import ssd.IO.OutputIO;
-import ssd.IO.SSDIO;
+import ssd.buffer.CommandBuffer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,10 +8,10 @@ import java.util.Map;
 public class CommandExecutor {
     private final Map<CommandType, Command> commandMap = new HashMap<>();
 
-    public CommandExecutor(SSDIO ssdio, OutputIO outputIO) {
-        commandMap.put(CommandType.R, new ReadCommand(ssdio, outputIO));
-        commandMap.put(CommandType.W, new WriteCommand(ssdio, outputIO));
-        commandMap.put(CommandType.E, new EraseCommand(ssdio, outputIO));
+    public CommandExecutor(CommandBuffer commandBuffer) {
+        commandMap.put(CommandType.R, new ReadCommand(commandBuffer));
+        commandMap.put(CommandType.W, new WriteCommand(commandBuffer));
+        commandMap.put(CommandType.E, new EraseCommand(commandBuffer));
     }
 
     public void execute(CommandType commandKey, String[] args) {

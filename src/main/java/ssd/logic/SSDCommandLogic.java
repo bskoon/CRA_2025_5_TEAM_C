@@ -2,16 +2,15 @@ package ssd.logic;
 
 import ssd.IO.OutputIO;
 import ssd.IO.SSDIO;
+import ssd.buffer.CommandBuffer;
 import ssd.command.CommandExecutor;
 import ssd.command.CommandType;
 
 public class SSDCommandLogic {
-    private final OutputIO outputIO;
-    private final SSDIO ssdIO;
+    private final CommandBuffer commandBuffer;
 
-    public SSDCommandLogic(OutputIO outputIO, SSDIO ssdio) {
-        this.outputIO = outputIO;
-        this.ssdIO = ssdio;
+    public SSDCommandLogic(CommandBuffer commandBuffer) {
+        this.commandBuffer = commandBuffer;
     }
 
     public void run(String[] args) {
@@ -19,10 +18,10 @@ public class SSDCommandLogic {
             if (args.length == 0) throw new RuntimeException();
             CommandType commandType = CommandType.fromString(args[0]);
 
-            CommandExecutor executor = new CommandExecutor(ssdIO, outputIO);
+            CommandExecutor executor = new CommandExecutor(commandBuffer);
             executor.execute(commandType, args);
         } catch (RuntimeException e) {
-            outputIO.write(0, "ERROR");
+            commandBuffer.errorWrite(0, "ERROR");
         }
     }
 }

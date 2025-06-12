@@ -2,18 +2,17 @@ package ssd.command;
 
 import ssd.IO.OutputIO;
 import ssd.IO.SSDIO;
+import ssd.buffer.CommandBuffer;
 import ssd.common.ValidCheck;
 
 public class WriteCommand implements Command {
-    private final SSDIO ssdio;
-    private final OutputIO outputIO;
-
     private int lba;
     private String value;
+    private CommandBuffer commandBuffer;
 
-    public WriteCommand(SSDIO ssdio, OutputIO outputIO) {
-        this.ssdio = ssdio;
-        this.outputIO = outputIO;
+    public WriteCommand(CommandBuffer commandBuffer) {
+        this.commandBuffer = commandBuffer;
+
     }
 
     @Override
@@ -31,6 +30,6 @@ public class WriteCommand implements Command {
 
     @Override
     public void execute(String[] args) {
-        ssdio.write(lba, value);
+        commandBuffer.write(lba, value);
     }
 }

@@ -3,18 +3,17 @@ package ssd.command;
 import ssd.IO.OutputIO;
 import ssd.IO.SSDIO;
 import ssd.SSDConstant;
+import ssd.buffer.CommandBuffer;
 import ssd.common.ValidCheck;
 
 public class EraseCommand implements Command {
     private int lba;
     private int size;
+    private final CommandBuffer commandBuffer;
 
-    private final SSDIO ssdio;
-    private final OutputIO outputIO;
 
-    public EraseCommand(SSDIO ssdio, OutputIO outputIO) {
-        this.ssdio = ssdio;
-        this.outputIO = outputIO;
+    public EraseCommand(CommandBuffer commandBuffer) {
+        this.commandBuffer = commandBuffer;
     }
 
     @Override
@@ -33,12 +32,6 @@ public class EraseCommand implements Command {
 
     @Override
     public void execute(String[] args) {
-        try {
-            for (int i = 0; i < size; i++) {
-                ssdio.write(lba + i, "0x00000000");
-            }
-        } catch (RuntimeException e) {
-            outputIO.write(0, "ERROR");
-        }
+        commandBuffer.erase(lba,size);
     }
 }
