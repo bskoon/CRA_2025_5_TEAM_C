@@ -29,25 +29,29 @@ public class CommandBufferIO extends IOHandler {
         }
     }
 
-    public List<String> readBuffer() throws IOException {
+    public List<String> readBuffer() {
         // 폴더 경로를 Path 객체로 변환
         Path dirPath = Paths.get(path);
 
         // 파일 이름을 저장할 리스트
         List<String> createdFiles = new ArrayList<>();
 
-        // 각 접두어에 대해 파일이 있는지 확인
-        for (String prefix : prefixes) {
+        try{
+            // 각 접두어에 대해 파일이 있는지 확인
+            for (String prefix : prefixes) {
 
-            // 'prefix'로 시작하는 파일이 있는지 확인
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, prefix + "*")) {
-                for (Path entry : stream) {
-                    if (Files.isRegularFile(entry)) {
-                        createdFiles.add(entry.getFileName().toString());
-                        break;
+                // 'prefix'로 시작하는 파일이 있는지 확인
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, prefix + "*")) {
+                    for (Path entry : stream) {
+                        if (Files.isRegularFile(entry)) {
+                            createdFiles.add(entry.getFileName().toString());
+                            break;
+                        }
                     }
                 }
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return createdFiles;
     }
@@ -93,7 +97,7 @@ public class CommandBufferIO extends IOHandler {
                 }
             }
         } catch (IOException e) {
-            System.err.println("파일 작업 중 오류가 발생했습니다: " + e.getMessage());
+            throw new RuntimeException();
         }
     }
 
