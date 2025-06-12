@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 
 public class Logger {
@@ -12,7 +14,9 @@ public class Logger {
 
     private static final String LOG_FOLDER = "log";
     private static final String LOG_FILE = LOG_FOLDER + "\\latest.txt";
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd HH:mm");
+    private static final long MAX_LOG_SIZE = 10 * 1024;
+    private static final SimpleDateFormat logDateFormat = new SimpleDateFormat("yy.MM.dd HH:mm");
+    private static final SimpleDateFormat fileDateFormat = new SimpleDateFormat("yyMMdd_HH'h'_mm'm'_ss's'");
 
     public static Logger getLogger(){
         if (instance == null) instance = new Logger();
@@ -25,34 +29,36 @@ public class Logger {
             logDir.mkdirs();
     }
 
-    public static void log(String classMethodName, String message) {
-        checkLogFileSize();
+    public void log(String classMethodName, String message) {
         File logFile = new File(LOG_FILE);
-        if (!logFile.exists()) {
-            try {
-                logFile.createNewFile();
-            } catch (IOException e) {
-                System.err.println("로그 파일 생성 실패: " + e.getMessage());
-                return;
-            }
+        if (logFile.exists() && logFile.length() > MAX_LOG_SIZE) {
+            String timeStr = fileDateFormat.format(new Date());
+            String rolledName = LOG_FOLDER + "/until_" + timeStr + ".log";
+            File rolledFile = new File(rolledName);
+            logFile.renameTo(rolledFile);
         }
 
-        String timestamp = sdf.format(new Date());
+        String timestamp = logDateFormat.format(new Date());
         String fixedMethodName = formatMethodName(classMethodName);
-
         String logLine = String.format("[%s] %s : %s", timestamp, fixedMethodName, message);
-
-        System.out.println(logLine);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE, true))) {
             writer.write(logLine);
             writer.newLine();
         } catch (IOException e) {
-            System.err.println("로그 저장 실패: " + e.getMessage());
+            throw new RuntimeException();
         }
-    }
 
-    private static void checkLogFileSize() {
+        File[] rolledLogs = new File(LOG_FOLDER).listFiles((dir, name) -> name.endsWith(".log"));
+        if (rolledLogs != null && rolledLogs.length >= 2) {
+            Arrays.sort(rolledLogs, Comparator.comparingLong(File::lastModified));
+
+            for (int i = 0; i < rolledLogs.length-1; i++) {
+                File f = rolledLogs[i];
+                File zipped = new File(f.getAbsolutePath().replace(".log", ".zip"));
+                f.renameTo(zipped);
+            }
+        }
     }
 
     private static String formatMethodName(String input) {
@@ -62,9 +68,5 @@ public class Logger {
         } else {
             return String.format("%-" + width + "s", input);  // 왼쪽 정렬 + 공백 채움
         }
-    }
-
-    public static void main(String[] args) {
-        log("TestShell.launchShell()", "Shell Start1");
     }
 }
