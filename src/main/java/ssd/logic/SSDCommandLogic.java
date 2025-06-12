@@ -1,6 +1,7 @@
 package ssd.logic;
 
 import ssd.IO.IOHandler;
+import ssd.command.CommandExecutor;
 
 import static ssd.SSDConstant.READ;
 import static ssd.SSDConstant.WRITE;
@@ -23,16 +24,8 @@ public class SSDCommandLogic {
             checkArgument(args);
             char command = args[0].charAt(0);
 
-            switch (command) {
-                case READ:
-                    ssdAppLogic.read(Integer.parseInt(args[1]));
-                    break;
-                case WRITE:
-                    ssdAppLogic.write(Integer.parseInt(args[1]), args[2]);
-                    break;
-                default:
-                    throw new RuntimeException();
-            }
+            CommandExecutor executor = new CommandExecutor(ssdAppLogic);
+            executor.execute(command, args);
         } catch (RuntimeException e) {
             outputIO.write(0, "ERROR");
         }
