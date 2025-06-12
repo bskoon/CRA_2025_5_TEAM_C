@@ -46,7 +46,6 @@ public class CommandBufferIO extends IOHandler {
         try {
             // 확인할 파일 접두어 배열
             String[] prefixes = {"1_", "2_", "3_", "4_", "5_"};
-            boolean fileExists = true;
 
             // 각 접두어에 대해 파일이 있는지 확인
             for (String prefix : prefixes) {
@@ -66,7 +65,6 @@ public class CommandBufferIO extends IOHandler {
                 if (!exists) {
                     Path newFile = Paths.get(directoryPath, prefix + "empty.txt");
                     Files.createFile(newFile);
-                    fileExists = false;  // 하나라도 생성되었으면 flag를 false로
                 }
             }
         } catch (IOException e) {
