@@ -5,8 +5,7 @@ import ssd.IO.OutputIO;
 import ssd.IO.SSDIO;
 import ssd.command.CommandExecutor;
 
-import static ssd.SSDConstant.READ;
-import static ssd.SSDConstant.WRITE;
+import static ssd.SSDConstant.*;
 
 public class SSDCommandLogic {
     private final SSDAppLogic ssdAppLogic;
@@ -15,6 +14,7 @@ public class SSDCommandLogic {
 
     public static int DEFAULT_ARG_COUNT = 1;
     public static int READ_ARG_COUNT = 2;
+    public static int ERASE_ARG_COUNT = 3;
     public static int WRITE_ARG_COUNT = 3;
 
     public SSDCommandLogic(SSDAppLogic ssdAppLogic, OutputIO outputIO, SSDIO ssdio) {
@@ -73,6 +73,9 @@ public class SSDCommandLogic {
                 break;
             case WRITE:
                 count = WRITE_ARG_COUNT;
+                break;
+            case ERASE:
+                count = ERASE_ARG_COUNT;
                 break;
             default:
                 count = DEFAULT_ARG_COUNT;
