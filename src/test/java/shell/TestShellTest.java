@@ -60,6 +60,7 @@ public class TestShellTest {
 
     }
 
+    @Test
     void Write_Input_value_오류_확인() {
 
         String[] args = {"write", "3", "ABCDFFFF"};
@@ -75,12 +76,7 @@ public class TestShellTest {
     }
 
     @Test
-    void Read_정상_테스트_확인() {
-
-        String[] args = {"write", "3", TEST_VALUE};
-
-        // When
-        writeCommand.execute(args);
+    void Read_정상_테스트_확인() {       
 
         String[] readArgs = {"read", "3"};
 
@@ -92,6 +88,7 @@ public class TestShellTest {
 
     }
 
+    @Test
     void Read_파라미터_오류_확인() {
 
         String[] args = {"readfile" , "3"};
