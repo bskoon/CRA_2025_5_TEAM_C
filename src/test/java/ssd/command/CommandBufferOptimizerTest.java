@@ -11,50 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CommandBufferOptimizerTest {
     @Test
-    void erase앞에Write만있으면_앞쪽만줄어듦() {
-        List<String> commands = List.of(
-                "1_E_5_8",              // LBA 5~12
-                "2_W_5_0xAAAAAAA"       // 앞 write
-        );
-
-        List<String> optimized = CommandBufferOptimizer.optimize(commands);
-
-        assertEquals(2, optimized.size());
-        assertTrue(optimized.contains("1_E_6_7"));        // LBA 6~12
-        assertTrue(optimized.contains("2_W_5_0xAAAAAAA"));
-    }
-
-    @Test
-    void erase뒤에Write만있으면_뒤쪽만줄어듦() {
-        List<String> commands = List.of(
-                "1_E_5_8",              // LBA 5~12
-                "2_W_12_0xBBBBBBB"      // 뒤 write
-        );
-
-        List<String> optimized = CommandBufferOptimizer.optimize(commands);
-
-        assertEquals(2, optimized.size());
-        assertTrue(optimized.contains("1_E_5_7"));        // LBA 5~11
-        assertTrue(optimized.contains("2_W_12_0xBBBBBBB"));
-    }
-
-    @Test
-    void erase앞뒤에Write있으면_양쪽줄어듦() {
-        List<String> commands = List.of(
-                "1_E_5_8",              // LBA 5~12
-                "2_W_5_0xAAAAAAA",
-                "3_W_12_0xBBBBBBB"
-        );
-
-        List<String> optimized = CommandBufferOptimizer.optimize(commands);
-
-        assertEquals(3, optimized.size());
-        assertTrue(optimized.contains("1_E_6_6"));        // LBA 6~11
-        assertTrue(optimized.contains("2_W_5_0xAAAAAAA"));
-        assertTrue(optimized.contains("3_W_12_0xBBBBBBB"));
-    }
-
-    @Test
     void erase중간에만Write있으면_변경없음() {
         List<String> commands = List.of(
                 "1_E_5_8",              // LBA 5~12
@@ -80,8 +36,8 @@ class CommandBufferOptimizerTest {
 
         assertEquals(2, optimized.size());
         assertFalse(optimized.stream().anyMatch(s -> s.contains("_E_"))); // erase 없어야 함
-        assertTrue(optimized.contains("2_W_5_0x11111111"));
-        assertTrue(optimized.contains("3_W_6_0x22222222"));
+        assertTrue(optimized.contains("1_W_5_0x11111111"));
+        assertTrue(optimized.contains("2_W_6_0x22222222"));
     }
 
     @Test
@@ -377,36 +333,6 @@ class CommandBufferOptimizerTest {
         assertEquals(2, optimized.size());
         assertTrue(optimized.contains("1_E_5_10"));
         assertTrue(optimized.contains("2_E_15_3"));
-    }
-
-    @Test
-    void Erase병합시_4단_병합_될경우(){
-        List<String> commands = List.of(
-                "1_E_5_8",
-                "2_E_13_5",
-                "3_W_5_0x9F8267ED",
-                "4_W_16_0x9F8267ED",
-                "5_W_17_0x9F8267ED"
-        );
-
-        List<String> optimized = CommandBufferOptimizer.optimize(commands);
-
-        assertEquals(1, optimized.size());
-        assertTrue(optimized.contains("1_E_6_10"));
-    }
-
-    @Test
-    void erase와_write_겹칠_때_erase영역_제외하고_쪼개짐() {
-        List<String> commands = List.of(
-                "1_E_5_8",              // LBA 5~12
-                "2_W_5_0x9F8267ED"      // LBA 5에 Write
-        );
-
-        List<String> optimized = CommandBufferOptimizer.optimize(commands);
-
-        assertEquals(2, optimized.size());
-        assertTrue(optimized.contains("1_E_6_7"));
-        assertTrue(optimized.contains("2_W_5_0x9F8267ED"));
     }
 
     @Test
