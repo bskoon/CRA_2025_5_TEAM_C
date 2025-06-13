@@ -2,10 +2,12 @@ package ssd.IO;
 
 import java.io.*;
 
+import static ssd.SSDConstant.BUFFER_FOLDER_PATH;
+
 public class BufferFileIO extends IOHandler{
 
     public BufferFileIO(String filePath) {
-        super(filePath);
+        super(BUFFER_FOLDER_PATH+"/"+filePath);
     }
 
     @Override
