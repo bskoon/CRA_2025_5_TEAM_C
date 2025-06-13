@@ -20,7 +20,7 @@ public class CommandBuffer {
 
     private final List<BufferFileIO> fileManager;
     private final CommandExecutor commandExecutor;
-    private final SSDArgument ssdArgument;
+    private SSDArgument ssdArgument;
 
     public CommandBuffer(CommandExecutor executor, SSDArgument ssdArgument) {
         File logDir = new File(BUFFER_FOLDER_PATH);
@@ -94,7 +94,7 @@ public class CommandBuffer {
 
     }
 
-    public List<String> checkFilesOrCreateEmpty(String directoryPath) {
+    private List<String> checkFilesOrCreateEmpty(String directoryPath) {
         List<String> fileList = new ArrayList<>();
         String[] prefixes = {"1_", "2_", "3_", "4_", "5_"};
         Path dirPath = Paths.get(directoryPath);
@@ -135,7 +135,7 @@ public class CommandBuffer {
     }
 
     public void flush() {
-        // todo: ssd flush 기능 추가
+        // ssd flush 기능 추가
         loadBufferFromFile();
         for(String commands: buffer){
             SSDArgument convertedCommand = new SSDArgument(commands.replace(".txt","").substring(2).split("_"));
@@ -149,14 +149,14 @@ public class CommandBuffer {
         buffer.clear();
     }
 
-    public void loadBufferFromFile() {
+    private void loadBufferFromFile() {
         buffer.clear();
         for (BufferFileIO file : fileManager) {
             if(file.loadCommands()!=null)buffer.add(file.loadCommands());
         }
     }
 
-    public List<String> getBuffer() {
-        return new ArrayList<>(buffer); // 외부에 복사본 제공
+    public void setSsdArgument(SSDArgument ssdArgument){
+        this.ssdArgument = ssdArgument;
     }
 }
