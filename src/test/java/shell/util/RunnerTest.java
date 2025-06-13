@@ -39,7 +39,7 @@ class RunnerTest {
     }
 
     @Test
-    public void testInvalidFileThrowsException() {
+    public void Runner_없는_파일_읽을때 () {
         File invalidFile = new File("nonexistent_file.txt");
         Exception e = assertThrows(RuntimeException.class, () -> {
             new Runner(new String[]{invalidFile.getAbsolutePath()}, mockExecutor);
@@ -49,25 +49,25 @@ class RunnerTest {
     }
 
     @Test
-    public void testPassOutput() {
+    public void Runner_SCENARIO_결과_PASS() {
         doAnswer(invocation -> {
             System.out.print("PASS");
             return null;
         }).when(mockExecutor).executeCommand(new String[]{SCENARIO1});
 
         String output = getSysoutMessage();
-        assertTrue(output.contains(SCENARIO1 + "   ___   Run...Pass"));
+        assertTrue(output.contains(SCENARIO1 + "   ___   Run...PASS"));
     }
 
     @Test
-    public void testFailOutput() {
+    public void Runner_SCENARIO_결과_FAIL() {
         doAnswer(invocation -> {
             System.out.print("FAIL");
             return null;
         }).when(mockExecutor).executeCommand(new String[]{SCENARIO1});
 
         String output = getSysoutMessage();
-        assertTrue(output.contains(SCENARIO1 + "   ___   Run...FAIL!"));
+        assertTrue(output.contains(SCENARIO1 + "   ___   Run...FAIL"));
     }
 
     private String getSysoutMessage() {

@@ -31,12 +31,12 @@ public class Runner {
         try {
             scenarioList = Files.readAllLines(SCRIPT_FILE.toPath());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException();
         }
 
         for (String s : scenarioList) {
             System.out.print(s + "   ___   Run...");
-            System.out.println(getPassFail(s).equals("PASS") ? "Pass" : "FAIL!");
+            System.out.println(getPassFail(s));
         }
     }
 
