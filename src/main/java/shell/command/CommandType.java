@@ -1,5 +1,7 @@
 package shell.command;
 
+import static shell.util.ShellConstant.*;
+
 public enum CommandType {
     read, write, fullread, fullwrite, erase, erase_range, flush, script1, script2, script3, script4;
 
@@ -9,17 +11,17 @@ public enum CommandType {
         }
 
         return switch (value) {
-            case "read" -> read;
-            case "write" -> write;
-            case "fullread" -> fullread;
-            case "fullwrite" -> fullwrite;
-            case "erase" -> erase;
-            case "erase_range" -> erase_range;
-            case "flush" -> flush;
-            case "1_fullwriteandreadcompare" -> script1;
-            case "2_partiallbawrite" -> script2;
-            case "3_writereadaginig" -> script3;
-            case "4_eraseandwriteaging" -> script4;
+            case READ -> read;
+            case WRITE -> write;
+            case FULLREAD -> fullread;
+            case FULLWRITE -> fullwrite;
+            case ERASE -> erase;
+            case ERASERANGE -> erase_range;
+            case FLUSH -> flush;
+            case SCENARIO_1 -> script1;
+            case SCENARIO_2 -> script2;
+            case SCENARIO_3 -> script3;
+            case SCENARIO_4 -> script4;
             default -> throw new RuntimeException("알 수 없는 명령: " + value);
         };
     }

@@ -11,7 +11,7 @@ public class ShellConstant {
     public static final String SCENARIO_1 = "1_fullwriteandreadcompare";
     public static final String SCENARIO_2 = "2_partiallbawrite";
     public static final String SCENARIO_3 = "3_writereadaging";
-    public static final String SCRIPT_4 = "4_eraseandwriteaging";
+    public static final String SCENARIO_4 = "4_eraseandwriteaging";
     public static final String EXIT = "exit";
     public static final String HELP = "help";
 

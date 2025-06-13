@@ -25,8 +25,8 @@ public class Utility {
             case SCENARIO_3:
                 return SCENARIO_3;
             case "4_":
-            case SCRIPT_4:
-                return SCRIPT_4;
+            case SCENARIO_4:
+                return SCENARIO_4;
             default:
                 return lowerCaseCommand;
         }
