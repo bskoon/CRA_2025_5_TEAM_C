@@ -29,7 +29,7 @@ public class EraseCommand implements Command {
         lba = Integer.parseInt(args[1]);
         size = Integer.parseInt(args[2]);
 
-        if (eraseType == CommandType.erase) {
+        if (eraseType == CommandType.erase_range) {
             size = size - lba + 1;
         }
         size = Math.min(size, util.MAX_SSD_BLOCK - lba);
@@ -42,6 +42,7 @@ public class EraseCommand implements Command {
             System.out.println("INVALID COMMAND");
             return;
         }
+        setArgument(args);
 
         performEraseInChunks(lba, size);
     }
