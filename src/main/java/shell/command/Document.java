@@ -1,9 +1,12 @@
 package shell.command;
 
-import shell.util.TestScenario;
+import shell.util.Logger;
 import shell.util.SSDCaller;
+import shell.util.TestScenario;
 
 public class Document {
+    private static final Logger log = Logger.getLogger();
+
     private SSDCaller ssdCaller;
     private TestScenario testScenario;
 
@@ -15,14 +18,14 @@ public class Document {
     public void read(int lba, int size) {
         for (int idx = 0; idx < size; idx++) {
             String readVal = ssdCaller.readOnSSD(lba + idx);
-            System.out.println("LBA " + String.format("%02d", lba + idx) + ": " + readVal);
+            log.log("Document.read()", "Return READ - LBA:" + lba + "  DATA:" + readVal);
+            log.print("LBA " + String.format("%02d", lba + idx) + ": " + readVal);
         }
     }
 
     public void write(int lba, int size, String updateData) {
-        for (int idx = 0; idx < size; idx++) {
+        for (int idx = 0; idx < size; idx++)
             ssdCaller.writeOnSSD(lba + idx, updateData);
-        }
     }
 
     public void erase(int lba, int size) {
@@ -53,9 +56,10 @@ public class Document {
                     scenarioResult = "INVALID ARGUMENT";
                     break;
             }
-        } catch (Exception e) {
-
+        } catch (Exception ignored) {
         }
-        System.out.println(scenarioResult);
+
+        log.log("Document.scenario()", "Result SCENARIO :" + scenarioResult);
+        log.print(scenarioResult);
     }
 }

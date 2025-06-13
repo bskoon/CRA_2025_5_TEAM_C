@@ -20,7 +20,7 @@ public class CommandExecutor {
         args[0] = util.getExactCommand(args[0]);
         CommandType type = CommandType.fromString(args[0]);
         if (!util.isValidParameterCount(type, args.length)) {
-            System.out.println("INVALID COMMAND");
+            log.print("INVALID COMMAND");
             return;
         }
 
@@ -30,7 +30,7 @@ public class CommandExecutor {
             command.execute(args);
         } else {
             log.log("CommandExecutor.executeCommand()", "INVALID COMMAND");
-            System.out.println("Unknown command: " + args[0]);
+            log.print("Unknown command: " + args[0]);
         }
     }
 }

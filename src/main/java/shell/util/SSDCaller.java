@@ -57,7 +57,7 @@ public class SSDCaller {
     private String readSSDDataFromOutputFile() {
         String result = "";
         try {
-            result = readFileToString(OUTPUT_FILE);
+            result = readFileToString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -65,8 +65,8 @@ public class SSDCaller {
         return result.replace("\n","").trim();
     }
 
-    private String readFileToString(String filePath) throws IOException {
-        BufferedReader reader = Files.newBufferedReader(Paths.get(filePath));
+    private String readFileToString() throws IOException {
+        BufferedReader reader = Files.newBufferedReader(Paths.get(OUTPUT_FILE));
         StringBuilder stringBuilder = new StringBuilder();
 
         String line;

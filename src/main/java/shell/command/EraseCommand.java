@@ -41,7 +41,7 @@ public class EraseCommand implements Command {
     public void execute(String[] args) {
         eraseType = CommandType.fromString(args[0]);
         if (!argumentCheck(args)) {
-            System.out.println("INVALID COMMAND");
+            log.print("INVALID COMMAND");
             return;
         }
         setArgument(args);

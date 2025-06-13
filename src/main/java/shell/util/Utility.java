@@ -28,22 +28,13 @@ public class Utility {
 
     public String getExactCommand(String rawCommand) {
         String lowerCaseCommand = rawCommand.toLowerCase();
-        switch (lowerCaseCommand) {
-            case "1_":
-            case SCRIPT_1:
-                return SCRIPT_1;
-            case "2_":
-            case SCRIPT_2:
-                return SCRIPT_2;
-            case "3_":
-            case SCRIPT_3:
-                return SCRIPT_3;
-            case "4_":
-            case SCRIPT_4:
-                return SCRIPT_4;
-            default:
-                return lowerCaseCommand;
-        }
+        return switch (lowerCaseCommand) {
+            case "1_", SCRIPT_1 -> SCRIPT_1;
+            case "2_", SCRIPT_2 -> SCRIPT_2;
+            case "3_", SCRIPT_3 -> SCRIPT_3;
+            case "4_", SCRIPT_4 -> SCRIPT_4;
+            default -> lowerCaseCommand;
+        };
     }
 
     public boolean isValidParameterCount(CommandType type, int argLength) {

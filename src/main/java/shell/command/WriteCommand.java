@@ -52,7 +52,7 @@ public class WriteCommand implements Command {
     public void execute(String[] args) {
         writeType = CommandType.fromString(args[0]);
         if (!argumentCheck(args)) {
-            System.out.println("INVALID COMMAND");
+            log.print("INVALID COMMAND");
             return;
         }
         setArgument(args);

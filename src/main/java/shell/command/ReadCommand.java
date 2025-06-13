@@ -39,7 +39,7 @@ public class ReadCommand implements Command {
     public void execute(String[] args) {
         readType = CommandType.fromString(args[0]);
         if (!argumentCheck(args)) {
-            System.out.println("INVALID COMMAND");
+            log.print("INVALID COMMAND");
             return;
         }
         setArgument(args);
