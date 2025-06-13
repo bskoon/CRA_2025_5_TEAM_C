@@ -13,7 +13,7 @@ public class FlushCommand implements Command {
 
     @Override
     public boolean argumentCheck(String[] args) {
-        return false;
+        return true;
     }
 
     @Override
@@ -23,6 +23,9 @@ public class FlushCommand implements Command {
 
     @Override
     public void execute(String[] args) {
+        if (!argumentCheck(args)) { }
+        setArgument(args);
+
         log.log("FlushCommand.execute()", "Execute FLUSH");
         document.flush();
     }

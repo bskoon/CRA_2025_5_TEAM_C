@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import shell.command.CommandType;
 import shell.command.Document;
 import shell.command.ScenarioCommand;
 import shell.scenario.*;
@@ -29,17 +30,19 @@ public class TestScenarioTest {
     ScenarioCommand scenarioCommand;
     Random random;
     TestScenario testScenario;
+    ScenarioFactory scenarioFactory;
 
     @BeforeEach
     void setUp() {
         scenarioCommand = new ScenarioCommand(mockDocument);
+        scenarioFactory = new ScenarioFactory(ssdCaller);
         random = new Random(1234);
     }
 
     @Test
     void FullWriteAndReadCompare_첫번째_시나리오테스트() throws IOException{
         // Arrange: readCompare가 "PASS"만 리턴하게 만들기
-        testScenario = Mockito.spy(new Scenario1(ssdCaller, random));
+        testScenario = Mockito.spy(scenarioFactory.getScenario(CommandType.scenario1));
         doReturn("PASS").when(testScenario).readCompare(anyInt(), anyString());
 
         // Act
@@ -52,7 +55,7 @@ public class TestScenarioTest {
 
     @Test
     void PartialLBAWrite_두번째_시나리오테스트() throws IOException{
-        testScenario = Mockito.spy(new Scenario2(ssdCaller, random));
+        testScenario = Mockito.spy(scenarioFactory.getScenario(CommandType.scenario2));
         doReturn("PASS").when(testScenario).readCompare(anyInt(), anyString());
         doNothing().when(ssdCaller).writeOnSSD(anyInt(), anyString());
 
@@ -73,7 +76,7 @@ public class TestScenarioTest {
     @Test
     void WriteReadAging_세번째_시나리오테스트() throws IOException {
         // Arrange
-        testScenario = Mockito.spy(new Scenario3(ssdCaller, random));
+        testScenario = Mockito.spy(scenarioFactory.getScenario(CommandType.scenario3));
 
         // 모든 readCompare는 PASS 리턴
         doReturn("PASS").when(testScenario).readCompare(anyInt(), anyString());
@@ -92,7 +95,7 @@ public class TestScenarioTest {
 
     @Test
     void EraseAndWriteAging_네번째_시나리오테스트() throws IOException {
-        testScenario = Mockito.spy(new Scenario4(ssdCaller, random));
+        testScenario = Mockito.spy(scenarioFactory.getScenario(CommandType.scenario4));
 
         // Arrange: 모든 readCompare가 "PASS" 반환
         doReturn("PASS").when(testScenario).readCompare(anyInt(), eq("0x00000000"));
@@ -116,10 +119,5 @@ public class TestScenarioTest {
         verify(testScenario, times(1471)).readCompare(eq(0), anyString()); // 초기 1번 + 30*49*1번
         verify(testScenario, times(1471)).readCompare(eq(1), anyString()); // 초기 1번 + 30*49*1번  
         verify(testScenario, times(1471)).readCompare(eq(2), anyString()); // 초기 1번 + 30*49*1번
-    }
-
-    private String getRandomHexString(Random rand) {
-        int randomValue = rand.nextInt();
-        return "0x" + String.format("%08X", randomValue);
     }
 }
