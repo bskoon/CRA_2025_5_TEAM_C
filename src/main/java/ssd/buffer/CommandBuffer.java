@@ -136,6 +136,7 @@ public class CommandBuffer {
 
     public void flush() {
         // todo: ssd flush 기능 추가
+        loadBufferFromFile();
         for(String commands: buffer){
             SSDArgument convertedCommand = new SSDArgument(commands.replace(".txt","").substring(2).split("_"));
             commandExecutor.execute(convertedCommand.getArgs());
