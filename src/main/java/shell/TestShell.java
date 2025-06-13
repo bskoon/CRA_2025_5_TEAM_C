@@ -38,7 +38,7 @@ public class TestShell {
         executor.setCommand(SCENARIO_1, scenarioCommand);
         executor.setCommand(SCENARIO_2, scenarioCommand);
         executor.setCommand(SCENARIO_3, scenarioCommand);
-
+        executor.setCommand(SCENARIO_4, scenarioCommand);
         return executor;
     }
 
