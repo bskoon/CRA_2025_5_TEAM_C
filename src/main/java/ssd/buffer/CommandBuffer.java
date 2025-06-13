@@ -1,6 +1,7 @@
 package ssd.buffer;
 
 import ssd.IO.BufferFileIO;
+import ssd.command.BufferUtil;
 import ssd.command.CommandExecutor;
 
 import java.io.File;
@@ -9,16 +10,11 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static ssd.SSDConstant.BUFFER_FOLDER_PATH;
 
 public class CommandBuffer {
-    // 확인할 접두어 배열
-    private final String[] prefixes = {"1_", "2_", "3_", "4_", "5_"};
     private final List<String> buffer = new ArrayList<>();
     private final int maxSize = 5;
 
@@ -39,9 +35,14 @@ public class CommandBuffer {
     public void bufferExecutor() {
         switch (ssdArgument.getCommand()){
             case "R":
-                //TODO : 버퍼에서 읽어서 있는지 체크
-                // 없을때 아래 로직 실행
-                commandExecutor.execute(ssdArgument.getArgs());
+                //버퍼에서 읽어서 값 있는지 체크
+                String bufferData =readBuffer(ssdArgument.getLba());
+                if(bufferData !=null){
+                    commandExecutor.getOutputIO().write(0,bufferData);
+                }else{
+                    // 없을때
+                    commandExecutor.execute(ssdArgument.getArgs());
+                }
                 break;
             case "W":
             case "E":
@@ -50,7 +51,8 @@ public class CommandBuffer {
                     flush();
                 }
                 fileManager.get(buffer.size()).write(0,BUFFER_FOLDER_PATH+"/"+ssdArgument.makeFileName(buffer.size()+1));
-                // TODO:버퍼 최적화 알고리즘 돌리기.?
+                // 버퍼 최적화 알고리즘 돌리기.?
+                rewriteBuffer();
                 break;
             case "F":
                 flush();
@@ -58,6 +60,39 @@ public class CommandBuffer {
             default:
                 break;
         }
+    }
+
+    private String readBuffer(int lba) {loadBufferFromFile();
+        List<String> bufferList = new ArrayList<>();
+        for(String command : buffer){
+            String fixedCommand = command.replace(".txt","");
+            bufferList.add(fixedCommand);
+        }
+        BufferUtil util = new BufferUtil();
+        HashMap<Integer,String> result = util.makeMemory(bufferList);
+
+        return result.get(lba);
+    }
+
+    private void rewriteBuffer() {
+        loadBufferFromFile();
+        List<String> bufferList = new ArrayList<>();
+        for(String command : buffer){
+            String fixedCommand = command.replace(".txt","");
+            bufferList.add(fixedCommand);
+        }
+        BufferUtil util = new BufferUtil();
+        List<String> result = util.makeCommand(util.makeMemory(bufferList));
+
+        for(int i=0;i<5;i++){
+            BufferFileIO io = fileManager.get(i);
+            if(result.size()>i){
+               io.write(0,BUFFER_FOLDER_PATH+"/"+result.get(i)+".txt");
+            }else{
+               io.write(0,BUFFER_FOLDER_PATH+"/"+(i+1)+"_empty.txt");
+            }
+        }
+
     }
 
     public List<String> checkFilesOrCreateEmpty(String directoryPath) {
@@ -109,6 +144,10 @@ public class CommandBuffer {
 
     public void flush() {
         // todo: ssd flush 기능 추가
+        for(String commands: buffer){
+            SSDArgument convertedCommand = new SSDArgument(commands.replace(".txt","").substring(2).split("_"));
+            commandExecutor.execute(convertedCommand.getArgs());
+        }
 
         // 파일 + 내부 캐싱 데이터 초기화
         for (int i = 0; i < 5; i++) {

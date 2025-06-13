@@ -30,15 +30,18 @@ public class BufferUtil {
         int eraseStart = -1;
         for(int i=0;i<=100;i++){
             if(mem.get(i)!=null){
+                // erase 스타트 지점
                 if(mem.get(i).equals("0x00000000")){
                     if(eraseStart == -1){
                         eraseStart =i;
                     }
                 }
             }else{
+                // erase 종료 지점
                 if(eraseStart != -1){
                     result.add(commandOrder+"_E_"+eraseStart+"_"+(i-eraseStart));
                     commandOrder++;
+                    eraseStart = -1;
                 }
             }
         }
