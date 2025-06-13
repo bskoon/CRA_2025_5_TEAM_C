@@ -1,7 +1,7 @@
 package ssd.buffer;
 
 import ssd.IO.BufferFileIO;
-import ssd.command.BufferUtil;
+import ssd.command.CommandBufferOptimizer;
 import ssd.command.CommandExecutor;
 
 import java.io.File;
@@ -36,9 +36,9 @@ public class CommandBuffer {
         switch (ssdArgument.getCommand()){
             case "R":
                 //버퍼에서 읽어서 값 있는지 체크
-                String bufferData =readBuffer(ssdArgument.getLba());
-                if(bufferData !=null){
-                    commandExecutor.getOutputIO().write(0,bufferData);
+                Optional<String> bufferData =readBuffer(ssdArgument.getLba());
+                if(bufferData.isPresent()){
+                    commandExecutor.getOutputIO().write(0,bufferData.get());
                 }else{
                     // 없을때
                     commandExecutor.execute(ssdArgument.getArgs());
@@ -63,16 +63,14 @@ public class CommandBuffer {
         }
     }
 
-    private String readBuffer(int lba) {loadBufferFromFile();
+    private Optional<String> readBuffer(int lba) {loadBufferFromFile();
         List<String> bufferList = new ArrayList<>();
         for(String command : buffer){
             String fixedCommand = command.replace(".txt","");
             bufferList.add(fixedCommand);
         }
-        BufferUtil util = new BufferUtil();
-        HashMap<Integer,String> result = util.makeMemory(bufferList);
 
-        return result.get(lba);
+        return CommandBufferOptimizer.fastRead(bufferList,lba);
     }
 
     private void rewriteBuffer() {
@@ -82,8 +80,8 @@ public class CommandBuffer {
             String fixedCommand = command.replace(".txt","");
             bufferList.add(fixedCommand);
         }
-        BufferUtil util = new BufferUtil();
-        List<String> result = util.makeCommand(util.makeMemory(bufferList));
+
+        List<String> result = CommandBufferOptimizer.optimize(bufferList);
 
         for(int i=0;i<MAX_SIZE;i++){
             BufferFileIO io = fileManager.get(i);
