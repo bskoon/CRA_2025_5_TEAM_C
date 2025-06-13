@@ -20,7 +20,6 @@ class SSDCommandLogicTest {
     private OutputIO mockOutputIo;
 
     private SSDCommandLogic ssdCommandLogic;
-    private CommandBuffer commandBuffer;
 
     @BeforeEach
     void setUp() {
