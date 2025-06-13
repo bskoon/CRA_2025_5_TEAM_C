@@ -1,6 +1,7 @@
 package shell.command;
 
 import shell.util.Utility;
+import static shell.util.ShellConstant.*;
 
 public class EraseCommand implements Command {
     private Document document;
@@ -32,7 +33,7 @@ public class EraseCommand implements Command {
         if (eraseType == CommandType.erase_range) {
             size = size - lba + 1;
         }
-        size = Math.min(size, util.MAX_SSD_BLOCK - lba);
+        size = Math.min(size, MAX_SSD_BLOCK - lba);
     }
 
     @Override
