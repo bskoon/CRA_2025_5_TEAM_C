@@ -1,29 +1,24 @@
-package shell;
+package shell.util;
+
+import shell.TestShell;
 
 import java.io.IOException;
 import java.util.Random;
 
 public class TestScenario {
-    TestShell testShell;
-    Random rand;
+    private SSDCaller ssdCaller;
+    private Random rand;
 
-    public TestScenario(TestShell testShell, Random rand) {
-        this.testShell = testShell;
-        this.rand = rand;
-    }
-
-
-    private String readCompare(int i, String s) throws IOException {
-        String result = testShell.readLBA(i);
-            if(!result.equals(s)) return "FAIL";
-        return "PASS";
+    public TestScenario(SSDCaller ssdCaller) {
+        this.ssdCaller = ssdCaller;
+        this.rand = new Random();
     }
 
     public String fullWriteAndReadCompare() throws IOException {
         for(int i=0;i<20;i++){
             for(int j=0;j<5;j++){
                 String hexString = getRandomHexString(rand);
-                testShell.writeLBA(i*5+j,hexString);
+                ssdCaller.writeOnSSD(i*5+j,hexString);
                 String result = readCompare(i*5+j,hexString);
                 if(result.equals("FAIL")) return result;
             }
@@ -33,16 +28,34 @@ public class TestScenario {
 
     public String partialLBAWrite() throws IOException {
         for(int i=0;i<30;i++){
-            testShell.writeLBA(4,"0xFFFFFFFF");
-            testShell.writeLBA(0,"0xFFFFFFFF");
-            testShell.writeLBA(3,"0xFFFFFFFF");
-            testShell.writeLBA(1,"0xFFFFFFFF");
-            testShell.writeLBA(2,"0xFFFFFFFF");
+            ssdCaller.writeOnSSD(4,"0xFFFFFFFF");
+            ssdCaller.writeOnSSD(0,"0xFFFFFFFF");
+            ssdCaller.writeOnSSD(3,"0xFFFFFFFF");
+            ssdCaller.writeOnSSD(1,"0xFFFFFFFF");
+            ssdCaller.writeOnSSD(2,"0xFFFFFFFF");
             for(int j=0;j<5;j++){
                 String result = readCompare(j,"0xFFFFFFFF");
                 if(result.equals("FAIL")) return result;
             }
         }
+        return "PASS";
+    }
+
+    public String writeReadAging() throws IOException {
+        for(int i=0;i<200;i++){
+            if(!writeReadAgingOnce()) return "FAIL";
+        }
+        return "PASS";
+    }
+
+    public String eraseAndWriteAging() {
+        return "";
+    }
+
+    private String readCompare(int i, String s) throws IOException {
+        String result = ssdCaller.readOnSSD(i);
+
+        if(!result.equals(s)) return "FAIL";
         return "PASS";
     }
 
@@ -53,20 +66,13 @@ public class TestScenario {
         return "0x"+String.format("%08X", randomValue);
     }
 
-    public String writeReadAging() throws IOException {
-        for(int i=0;i<200;i++){
-            if(!writeReadAgingOnce()) return "FAIL";
-        }
-        return "PASS";
-    }
-
-    public boolean writeReadAgingOnce() throws IOException {
+    private boolean writeReadAgingOnce() throws IOException {
         String hexString = getRandomHexString(rand);
-        testShell.writeLBA(0,hexString);
+        ssdCaller.writeOnSSD(0, hexString);
         String result = readCompare(0,hexString);
         if(result.equals("FAIL")) return false;
         hexString = getRandomHexString(rand);
-        testShell.writeLBA(99,hexString);
+        ssdCaller.writeOnSSD(99,hexString);
         result = readCompare(99,hexString);
         if(result.equals("FAIL")) return false;
 
