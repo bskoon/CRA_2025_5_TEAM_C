@@ -15,6 +15,7 @@ public class TestShell {
     private static final String SCENARIO_1 = "1_fullwriteandreadcompare";
     private static final String SCENARIO_2 = "2_partiallbawrite";
     private static final String SCENARIO_3 = "3_writereadaging";
+    private static final String SCENARIO_4 = "4_eraseandwriteaging";
     private static final String EXIT = "exit";
     private static final String HELP = "help";
 
@@ -45,6 +46,7 @@ public class TestShell {
         executor.setCommand(SCENARIO_1, scenarioCommand);
         executor.setCommand(SCENARIO_2, scenarioCommand);
         executor.setCommand(SCENARIO_3, scenarioCommand);
+        executor.setCommand(SCENARIO_4, scenarioCommand);
     }
 
     public boolean isRunning() {

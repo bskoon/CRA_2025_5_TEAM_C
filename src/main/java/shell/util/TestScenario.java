@@ -53,8 +53,36 @@ public class TestScenario {
         return "PASS";
     }
 
-    public String eraseAndWriteAging() {
-        return "";
+    public String eraseAndWriteAging() throws IOException {
+        ssdCaller.eraseOnSSD(0,3);
+        for(int i=0;i<3;i++){
+            String result = readCompare(i,"0x00000000");
+            if(result.equals("FAIL")) return result;
+        }
+        for (int i=0;i<30;i++){
+            ssdCaller.writeOnSSD(2,"0xABCD1234");
+            ssdCaller.writeOnSSD(2,"0x1234ABCD");
+            ssdCaller.eraseOnSSD(2,3);
+            for(int j=0;j<3;j++){
+                String result = readCompare(j,"0x00000000");
+                if(result.equals("FAIL")) return result;
+            }
+            ssdCaller.writeOnSSD(4,"0xABCD1234");
+            ssdCaller.writeOnSSD(4,"0x1234ABCD");
+            ssdCaller.eraseOnSSD(4,3);
+            for(int j=0;j<3;j++){
+                String result = readCompare(j,"0x00000000");
+                if(result.equals("FAIL")) return result;
+            }
+            ssdCaller.writeOnSSD(6,"0xABCD1234");
+            ssdCaller.writeOnSSD(6,"0x1234ABCD");
+            ssdCaller.eraseOnSSD(6,3);
+            for(int j=0;j<3;j++){
+                String result = readCompare(j,"0x00000000");
+                if(result.equals("FAIL")) return result;
+            }
+        }
+        return "PASS";
     }
 
     public String readCompare(int i, String s) throws IOException {
