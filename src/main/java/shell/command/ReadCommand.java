@@ -1,6 +1,7 @@
 package shell.command;
 
 import shell.util.Utility;
+import static shell.util.ShellConstant.*;
 
 public class ReadCommand implements Command {
     private Document document;
@@ -15,7 +16,7 @@ public class ReadCommand implements Command {
         this.util = Utility.getInstance();
 
         this.lba = 0;
-        this.size = util.MAX_SSD_BLOCK;
+        this.size = MAX_SSD_BLOCK;
     }
 
     @Override
