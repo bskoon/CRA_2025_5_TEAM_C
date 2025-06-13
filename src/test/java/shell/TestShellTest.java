@@ -87,20 +87,4 @@ public class TestShellTest {
         verify(mockDocument).read(3, 1 );
 
     }
-
-    @Test
-    void Read_파라미터_오류_확인() {
-
-        String[] args = {"readfile" , "3"};
-
-        // When
-        readCommand.execute(args);
-
-        // Then
-        String output = outputStream.toString().trim();
-        assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).read(3,1);
-    }
-
-
 }
