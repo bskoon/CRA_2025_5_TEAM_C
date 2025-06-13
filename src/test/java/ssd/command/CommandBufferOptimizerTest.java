@@ -4,11 +4,67 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CommandBufferOptimizerTest {
     CommandBufferOptimizer commandBufferOptimizer = new CommandBufferOptimizer();
+
+    @Test
+    void makeMemoryOne() {
+        List<String> commands = List.of(
+                "1_W_10_0xAAAA0000",
+                "2_E_7_3",
+                "3_W_9_0xFFFFFFFF",
+                "4_W_8_0xFFFFFFFF",
+                "5_W_7_0xFFFFFFFF"
+        );
+
+        List<String> optimized = commandBufferOptimizer.optimize(commands);
+
+        assertEquals(4, optimized.size());
+
+        Set<String> expected = Set.of(
+                "_W_10_0xAAAA0000",
+                "_W_9_0xFFFFFFFF",
+                "_W_8_0xFFFFFFFF",
+                "_W_7_0xFFFFFFFF"
+        );
+        Set<String> actual = optimized.stream()
+                .map(cmd -> cmd.substring(cmd.indexOf("_"), cmd.length())) // 인덱스 제외
+                .collect(Collectors.toSet());
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void makeMemoryTwo() {
+        List<String> commands = List.of(
+                "1_E_0_10",
+                "2_E_10_5"
+        );
+
+        List<String> optimized = commandBufferOptimizer.optimize(commands);
+
+        assertEquals(2, optimized.size());
+        assertTrue(optimized.contains("1_E_0_10"));
+        assertTrue(optimized.contains("2_E_10_5"));
+    }
+
+    @Test
+    void makeMemoryThree() {
+        List<String> commands = List.of(
+                "1_E_0_3",
+                "2_E_3_5"
+        );
+
+        List<String> optimized = commandBufferOptimizer.optimize(commands);
+
+        assertEquals(1, optimized.size());
+        assertTrue(optimized.contains("1_E_0_8"));
+    }
 
     @Test
     void makeMemory() {
@@ -23,11 +79,19 @@ class CommandBufferOptimizerTest {
         List<String> optimized = commandBufferOptimizer.optimize(commands);
 
         assertEquals(5, optimized.size());
-        assertTrue(optimized.contains("1_W_10_0xAAAA0000"));
-        assertTrue(optimized.contains("2_E_0_10"));
-        assertTrue(optimized.contains("3_W_9_0xFFFFFFFF"));
-        assertTrue(optimized.contains("4_W_8_0xFFFFFFFF"));
-        assertTrue(optimized.contains("5_W_7_0xFFFFFFFF"));
+
+        Set<String> expected = Set.of(
+                "_W_10_0xAAAA0000",
+                "_E_0_10",
+                "_W_9_0xFFFFFFFF",
+                "_W_8_0xFFFFFFFF",
+                "_W_7_0xFFFFFFFF"
+        );
+        Set<String> actual = optimized.stream()
+                .map(cmd -> cmd.substring(cmd.indexOf("_"), cmd.length())) // 인덱스 제외
+                .collect(Collectors.toSet());
+
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -110,8 +174,16 @@ class CommandBufferOptimizerTest {
         List<String> optimized = commandBufferOptimizer.optimize(commands);
 
         assertEquals(2, optimized.size());
-        assertTrue(optimized.contains("1_W_20_0xAABBCCDD"));
-        assertTrue(optimized.contains("2_E_10_6"));
+
+        Set<String> expected = Set.of(
+                "_W_20_0xAABBCCDD",
+                "_E_10_6"
+        );
+        Set<String> actual = optimized.stream()
+                .map(cmd -> cmd.substring(cmd.indexOf("_"), cmd.length())) // 인덱스 제외
+                .collect(Collectors.toSet());
+
+        assertEquals(expected, actual);
     }
 
     @Test
