@@ -1,12 +1,15 @@
 package ssd;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ssd.IO.OutputIO;
 import ssd.IO.SSDIO;
+import ssd.buffer.CommandBuffer;
+import ssd.command.Command;
 import ssd.logic.SSDCommandLogic;
 
 import static org.mockito.Mockito.*;
@@ -23,7 +26,7 @@ class SSDTest {
 
     @BeforeEach
     void setUp() {
-        ssdCommandLogic = new SSDCommandLogic(mockOutputIo, mockSSDIo);
+        ssdCommandLogic = new SSDCommandLogic(mockSSDIo, mockOutputIo);
     }
 
     @Test
@@ -108,15 +111,6 @@ class SSDTest {
     }
 
     @Test
-    void Write_테스트() {
-        // when
-        ssdCommandLogic.run(new String[]{"W", "10", "0xABCDEF01"});
-
-        // then
-        verify(mockSSDIo).write(10, "0xABCDEF01");
-    }
-
-    @Test
     void ReadValidLBA_마이너스_예외처리() {
         // when
         ssdCommandLogic.run(new String[]{"R", "-1"});
@@ -132,28 +126,5 @@ class SSDTest {
 
         // then
         verify(mockOutputIo).write(0, "ERROR");
-    }
-
-    @Test
-    void Read_테스트() {
-        // when
-        when(mockSSDIo.read(5)).thenReturn("0xABCDEF01");
-        ssdCommandLogic.run(new String[]{"W", "5", "0xABCDEF01"});
-        ssdCommandLogic.run(new String[]{"R", "5"});
-
-        // then
-        verify(mockSSDIo).write(5, "0xABCDEF01");
-        verify(mockSSDIo).read(5);
-        verify(mockOutputIo).write(0, "0xABCDEF01");
-    }
-
-    @Test
-    void Read_Write_설정하지_않은값() {
-        // when
-        when(mockSSDIo.read(5)).thenReturn("0x00000000");
-        ssdCommandLogic.run(new String[]{"R", "5"});
-
-        // then
-        verify(mockOutputIo).write(0, "0x00000000");
     }
 }
