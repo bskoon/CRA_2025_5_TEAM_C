@@ -10,10 +10,10 @@ import static ssd.SSDConstant.SSD_FILE_PATH;
 
 public class SSD {
     public static void main(String[] args) {
-        SSDIO ssdIO = new SSDIO(SSD_FILE_PATH);
+        SSDIO ssdio = new SSDIO(SSD_FILE_PATH);
         OutputIO outputIO = new OutputIO(OUTPUT_FILE_PATH);
-        CommandBuffer commandBuffer = new CommandBuffer(ssdIO,outputIO);
-        SSDCommandLogic ssdCommandLogic = new SSDCommandLogic(commandBuffer);
+
+        SSDCommandLogic ssdCommandLogic = new SSDCommandLogic(ssdio, outputIO);
         ssdCommandLogic.run(args);
     }
 }

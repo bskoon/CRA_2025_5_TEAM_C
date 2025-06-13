@@ -1,8 +1,7 @@
 package ssd.buffer;
 
 import ssd.IO.BufferFileIO;
-import ssd.IO.OutputIO;
-import ssd.IO.SSDIO;
+import ssd.command.CommandExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static ssd.SSDConstant.BUFFER_FOLDER_PATH;
@@ -22,16 +23,21 @@ public class CommandBuffer {
     private final int maxSize = 5;
 
     private final List<BufferFileIO> fileManager;
-    private final SSDIO ssdio;
-    private final OutputIO outputIO;
+    private final CommandExecutor commandExecutor;
+    private final SSDArgument ssdArgument;
 
-    public CommandBuffer(SSDIO ssdIO, OutputIO outputIO) {
+    public CommandBuffer(CommandExecutor executor, SSDArgument ssdArgument) {
         File logDir = new File(BUFFER_FOLDER_PATH);
         if (!logDir.exists()) logDir.mkdirs();
         fileManager = new ArrayList<>();
         checkFilesOrCreateEmpty(BUFFER_FOLDER_PATH);
-        this.ssdio =ssdIO;
-        this.outputIO = outputIO;
+
+        this.commandExecutor = executor;
+        this.ssdArgument = ssdArgument;
+    }
+
+    public void bufferExecutor() {
+        ssdArgument.toString();
     }
 
     public List<String> checkFilesOrCreateEmpty(String directoryPath) {
@@ -85,15 +91,15 @@ public class CommandBuffer {
         // todo: ssd flush 기능 추가
 
         // 파일 + 내부 캐싱 데이터 초기화
-        for(int i=1;i<=5;i++){
-            fileManager.get(i).write(0,BUFFER_FOLDER_PATH+"/"+i+"_empty");
+        for (int i = 1; i <= 5; i++) {
+            fileManager.get(i).write(0, BUFFER_FOLDER_PATH + "/" + i + "_empty");
         }
         buffer.clear();
     }
 
     public void loadBufferFromFile() {
         buffer.clear();
-        for(BufferFileIO file : fileManager){
+        for (BufferFileIO file : fileManager) {
             buffer.add(file.loadCommands());
         }
     }
@@ -106,25 +112,17 @@ public class CommandBuffer {
         return buffer.isEmpty();
     }
 
-    public void write(int lba, String value) {
-        ssdio.write(lba, value);
-    }
-
-    public void read(int lba) {
-        String ssdData = ssdio.read(lba);
-        outputIO.write(0, ssdData);
-    }
-
-    public void erase(int lba, int size) {
-        try {
-            for (int i = 0; i < size; i++) {
-                ssdio.write(lba + i, "0x00000000");
-            }
-        } catch (RuntimeException e) {
-            outputIO.write(0, "ERROR");
-        }
-    }
 
     public void errorWrite(int i, String error) {
+    }
+
+    public void flush(List<String> commandList) {
+        Collections.sort(commandList);
+
+        for (String commandData : commandList) {
+            String[] original = commandData.split("_");
+            String[] trimmed = Arrays.copyOfRange(original, 1, original.length);
+            commandExecutor.execute(trimmed);
+        }
     }
 }

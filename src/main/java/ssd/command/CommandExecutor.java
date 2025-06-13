@@ -1,27 +1,30 @@
 package ssd.command;
 
+import ssd.IO.OutputIO;
+import ssd.IO.SSDIO;
 import ssd.buffer.CommandBuffer;
+import ssd.common.ValidCheck;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class CommandExecutor {
-    private final Map<CommandType, Command> commandMap = new HashMap<>();
+    private final Map<String, Command> commandMap = new HashMap<>();
 
-    public CommandExecutor(CommandBuffer commandBuffer) {
-        commandMap.put(CommandType.R, new ReadCommand(commandBuffer));
-        commandMap.put(CommandType.W, new WriteCommand(commandBuffer));
-        commandMap.put(CommandType.E, new EraseCommand(commandBuffer));
+    public CommandExecutor(SSDIO ssdio, OutputIO outputIO) {
+        commandMap.put("R", new ReadCommand(ssdio, outputIO));
+        commandMap.put("W", new WriteCommand(ssdio, outputIO));
+        commandMap.put("E", new EraseCommand(ssdio, outputIO));
     }
 
-    public void execute(CommandType commandKey, String[] args) {
-        Command command = commandMap.get(commandKey);
-        if (command != null) {
-            command.parameterCheck(args);
-            command.parameterSet(args);
-            command.execute(args);
-        } else {
-            throw new RuntimeException("Unknown command: " + commandKey);
-        }
+    public void execute(String[] args) {
+        if (args.length == 0) throw new RuntimeException();
+        ValidCheck.validateCommandType(args[0]);
+
+        Command command = commandMap.get(args[0]);
+        if (command == null)
+            throw new RuntimeException("Unknown command: " + args[0]);
+
+        command.execute(args);
     }
 }
