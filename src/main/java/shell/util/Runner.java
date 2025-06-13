@@ -36,7 +36,8 @@ public class Runner {
         try {
             scenarioList = Files.readAllLines(SCRIPT_FILE.toPath());
         } catch (Exception e) {
-            throw new RuntimeException();
+            log.log("Runner.run()", "Exception occur while read Runner file");
+            return;
         }
 
         for (String s : scenarioList) {

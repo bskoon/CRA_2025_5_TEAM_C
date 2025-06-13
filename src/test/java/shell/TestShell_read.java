@@ -59,6 +59,19 @@ public class TestShell_read {
     }
 
     @Test
+    void Read_비정상_LBA_테스트_확인() {
+
+        String[] readArgs = {"read", "-3"};
+
+        // When
+        readCommand.execute(readArgs);
+
+        // Then
+        verify(mockDocument, never()).read(anyInt(), anyInt() );
+
+    }
+
+    @Test
     void FullRead_정상_테스트_확인() {
         // When
         String[] readArgs = {"fullread"};

@@ -59,6 +59,21 @@ public class TestShell_write {
     }
 
     @Test
+    void Write_LBA_오류_확인() {
+
+        String[] args = {"write", "-1", "ABCDFFFF"};
+
+        // When
+        writeCommand.execute(args);
+
+        // Then
+        // Then
+        String output = outputStream.toString().trim();
+        assertTrue(output.contains("INVALID COMMAND"));
+        verify(mockDocument, never()).write(3, 1,TEST_VALUE );
+    }
+
+    @Test
     void Write_Input_value_오류_확인() {
 
         String[] args = {"write", "3", "ABCDFFFF"};

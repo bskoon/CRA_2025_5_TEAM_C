@@ -45,9 +45,20 @@ class LoggerTest {
     @Test
     void Logger_log함수_호출시_latest생성() throws IOException {
         String timestamp = logDateFormat.format(new Date());
-        String expected = "[" + timestamp + "] TestShell.launchShell()                            : Shell Start";
+        String expected = "[" + timestamp + "] TestShell.launchShell()                  : Shell Start";
 
         log.log("TestShell.launchShell()", "Shell Start");
+
+        List<String> lines = Files.readAllLines(LOG_FILE.toPath());
+        assertEquals(expected, lines.get(0));
+    }
+
+    @Test
+    void Logger_log함수_호출_method명_길이_초과() throws IOException {
+        String timestamp = logDateFormat.format(new Date());
+        String expected = "[" + timestamp + "] TestShell.launchShell()11111111111111111 : Shell Start";
+
+        log.log("TestShell.launchShell()1111111111111111112222222", "Shell Start");
 
         List<String> lines = Files.readAllLines(LOG_FILE.toPath());
         assertEquals(expected, lines.get(0));
