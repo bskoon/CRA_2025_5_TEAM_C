@@ -11,6 +11,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CommandBufferOptimizerTest {
     @Test
+    void erase중간에만Write있으면_변경없음() {
+        List<String> commands = List.of(
+                "1_E_5_8",              // LBA 5~12
+                "2_W_8_0xCCCCCCC"       // 중간 write
+        );
+
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
+
+        assertEquals(2, optimized.size());
+        assertTrue(optimized.contains("1_E_5_8"));        // 변경 없음
+        assertTrue(optimized.contains("2_W_8_0xCCCCCCC"));
+    }
+
+    @Test
+    void erase완전히덮이면_erase제거() {
+        List<String> commands = List.of(
+                "1_E_5_2",              // LBA 5~6
+                "2_W_5_0x11111111",
+                "3_W_6_0x22222222"
+        );
+
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
+
+        assertEquals(2, optimized.size());
+        assertFalse(optimized.stream().anyMatch(s -> s.contains("_E_"))); // erase 없어야 함
+        assertTrue(optimized.contains("1_W_5_0x11111111"));
+        assertTrue(optimized.contains("2_W_6_0x22222222"));
+    }
+
+    @Test
     void makeMemoryOne() {
         List<String> commands = List.of(
                 "1_W_10_0xAAAA0000",
@@ -196,6 +226,16 @@ class CommandBufferOptimizerTest {
     }
 
     @Test
+    void testFastRead_EraseOnly_ReturnsZero() {
+        List<String> commands = List.of(
+                "1_E_30_2"
+        );
+        Optional<String> result = CommandBufferOptimizer.fastRead(commands, 30);
+        assertTrue(result.isPresent());
+        assertEquals("0x00000000", result.get());
+    }
+
+    @Test
     void testFastRead_ReadErasedAreaExactly_ReturnsZero() {
         List<String> commands = List.of(
                 "1_W_40_0xAAAAAAAA",
@@ -271,6 +311,28 @@ class CommandBufferOptimizerTest {
 
         assertEquals(1, optimized.size());
         assertEquals("1_E_24_3", optimized.get(0)); // Write to 25 should be erased
+    }
+
+    @Test
+    void Erase병합시_3단_병합_될경우(){
+        List<String> commands = List.of("1_E_5_8", "2_E_13_5", "3_E_18_7");
+
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
+
+        assertEquals(2, optimized.size());
+        assertTrue(optimized.contains("1_E_5_10"));
+        assertTrue(optimized.contains("2_E_15_10"));
+    }
+
+    @Test
+    void Erase병합시_2단_병합_될경우(){
+        List<String> commands = List.of("1_E_5_8", "2_E_13_5");
+
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
+
+        assertEquals(2, optimized.size());
+        assertTrue(optimized.contains("1_E_5_10"));
+        assertTrue(optimized.contains("2_E_15_3"));
     }
 
     @Test
