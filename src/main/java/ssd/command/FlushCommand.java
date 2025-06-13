@@ -1,16 +1,20 @@
 package ssd.command;
 
-import ssd.logic.SSDAppLogic;
-
 public class FlushCommand implements Command {
-    private final SSDAppLogic ssdAppLogic;
-
-    public FlushCommand(SSDAppLogic logic) {
-        this.ssdAppLogic = logic;
-    }
+    public FlushCommand() {}
 
     @Override
     public void execute(String[] args) {
+        parameterCheck(args);
+        parameterSet(args);
         // todo :: flush 기능 구현
+    }
+
+    private void parameterCheck(String[] args) {
+
+    }
+
+    private void parameterSet(String[] args) {
+
     }
 }
