@@ -30,14 +30,18 @@ public class TestShell_exit_help_test {
     }
 
     @Test
-    void Exit_동작_여부_확인() throws Exception {
+    void Exit_동작_여부_확인() {
         // Arrange
         assertTrue(testShell.isRunning());
 
         // Act: private exit() 호출
-        java.lang.reflect.Method exitMethod = TestShell.class.getDeclaredMethod("exit");
-        exitMethod.setAccessible(true);  // private 접근 허용
-        exitMethod.invoke(testShell);
+        try {
+            java.lang.reflect.Method exitMethod = TestShell.class.getDeclaredMethod("exit");
+            exitMethod.setAccessible(true);  // private 접근 허용
+            exitMethod.invoke(testShell);
+        } catch (Exception e) {
+            fail();
+        }
 
         // Assert
         assertFalse(testShell.isRunning());
@@ -46,40 +50,39 @@ public class TestShell_exit_help_test {
         assertTrue(output.contains("Exiting TestShell..."));
     }
 
-    @Test
-    void Help_팀명_포함_여부_확인() throws Exception  {
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outputStream));
-
+    private static void changePrivateToPublicMethod(PrintStream originalOut) {
         try {
             TestShell testShell = new TestShell();
             java.lang.reflect.Method helpMethod = TestShell.class.getDeclaredMethod("help");
             helpMethod.setAccessible(true);
             helpMethod.invoke(testShell);
+        }  catch (Exception e) {
+            fail();
         } finally {
             System.setOut(originalOut);
         }
+    }
+
+    @Test
+    void Help_팀명_포함_여부_확인() {
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+
+        changePrivateToPublicMethod(originalOut);
 
         String output = outputStream.toString();
         assertTrue(output.contains("제작자: TEAM_C"));
     }
 
     @Test
-    void Help_Write_설명_확인() throws Exception{
+    void Help_Write_설명_확인() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
 
-        try {
-            TestShell testShell = new TestShell();
-            java.lang.reflect.Method helpMethod = TestShell.class.getDeclaredMethod("help");
-            helpMethod.setAccessible(true);
-            helpMethod.invoke(testShell);
-        } finally {
-            System.setOut(originalOut);
-        }
+        changePrivateToPublicMethod(originalOut);
 
         String output = outputStream.toString();
 
@@ -87,20 +90,15 @@ public class TestShell_exit_help_test {
         assertTrue(output.contains("write 3 0x1298CDEF"));
     }
 
+
+
     @Test
-    void Help_Read_설명_확인() throws Exception {
+    void Help_Read_설명_확인() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
 
-        try {
-            TestShell testShell = new TestShell();
-            java.lang.reflect.Method helpMethod = TestShell.class.getDeclaredMethod("help");
-            helpMethod.setAccessible(true);
-            helpMethod.invoke(testShell);
-        } finally {
-            System.setOut(originalOut);
-        }
+        changePrivateToPublicMethod(originalOut);
 
         String output = outputStream.toString();
 
@@ -109,19 +107,12 @@ public class TestShell_exit_help_test {
     }
 
     @Test
-    void Help_fullwrite_설명_확인() throws Exception {
+    void Help_fullwrite_설명_확인() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
 
-        try {
-            TestShell testShell = new TestShell();
-            java.lang.reflect.Method helpMethod = TestShell.class.getDeclaredMethod("help");
-            helpMethod.setAccessible(true);
-            helpMethod.invoke(testShell);
-        } finally {
-            System.setOut(originalOut);
-        }
+        changePrivateToPublicMethod(originalOut);
 
         String output = outputStream.toString();
 
@@ -133,19 +124,12 @@ public class TestShell_exit_help_test {
     }
 
     @Test
-    void Help_fullread_설명_확인() throws Exception {
+    void Help_fullread_설명_확인() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
 
-        try {
-            TestShell testShell = new TestShell();
-            java.lang.reflect.Method helpMethod = TestShell.class.getDeclaredMethod("help");
-            helpMethod.setAccessible(true);
-            helpMethod.invoke(testShell);
-        } finally {
-            System.setOut(originalOut);
-        }
+        changePrivateToPublicMethod(originalOut);
 
         String output = outputStream.toString();
 
