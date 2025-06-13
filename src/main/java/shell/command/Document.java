@@ -1,15 +1,17 @@
 package shell.command;
 
-import shell.util.TestScenario;
+import shell.scenario.ScenarioFactory;
+import shell.scenario.TestScenario;
+import shell.util.Logger;
 import shell.util.SSDCaller;
 
 public class Document {
     private SSDCaller ssdCaller;
-    private TestScenario testScenario;
+    private Logger logger;
 
     public Document() {
-        ssdCaller = SSDCaller.getInstance();
-        testScenario = new TestScenario(ssdCaller);
+        this.ssdCaller = SSDCaller.getInstance();
+        this.logger = Logger.getLogger();
     }
 
     public void read(int lba, int size) {
@@ -34,28 +36,13 @@ public class Document {
     }
 
     public void scenario(CommandType type) {
-        String scenarioResult = "";
-        try {
-            switch (type) {
-                case script1:
-                    scenarioResult = testScenario.fullWriteAndReadCompare();
-                    break;
-                case script2:
-                    scenarioResult = testScenario.partialLBAWrite();
-                    break;
-                case script3:
-                    scenarioResult = testScenario.writeReadAging();
-                    break;
-                case script4:
-                    scenarioResult = testScenario.eraseAndWriteAging();
-                    break;
-                default:
-                    scenarioResult = "INVALID ARGUMENT";
-                    break;
-            }
-        } catch (Exception e) {
-
+        TestScenario testScenario = new ScenarioFactory(ssdCaller).getScenario(type);
+        if (testScenario == null) {
+            logger.log("Document.scenario()", "Not implemented Scenario");
+            logger.print("INVALID ARGUMENT");
         }
+
+        String scenarioResult = testScenario.executeScenario();
         System.out.println(scenarioResult);
     }
 }

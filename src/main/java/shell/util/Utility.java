@@ -54,10 +54,10 @@ public class Utility {
             case flush:
                 correctLength = FLUSH_ARG_COUNT;
                 break;
-            case script1:
-            case script2:
-            case script3:
-            case script4:
+            case scenario1:
+            case scenario2:
+            case scenario3:
+            case scenario4:
                 correctLength = SCRIPT_ARG_COUNT;
                 break;
             default:
