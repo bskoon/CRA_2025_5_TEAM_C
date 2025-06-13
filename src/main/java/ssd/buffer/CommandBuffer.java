@@ -37,17 +37,26 @@ public class CommandBuffer {
     }
 
     public void bufferExecutor() {
-        if(ssdArgument.getCommand().equals("R")){
-            //TODO : 버퍼에서 읽어서 있는지 체크
-            // 없을때 아래 로직 실행
-            commandExecutor.execute(ssdArgument.getArgs());
-        }else{
-            loadBufferFromFile();
-            if(buffer.size() == 5){
+        switch (ssdArgument.getCommand()){
+            case "R":
+                //TODO : 버퍼에서 읽어서 있는지 체크
+                // 없을때 아래 로직 실행
+                commandExecutor.execute(ssdArgument.getArgs());
+                break;
+            case "W":
+            case "E":
+                loadBufferFromFile();
+                if(buffer.size() == 5){
+                    flush();
+                }
+                fileManager.get(buffer.size()).write(0,BUFFER_FOLDER_PATH+"/"+ssdArgument.makeFileName(buffer.size()+1));
+                // TODO:버퍼 최적화 알고리즘 돌리기.?
+                break;
+            case "F":
                 flush();
-            }
-            fileManager.get(buffer.size()).write(0,BUFFER_FOLDER_PATH+"/"+ssdArgument.makeFileName(buffer.size()+1));
-            // TODO:버퍼 최적화 알고리즘 돌리기.?
+                break;
+            default:
+                break;
         }
     }
 
