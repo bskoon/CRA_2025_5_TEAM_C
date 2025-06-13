@@ -27,4 +27,10 @@ public class ValidCheck {
             return false;
         }
     }
+
+    public static void validateCommandType(String value) {
+        if (!"W".equals(value) && !"R".equals(value) && !"E".equals(value)) {
+            throw new RuntimeException("지원하지 않는 명령어입니다: " + value);
+        }
+    }
 }
