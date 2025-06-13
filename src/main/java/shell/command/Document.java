@@ -9,7 +9,6 @@ public class Document {
     private static final Logger log = Logger.getLogger();
 
     private SSDCaller ssdCaller = SSDCaller.getInstance();
-    private TestScenario testScenario;
 
     public void read(int lba, int size) {
         for (int idx = 0; idx < size; idx++) {
