@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class FullWriteFullReadTest {
+public class TestShell_full {
 
     private static final int MAX_BLOCK_SIZE = 100;
     private static final String TEST_VALUE = "0xABCDFFFF";
