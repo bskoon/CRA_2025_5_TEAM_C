@@ -41,6 +41,6 @@ public class EraseCommand implements Command {
     private void parameterSet(String[] args) {
         this.lba = Integer.parseInt(args[1]);
         this.size = Integer.parseInt(args[2]);
-        if (SSDConstant.MAX_LBA < lba + size) throw new RuntimeException("COMMAND ERROR");
+        if (SSDConstant.MAX_LBA < lba + size - 1) throw new RuntimeException("COMMAND ERROR");
     }
 }
