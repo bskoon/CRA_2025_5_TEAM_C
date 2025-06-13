@@ -6,18 +6,16 @@ import shell.util.Logger;
 import shell.util.SSDCaller;
 
 public class Document {
-    private SSDCaller ssdCaller;
-    private Logger logger;
+    private static final Logger log = Logger.getLogger();
 
-    public Document() {
-        this.ssdCaller = SSDCaller.getInstance();
-        this.logger = Logger.getLogger();
-    }
+    private SSDCaller ssdCaller = SSDCaller.getInstance();
+    private TestScenario testScenario;
 
     public void read(int lba, int size) {
         for (int idx = 0; idx < size; idx++) {
             String readVal = ssdCaller.readOnSSD(lba + idx);
-            System.out.println("LBA " + String.format("%02d", lba + idx) + ": " + readVal);
+            log.log("Document.read()", "Return READ - LBA:" + lba + "  DATA:" + readVal);
+            log.print("LBA " + String.format("%02d", lba + idx) + ": " + readVal);
         }
     }
 
@@ -38,11 +36,12 @@ public class Document {
     public void scenario(CommandType type) {
         TestScenario testScenario = new ScenarioFactory(ssdCaller).getScenario(type);
         if (testScenario == null) {
-            logger.log("Document.scenario()", "Not implemented Scenario");
-            logger.print("INVALID ARGUMENT");
+            log.log("Document.scenario()", "Not implemented Scenario");
+            log.print("INVALID ARGUMENT");
         }
 
         String scenarioResult = testScenario.executeScenario();
+        log.log("Document.scenario()", "Result SCENARIO :" + scenarioResult);
         System.out.println(scenarioResult);
     }
 }

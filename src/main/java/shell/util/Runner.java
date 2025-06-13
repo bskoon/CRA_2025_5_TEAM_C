@@ -9,12 +9,14 @@ import java.nio.file.Files;
 import java.util.List;
 
 public class Runner {
-    private File SCRIPT_FILE;
+    private static final Logger log = Logger.getLogger();
 
+    private File SCRIPT_FILE;
     private final CommandExecutor executor;
 
     public Runner(String[] args, CommandExecutor executor) {
         SCRIPT_FILE = new File(args[0]);
+        log.log("Runner.Runner()", "Check Script Name - " + args[0]);
         validCheck();
 
         this.executor = executor;
@@ -22,12 +24,15 @@ public class Runner {
     }
 
     private void validCheck() {
-        if (!SCRIPT_FILE.exists())
+        if (!SCRIPT_FILE.exists()){
+            log.log("Runner.validCheck()", "Invalid File Name");
             throw new RuntimeException("Invalid File Name");
+        }
     }
 
     public void run() {
         List<String> scenarioList;
+        log.log("Runner.run()", "Load Script File");
         try {
             scenarioList = Files.readAllLines(SCRIPT_FILE.toPath());
         } catch (Exception e) {
@@ -36,6 +41,7 @@ public class Runner {
 
         for (String s : scenarioList) {
             System.out.print(s + "   ___   Run...");
+            log.log("Runner.run()", "Run Script - " + s);
             System.out.println(getPassFail(s));
         }
     }
@@ -48,6 +54,8 @@ public class Runner {
         executor.executeCommand(new String[]{ScenarioName});
 
         System.setOut(originalOut);
-        return outContent.toString().replace("\r\n", "");
+        String outString = outContent.toString().replace("\r\n", "");
+        log.log("Runner.getPassFail()", "Script Result : " + outString);
+        return outString;
     }
 }
