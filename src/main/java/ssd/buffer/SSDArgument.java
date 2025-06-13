@@ -24,8 +24,13 @@ public class SSDArgument {
             case "R" -> handleRead();
             case "W" -> handleWrite();
             case "E" -> handleErase();
+            case "F" -> handleFlush();
             default -> throw new IllegalArgumentException("알 수 없는 명령어: " + command);
         }
+    }
+
+    private void handleFlush() {
+        validateLength(1);
     }
 
     private void handleRead() {

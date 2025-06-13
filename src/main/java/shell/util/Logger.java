@@ -76,7 +76,7 @@ public class Logger {
     }
 
     private static String formatMethodName(String input) {
-        int width = 50;
+        int width = 40;
         if (input.length() >= width) {
             return input.substring(0, width);
         } else {

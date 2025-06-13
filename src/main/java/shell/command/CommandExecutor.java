@@ -1,11 +1,14 @@
 package shell.command;
 
+import shell.util.Logger;
 import shell.util.Utility;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class CommandExecutor {
+    private static final Logger log = Logger.getLogger();
+
     private Map<String, Command> commandMap = new HashMap<>();
     private Utility util = Utility.getInstance();
 
@@ -14,19 +17,25 @@ public class CommandExecutor {
     }
 
     public void executeCommand(String[] args) {
-        args[0] = util.getExactCommand(args[0]);
-        CommandType type = CommandType.fromString(args[0]);
-        if (!util.isValidParameterCount(type, args.length)) {
-            System.out.println("INVALID COMMAND");
+        Command command = null;
+        try {
+            args[0] = util.getExactCommand(args[0]);
+            CommandType type = CommandType.fromString(args[0]);
+            if (!util.isValidParameterCount(type, args.length)) {
+                log.print("INVALID COMMAND");
+                return;
+            }
+            command = commandMap.get(args[0]);
+        } catch (Exception e) {
+            log.log("CommandExecutor.executeCommand()", "Exception Occur on executeCommand()");
             return;
         }
-
-        Command command = commandMap.get(args[0]);
 
         if (command != null) {
             command.execute(args);
         } else {
-            System.out.println("Unknown command: " + args[0]);
+            log.log("CommandExecutor.executeCommand()", "INVALID COMMAND");
+            log.print("Unknown command: " + args[0]);
         }
     }
 }

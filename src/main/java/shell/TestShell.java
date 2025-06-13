@@ -1,6 +1,7 @@
 package shell;
 
 import shell.command.*;
+import shell.util.Logger;
 import shell.util.Runner;
 
 import java.util.*;
@@ -8,6 +9,8 @@ import java.util.*;
 import static shell.util.ShellConstant.*;
 
 public class TestShell {
+    private static final Logger log = Logger.getLogger();
+
     private Scanner scanner;
     private boolean isRunning;
 
@@ -49,19 +52,23 @@ public class TestShell {
     private void launchShell() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("SSD Test Shell 시작 (명령어 입력: write/read)");
+        log.log("TestShell.launchShell()", "Start Shell");
 
         while (isRunning) {
             System.out.print("> ");
             String shellCommand = scanner.nextLine().trim();
+            log.log("TestShell.launchShell()", "Command - " + shellCommand);
             String[] commandParameters = shellCommand.split("\\s+");
 
             if (commandParameters.length == 0) continue;
+            if (commandParameters[0].trim().isEmpty()) continue;
 
             executeCommand(commandParameters);
         }
     }
 
     private void executeCommand(String[] commandParameters) {
+        log.log("TestShell.executeCommand()", "Command Execute Start");
         if (commandParameters[0].equals(EXIT)) {
             exit();
         } else if (commandParameters[0].equals(HELP)) {
@@ -73,6 +80,7 @@ public class TestShell {
 
     private void exit() {
         System.out.println("Exiting TestShell...");
+        log.log("TestShell.exit()", "Shell Close");
         isRunning = false;
         if (scanner != null) {
             scanner.close();
@@ -80,6 +88,7 @@ public class TestShell {
     }
 
     private void help() {
+        log.log("TestShell.help()", "Print help");
         System.out.println("==========================================");
         System.out.println("TestShell Help");
         System.out.println("==========================================");
@@ -121,7 +130,7 @@ public class TestShell {
     }
 
     public static void main(String[] args) {
-        if (args != null)
+        if (args.length != 0)
             new Runner(args, initCommandExecutor()).run();
         else {
             TestShell shell = new TestShell();
