@@ -1,11 +1,14 @@
 package shell;
 
 import shell.command.*;
+import shell.util.Logger;
 import shell.util.Runner;
 
 import java.util.*;
 
 public class TestShell {
+    private static final Logger log = Logger.getLogger();
+
     private static final String READ = "read";
     private static final String WRITE = "write";
     private static final String ERASE = "erase";
@@ -60,10 +63,12 @@ public class TestShell {
     private void launchShell() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("SSD Test Shell 시작 (명령어 입력: write/read)");
+        log.log("TestShell.launchShell()", "Start Shell");
 
         while (isRunning) {
             System.out.print("> ");
             String shellCommand = scanner.nextLine().trim();
+            log.log("TestShell.launchShell()", "Command - " + shellCommand);
             String[] commandParameters = shellCommand.split("\\s+");
 
             if (commandParameters.length == 0) continue;
@@ -73,6 +78,7 @@ public class TestShell {
     }
 
     private void executeCommand(String[] commandParameters) {
+        log.log("TestShell.executeCommand()", "Command Execute Start");
         if (commandParameters[0].equals(EXIT)) {
             exit();
         } else if (commandParameters[0].equals(HELP)) {
@@ -84,6 +90,7 @@ public class TestShell {
 
     private void exit() {
         System.out.println("Exiting TestShell...");
+        log.log("TestShell.exit()", "Shell Close");
         isRunning = false;
         if (scanner != null) {
             scanner.close();
@@ -91,6 +98,7 @@ public class TestShell {
     }
 
     private void help() {
+        log.log("TestShell.help()", "Print help");
         System.out.println("==========================================");
         System.out.println("TestShell Help");
         System.out.println("==========================================");

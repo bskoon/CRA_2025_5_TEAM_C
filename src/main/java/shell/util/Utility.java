@@ -3,6 +3,7 @@ package shell.util;
 import shell.command.CommandType;
 
 public class Utility {
+    private static final Logger log = Logger.getLogger();
     private static Utility instance;
 
     public static Utility getInstance() {
@@ -74,6 +75,7 @@ public class Utility {
                 correctLength = SCRIPT_ARG_COUNT;
                 break;
             default:
+                log.log("Utility.isValidParameterCount()", "INVALID PARAMETER");
                 break;
         }
         return correctLength == argLength;
@@ -84,12 +86,17 @@ public class Utility {
         try {
             lba = Integer.parseInt(lbaString);
         } catch (NumberFormatException e) {
+            log.log("Utility.isValidLBA()", "INVALID LBA");
             return false;
         }
 
         return lba >= 0 && lba < MAX_SSD_BLOCK;
     }
     public boolean isValidUpdateData(String updateData) {
-        return updateData.matches("0x[0-9A-F]{8}");
+        if (updateData.matches("0x[0-9A-F]{8}")) return true;
+        else {
+            log.log("Utility.isValidUpdateData()", "INVALID DATA");
+            return false;
+        }
     }
 }

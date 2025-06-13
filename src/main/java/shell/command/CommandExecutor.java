@@ -1,11 +1,14 @@
 package shell.command;
 
+import shell.util.Logger;
 import shell.util.Utility;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class CommandExecutor {
+    private static final Logger log = Logger.getLogger();
+
     private Map<String, Command> commandMap = new HashMap<>();
     private Utility util = Utility.getInstance();
 
@@ -26,6 +29,7 @@ public class CommandExecutor {
         if (command != null) {
             command.execute(args);
         } else {
+            log.log("CommandExecutor.executeCommand()", "INVALID COMMAND");
             System.out.println("Unknown command: " + args[0]);
         }
     }

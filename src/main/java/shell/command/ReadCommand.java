@@ -1,10 +1,13 @@
 package shell.command;
 
+import shell.util.Logger;
 import shell.util.Utility;
 
 public class ReadCommand implements Command {
+    private static final Logger log = Logger.getLogger();
+
     private Document document;
-    Utility util;
+    Utility util = Utility.getInstance();
 
     int lba;
     int size;
@@ -12,7 +15,6 @@ public class ReadCommand implements Command {
 
     public ReadCommand (Document document) {
         this.document = document;
-        this.util = Utility.getInstance();
 
         this.lba = 0;
         this.size = util.MAX_SSD_BLOCK;
@@ -42,6 +44,7 @@ public class ReadCommand implements Command {
         }
         setArgument(args);
 
+        log.log("ReadCommand.execute()", "Execute READ - LBA:" + lba + "  SIZE:" + size);
         document.read(lba, size);
     }
 }

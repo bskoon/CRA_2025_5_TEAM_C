@@ -1,14 +1,14 @@
 package shell.command;
 
-import shell.util.Utility;
+import shell.util.Logger;
 
 public class FlushCommand implements Command {
-    Document document;
-    Utility util;
+    private static final Logger log = Logger.getLogger();
 
-    public FlushCommand (Document document) {
+    Document document;
+
+    public FlushCommand(Document document) {
         this.document = document;
-        this.util = Utility.getInstance();
     }
 
     @Override
@@ -23,6 +23,7 @@ public class FlushCommand implements Command {
 
     @Override
     public void execute(String[] args) {
+        log.log("FlushCommand.execute()", "Execute FLUSH");
         document.flush();
     }
 }
