@@ -38,9 +38,4 @@ public abstract class TestScenario {
     }
 
     public abstract String executeScenario();
-
-    public String eraseAndWriteAging() {
-        return "";
-    }
-
 }

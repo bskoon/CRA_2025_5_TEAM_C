@@ -17,6 +17,8 @@ public class ScenarioFactory {
                 return new Scenario2(ssdCaller);
             case scenario3:
                 return new Scenario3(ssdCaller);
+            case scenario4:
+                return new Scenario4(ssdCaller);
             default:
                 return null;
         }

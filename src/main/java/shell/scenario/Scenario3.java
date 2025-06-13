@@ -21,7 +21,7 @@ public class Scenario3 extends TestScenario {
                 if (!writeReadAgingOnce()) return "FAIL";
             }
         } catch (Exception e) {
-            logger.log("Scenario1.executeScenario()", "Exception while execute scenario");
+            logger.log("Scenario3.executeScenario()", "Exception while execute scenario");
             return "FAIL";
         }
 

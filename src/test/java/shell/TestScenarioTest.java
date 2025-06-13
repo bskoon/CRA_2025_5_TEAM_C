@@ -8,11 +8,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import shell.command.Document;
 import shell.command.ScenarioCommand;
-import shell.scenario.Scenario1;
-import shell.scenario.Scenario2;
-import shell.scenario.Scenario3;
+import shell.scenario.*;
 import shell.util.SSDCaller;
-import shell.scenario.TestScenario;
 
 import java.io.IOException;
 import java.util.*;
@@ -100,24 +97,7 @@ public class TestScenarioTest {
         // Arrange: 모든 readCompare가 "PASS" 반환
         doReturn("PASS").when(testScenario).readCompare(anyInt(), eq("0x00000000"));
 
-        // 초기 erase 0~2
-        ssdCaller.eraseOnSSD(0, 3);
-        testScenario.readCompare(0, "0x00000000");
-        testScenario.readCompare(1, "0x00000000");
-        testScenario.readCompare(2, "0x00000000");
-
-        for (int i = 0; i < 30; i++) {
-            for (int lba = 2; lba <= 98; lba += 2) {
-                String hexa = getRandomHexString(random);
-                String hexb = getRandomHexString(random);
-                ssdCaller.writeOnSSD(lba, hexa);
-                ssdCaller.writeOnSSD(lba, hexb);
-                ssdCaller.eraseOnSSD(lba, 3);
-                for (int j = 0; j < 3; j++) {
-                    testScenario.readCompare(j, "0x00000000");
-                }
-            }
-        }
+        testScenario.executeScenario();
 
         // Verify
         verify(ssdCaller, times(1)).eraseOnSSD(eq(0), eq(3));
