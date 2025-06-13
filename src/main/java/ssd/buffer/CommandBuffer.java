@@ -16,7 +16,7 @@ import static ssd.SSDConstant.BUFFER_FOLDER_PATH;
 
 public class CommandBuffer {
     private final List<String> buffer = new ArrayList<>();
-    private final int maxSize = 5;
+    private final int MAX_SIZE = 5;
 
     private final List<BufferFileIO> fileManager;
     private final CommandExecutor commandExecutor;
@@ -46,8 +46,9 @@ public class CommandBuffer {
                 break;
             case "W":
             case "E":
+                // 버퍼 갱신
                 loadBufferFromFile();
-                if(buffer.size() == 5){
+                if(buffer.size() >= MAX_SIZE){
                     flush();
                 }
                 fileManager.get(buffer.size()).write(0,BUFFER_FOLDER_PATH+"/"+ssdArgument.makeFileName(buffer.size()+1));
@@ -84,7 +85,7 @@ public class CommandBuffer {
         BufferUtil util = new BufferUtil();
         List<String> result = util.makeCommand(util.makeMemory(bufferList));
 
-        for(int i=0;i<5;i++){
+        for(int i=0;i<MAX_SIZE;i++){
             BufferFileIO io = fileManager.get(i);
             if(result.size()>i){
                io.write(0,BUFFER_FOLDER_PATH+"/"+result.get(i)+".txt");
@@ -143,7 +144,7 @@ public class CommandBuffer {
         }
 
         // 파일 + 내부 캐싱 데이터 초기화
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < MAX_SIZE; i++) {
             fileManager.get(i).write(0, BUFFER_FOLDER_PATH + "/" + (i+1) + "_empty.txt");
         }
         buffer.clear();
