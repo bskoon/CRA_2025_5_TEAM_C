@@ -59,7 +59,7 @@ public class SSDArgument {
         this.lba = Integer.parseInt(args[1]);
         this.size = Integer.parseInt(args[2]);
 
-        if (lba + size > SSDConstant.MAX_LBA) {
+        if (lba + size - 1 > SSDConstant.MAX_LBA) {
             throw new IllegalArgumentException("LBA + Size가 최대 허용 범위를 초과합니다.");
         }
     }
