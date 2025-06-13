@@ -61,6 +61,7 @@ public class TestShell {
             String[] commandParameters = shellCommand.split("\\s+");
 
             if (commandParameters.length == 0) continue;
+            if (commandParameters[0].trim().isEmpty()) continue;
 
             executeCommand(commandParameters);
         }

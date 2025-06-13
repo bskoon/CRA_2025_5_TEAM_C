@@ -17,14 +17,19 @@ public class CommandExecutor {
     }
 
     public void executeCommand(String[] args) {
-        args[0] = util.getExactCommand(args[0]);
-        CommandType type = CommandType.fromString(args[0]);
-        if (!util.isValidParameterCount(type, args.length)) {
-            log.print("INVALID COMMAND");
+        Command command = null;
+        try {
+            args[0] = util.getExactCommand(args[0]);
+            CommandType type = CommandType.fromString(args[0]);
+            if (!util.isValidParameterCount(type, args.length)) {
+                log.print("INVALID COMMAND");
+                return;
+            }
+            command = commandMap.get(args[0]);
+        } catch (Exception e) {
+            log.log("CommandExecutor.executeCommand()", "Exception Occur on executeCommand()");
             return;
         }
-
-        Command command = commandMap.get(args[0]);
 
         if (command != null) {
             command.execute(args);
