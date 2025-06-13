@@ -8,7 +8,7 @@ public class Document {
     private TestScenario testScenario;
 
     public Document() {
-        ssdCaller = SSDCaller.getSSDCaller();
+        ssdCaller = SSDCaller.getInstance();
         testScenario = new TestScenario(ssdCaller);
     }
 
@@ -33,24 +33,24 @@ public class Document {
         ssdCaller.flushSSD();
     }
 
-    public void scenario(int scenarioNum) {
+    public void scenario(CommandType type) {
         String scenarioResult = "";
         try {
-            switch (scenarioNum) {
-                case 1:
+            switch (type) {
+                case script1:
                     scenarioResult = testScenario.fullWriteAndReadCompare();
                     break;
-                case 2:
+                case script2:
                     scenarioResult = testScenario.partialLBAWrite();
                     break;
-                case 3:
+                case script3:
                     scenarioResult = testScenario.writeReadAging();
                     break;
-                case 4:
+                case script4:
                     scenarioResult = testScenario.eraseAndWriteAging();
                     break;
                 default:
-                    scenarioResult = "INVLIAD ARGUMENT";
+                    scenarioResult = "INVALID ARGUMENT";
                     break;
             }
         } catch (Exception e) {

@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TestShellTest {
+public class TestShell_full {
 
-    private static final int MAX_LBA = 99;
+    private static final int MAX_BLOCK_SIZE = 100;
     private static final String TEST_VALUE = "0xABCDFFFF";
 
     @Mock
@@ -48,22 +48,22 @@ public class TestShellTest {
     }
 
     @Test
-    void Write_정상_테스트_확인() {
+    void FullWrite_정상_테스트_확인() {
 
-        String[] args = {"write", "3", TEST_VALUE};
+        String[] args = {"fullwrite", TEST_VALUE};
 
         // When
         writeCommand.execute(args);
 
         // Then
-        verify(mockDocument).write(3, 1, TEST_VALUE );
+        verify(mockDocument).write(0, MAX_BLOCK_SIZE,TEST_VALUE );
 
     }
 
     @Test
-    void Write_Input_value_오류_확인() {
+    void FullWrite_Input_value_오류_확인() {
 
-        String[] args = {"write", "3", "ABCDFFFF"};
+        String[] args = {"fullwrite", "ABCDFFFF"};
 
         // When
         writeCommand.execute(args);
@@ -72,35 +72,19 @@ public class TestShellTest {
         // Then
         String output = outputStream.toString().trim();
         assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).write(3, 1,TEST_VALUE );
+        verify(mockDocument, never()).write(0, MAX_BLOCK_SIZE,TEST_VALUE );
     }
 
     @Test
-    void Read_정상_테스트_확인() {       
-
-        String[] readArgs = {"read", "3"};
+    void FullRead_정상_테스트_확인() {
+        // When
+        String[] readArgs = {"fullread"};
 
         // When
         readCommand.execute(readArgs);
 
         // Then
-        verify(mockDocument).read(3, 1 );
+        verify(mockDocument).read(0, MAX_BLOCK_SIZE );
 
     }
-
-    @Test
-    void Read_파라미터_오류_확인() {
-
-        String[] args = {"readfile" , "3"};
-
-        // When
-        readCommand.execute(args);
-
-        // Then
-        String output = outputStream.toString().trim();
-        assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).read(3,1);
-    }
-
-
 }

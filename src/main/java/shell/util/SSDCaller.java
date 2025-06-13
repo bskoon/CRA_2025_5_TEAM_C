@@ -15,7 +15,7 @@ public class SSDCaller {
 
     private static final List<String> EXECUTE_COMMAND = new ArrayList<>(List.of("java", "-jar", JAR_FILE_PATH));
 
-    public static SSDCaller getSSDCaller() {
+    public static SSDCaller getInstance() {
         if (instance == null) instance = new SSDCaller();
         return instance;
     }
