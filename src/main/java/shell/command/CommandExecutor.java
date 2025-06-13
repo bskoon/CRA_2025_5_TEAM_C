@@ -33,7 +33,7 @@ public class CommandExecutor {
                 log.print("Unknown command: " + args[0]);
             }
         } catch (Exception e) {
-            log.log("CommandExecutor.executeCommand()", "Exception Occur on executeCommand()");return;
+            log.log("CommandExecutor.executeCommand()", "Exception Occur on executeCommand()");
         }
     }
 }
