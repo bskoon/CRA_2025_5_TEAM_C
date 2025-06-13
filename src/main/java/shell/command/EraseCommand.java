@@ -27,13 +27,27 @@ public class EraseCommand implements Command {
 
     @Override
     public void setArgument(String[] args) {
-        lba = Integer.parseInt(args[1]);
-        size = Integer.parseInt(args[2]);
-
-        if (eraseType == CommandType.erase_range) {
-            size = size - lba + 1;
+        int intArg1 = Integer.parseInt(args[1]);
+        int intArg2 = Integer.parseInt(args[2]);
+        if (eraseType == CommandType.erase) {
+            if (intArg2 >= 0) {
+                lba = intArg1;
+                size = Math.min(intArg2, MAX_SSD_BLOCK - lba);
+            }
+            else {
+                lba = Math.max(intArg1 + intArg2 + 1, 0);
+                size = Math.min(-intArg2, intArg1 + 1);
+            }
         }
-        size = Math.min(size, MAX_SSD_BLOCK - lba);
+        else if (eraseType == CommandType.erase_range) {
+            int lower = Math.min(intArg1, intArg2);
+            int upper = Math.max(intArg1, intArg2);
+
+            lba = lower;
+            size = upper - lower + 1;
+            size = Math.min(size, MAX_SSD_BLOCK - lba);
+        }
+
     }
 
     @Override

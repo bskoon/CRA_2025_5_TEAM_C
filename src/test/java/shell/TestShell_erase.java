@@ -136,8 +136,8 @@ public class TestShell_erase {
 
         // Then
         InOrder inOrder = inOrder(mockDocument);
-        inOrder.verify(mockDocument).erase(70, 10); // 첫 chunk
-        inOrder.verify(mockDocument).erase(65, 5);  // 두 번째 chunk
+        inOrder.verify(mockDocument).erase(66, 10); // 첫 chunk
+        inOrder.verify(mockDocument).erase(76, 5);  // 두 번째 chunk
 
         // 정확히 두 번만 호출되었는지 확인 (불필요한 호출 방지)
         verify(mockDocument, times(2)).erase(anyInt(), anyInt());
