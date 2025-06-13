@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CommandBufferOptimizerTest {
-    CommandBufferOptimizer commandBufferOptimizer = new CommandBufferOptimizer();
-
     @Test
     void makeMemoryOne() {
         List<String> commands = List.of(
@@ -22,7 +20,7 @@ class CommandBufferOptimizerTest {
                 "5_W_7_0xFFFFFFFF"
         );
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(4, optimized.size());
 
@@ -46,7 +44,7 @@ class CommandBufferOptimizerTest {
                 "2_E_10_5"
         );
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(2, optimized.size());
         assertTrue(optimized.contains("1_E_0_10"));
@@ -60,7 +58,7 @@ class CommandBufferOptimizerTest {
                 "2_E_3_5"
         );
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(1, optimized.size());
         assertTrue(optimized.contains("1_E_0_8"));
@@ -76,7 +74,7 @@ class CommandBufferOptimizerTest {
                 "5_W_7_0xFFFFFFFF"
         );
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(5, optimized.size());
 
@@ -98,7 +96,7 @@ class CommandBufferOptimizerTest {
     void testFastRead_WriteThenRead_ReturnsValue() {
         List<String> commands = List.of("1_W_10_0xAAAA0000");
 
-        Optional<String> result = commandBufferOptimizer.fastRead(commands, 10);
+        Optional<String> result = CommandBufferOptimizer.fastRead(commands, 10);
 
         assertTrue(result.isPresent());
         assertEquals("0xAAAA0000", result.get());
@@ -108,7 +106,7 @@ class CommandBufferOptimizerTest {
     void testFastRead_EraseThenRead_ReturnsZero() {
         List<String> commands = List.of("1_E_10_2");
 
-        Optional<String> result = commandBufferOptimizer.fastRead(commands, 10);
+        Optional<String> result = CommandBufferOptimizer.fastRead(commands, 10);
 
         assertTrue(result.isPresent());
         assertEquals("0x00000000", result.get());
@@ -121,7 +119,7 @@ class CommandBufferOptimizerTest {
                 "2_W_10_0xBBBB1111"
         );
 
-        Optional<String> result = commandBufferOptimizer.fastRead(commands, 10);
+        Optional<String> result = CommandBufferOptimizer.fastRead(commands, 10);
 
         assertTrue(result.isPresent());
         assertEquals("0xBBBB1111", result.get());
@@ -131,7 +129,7 @@ class CommandBufferOptimizerTest {
     void testFastRead_NoMatch_ReturnsEmpty() {
         List<String> commands = List.of("1_W_5_0xFFFEEE");
 
-        Optional<String> result = commandBufferOptimizer.fastRead(commands, 10);
+        Optional<String> result = CommandBufferOptimizer.fastRead(commands, 10);
 
         assertTrue(result.isEmpty());
     }
@@ -144,7 +142,7 @@ class CommandBufferOptimizerTest {
                 "3_E_18_5"
         );
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(1, optimized.size());
         assertEquals("1_E_18_5", optimized.get(0));
@@ -157,7 +155,7 @@ class CommandBufferOptimizerTest {
                 "2_E_13_3"
         );
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(1, optimized.size());
         assertEquals("1_E_10_6", optimized.get(0));
@@ -171,7 +169,7 @@ class CommandBufferOptimizerTest {
                 "3_E_13_3"
         );
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(2, optimized.size());
 
@@ -192,7 +190,7 @@ class CommandBufferOptimizerTest {
                 "1_E_30_2",
                 "2_W_30_0x11111111"
         );
-        Optional<String> result = commandBufferOptimizer.fastRead(commands, 30);  // ✅ 30으로 수정
+        Optional<String> result = CommandBufferOptimizer.fastRead(commands, 30);  // ✅ 30으로 수정
         assertTrue(result.isPresent());
         assertEquals("0x11111111", result.get());
     }
@@ -204,7 +202,7 @@ class CommandBufferOptimizerTest {
                 "2_E_40_1"
         );
 
-        Optional<String> result = commandBufferOptimizer.fastRead(commands, 40);
+        Optional<String> result = CommandBufferOptimizer.fastRead(commands, 40);
 
         assertTrue(result.isPresent());
         assertEquals("0x00000000", result.get());
@@ -217,7 +215,7 @@ class CommandBufferOptimizerTest {
                 "2_E_7_2"
         );
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(1, optimized.size());
         assertEquals("1_E_5_4", optimized.get(0)); // LBA 5~8 총 4개
@@ -231,7 +229,7 @@ class CommandBufferOptimizerTest {
                 "3_W_12_0xCCCC0000"
         );
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(3, optimized.size());
         assertTrue(optimized.contains("1_W_10_0xAAAA0000"));
@@ -246,7 +244,7 @@ class CommandBufferOptimizerTest {
                 "2_W_50_0xFFF00000"
         );
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(1, optimized.size());
         assertEquals("1_W_50_0xFFF00000", optimized.get(0));
@@ -256,7 +254,7 @@ class CommandBufferOptimizerTest {
     void testErase_MaxSizeBoundaryAccepted() {
         List<String> commands = List.of("1_E_0_10");
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(1, optimized.size());
         assertEquals("1_E_0_10", optimized.get(0));
@@ -269,7 +267,7 @@ class CommandBufferOptimizerTest {
                 "2_E_24_3"
         );
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(1, optimized.size());
         assertEquals("1_E_24_3", optimized.get(0)); // Write to 25 should be erased
@@ -298,7 +296,7 @@ class CommandBufferOptimizerTest {
                 "5_E_62_4"
         );
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertTrue(optimized.stream().anyMatch(cmd -> cmd.contains("_W_77_0x15CA21FC")));
         assertTrue(optimized.stream().anyMatch(cmd -> cmd.contains("_E_13_4")));
@@ -313,7 +311,7 @@ class CommandBufferOptimizerTest {
     void testEraseAndOverwriteThenEraseAgain() {
         List<String> commands = List.of("1_E_10_2", "2_W_11_0xABCD1234", "3_E_10_3");
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(1, optimized.size());
         assertTrue(optimized.contains("1_E_10_3"));
@@ -323,7 +321,7 @@ class CommandBufferOptimizerTest {
     void testMultipleWritesThenEraseSubset() {
         List<String> commands = List.of("1_W_5_0xAAAA0000", "2_W_6_0xBBBB1111", "3_E_6_1");
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(2, optimized.size());
         assertTrue(optimized.contains("1_W_5_0xAAAA0000"));
@@ -334,7 +332,7 @@ class CommandBufferOptimizerTest {
     void testOverwriteThenEraseAll() {
         List<String> commands = List.of("1_W_20_0xAABBCCDD", "2_W_20_0x11223344", "3_E_20_1");
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(1, optimized.size());
         assertTrue(optimized.contains("1_E_20_1"));
@@ -344,7 +342,7 @@ class CommandBufferOptimizerTest {
     void testSeparateEraseBlocks() {
         List<String> commands = List.of("1_E_30_2", "2_E_33_1");
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(2, optimized.size());
         assertTrue(optimized.contains("1_E_30_2"));
@@ -355,7 +353,7 @@ class CommandBufferOptimizerTest {
     void testEraseOverlappingWriteBlock() {
         List<String> commands = List.of("1_W_40_0xAAAABBBB", "2_E_40_2");
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(1, optimized.size());
         assertTrue(optimized.contains("1_E_40_2"));
@@ -365,7 +363,7 @@ class CommandBufferOptimizerTest {
     void testWriteAfterEraseNoOverlap() {
         List<String> commands = List.of("1_E_50_2", "2_W_52_0x12345678");
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(2, optimized.size());
         assertTrue(optimized.contains("1_E_50_2"));
@@ -376,7 +374,7 @@ class CommandBufferOptimizerTest {
     void testMultipleErasesAndWrites() {
         List<String> commands = List.of("1_E_60_2", "2_W_62_0x9F8267ED", "3_E_63_1");
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(3, optimized.size());
         assertTrue(optimized.contains("1_E_60_2"));
@@ -388,7 +386,7 @@ class CommandBufferOptimizerTest {
     void testEraseCompletelyOverwritesAllWrites() {
         List<String> commands = List.of("1_W_70_0xDEADBEEF", "2_E_70_1");
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(1, optimized.size());
         assertTrue(optimized.contains("1_E_70_1"));
@@ -398,7 +396,7 @@ class CommandBufferOptimizerTest {
     void testWriteThenEraseThenWriteAgain() {
         List<String> commands = List.of("1_W_80_0x00001111", "2_E_80_1", "3_W_80_0x99998888");
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(1, optimized.size());
         assertTrue(optimized.contains("1_W_80_0x99998888"));
@@ -408,7 +406,7 @@ class CommandBufferOptimizerTest {
     void testWriteBlockThenEraseSubsetAndContinueWrite() {
         List<String> commands = List.of("1_W_90_0x12341234", "2_E_90_1", "3_W_91_0x56785678");
 
-        List<String> optimized = commandBufferOptimizer.optimize(commands);
+        List<String> optimized = CommandBufferOptimizer.optimize(commands);
 
         assertEquals(2, optimized.size());
         assertTrue(optimized.contains("1_E_90_1"));
