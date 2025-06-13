@@ -14,6 +14,9 @@ public class WriteCommand implements Command {
     public WriteCommand (Document document) {
         this.document = document;
         this.util = Utility.getLogger();
+
+        this.lba = 0;
+        this.size = util.MAX_SSD_BLOCK;
     }
 
     @Override
@@ -42,11 +45,11 @@ public class WriteCommand implements Command {
         } else if(writeType == CommandType.fullwrite) {
             updateData = args[1];
         }
-
     }
 
     @Override
     public void execute(String[] args) {
+        writeType = CommandType.fromString(args[0]);
         if (!argumentCheck(args)) {
             System.out.println("INVALID COMMAND");
             return;

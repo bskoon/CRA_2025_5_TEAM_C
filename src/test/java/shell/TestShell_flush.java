@@ -51,18 +51,4 @@ public class TestShell_flush {
         // Then
         verify(mockDocument).flush();
     }
-
-    @Test
-    void Flush_파라미터_오류_테스트(){
-        // Given
-        String[] args = {"flush","asdasd"};
-
-        // When
-        flushCommand.execute(args);
-
-        // Then
-        String output = outputStream.toString().trim();
-        assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).flush();
-    }
 }

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class FullWriteFullReadTest {
 
-    private static final int MAX_LBA = 99;
+    private static final int MAX_BLOCK_SIZE = 100;
     private static final String TEST_VALUE = "0xABCDFFFF";
 
     @Mock
@@ -56,10 +56,11 @@ public class FullWriteFullReadTest {
         writeCommand.execute(args);
 
         // Then
-        verify(mockDocument).write(0, MAX_LBA,TEST_VALUE );
+        verify(mockDocument).write(0, MAX_BLOCK_SIZE,TEST_VALUE );
 
     }
 
+    @Test
     void FullWrite_Input_value_오류_확인() {
 
         String[] args = {"fullwrite", "ABCDFFFF"};
@@ -71,39 +72,19 @@ public class FullWriteFullReadTest {
         // Then
         String output = outputStream.toString().trim();
         assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).write(0, MAX_LBA,TEST_VALUE );
+        verify(mockDocument, never()).write(0, MAX_BLOCK_SIZE,TEST_VALUE );
     }
 
     @Test
     void FullRead_정상_테스트_확인() {
-
-        String[] args = {"fullwrite", TEST_VALUE};
-
         // When
-        writeCommand.execute(args);
-
         String[] readArgs = {"fullread"};
 
         // When
         readCommand.execute(readArgs);
 
         // Then
-        verify(mockDocument).read(0, MAX_LBA );
+        verify(mockDocument).read(0, MAX_BLOCK_SIZE );
 
     }
-
-    void FullRead_파라미터_오류_확인() {
-
-        String[] args = {"readfull"};
-
-        // When
-        readCommand.execute(args);
-
-        // Then
-        String output = outputStream.toString().trim();
-        assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).read(0, MAX_LBA);
-    }
-
-
 }
