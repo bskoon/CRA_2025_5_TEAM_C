@@ -4,15 +4,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class LoggerTest {
 
@@ -44,7 +45,7 @@ class LoggerTest {
     @Test
     void Logger_log함수_호출시_latest생성() throws IOException {
         String timestamp = logDateFormat.format(new Date());
-        String expected = "[" + timestamp + "] TestShell.launchShell()        : Shell Start";
+        String expected = "[" + timestamp + "] TestShell.launchShell()                            : Shell Start";
 
         log.log("TestShell.launchShell()", "Shell Start");
 
@@ -83,5 +84,34 @@ class LoggerTest {
     private static void logging200Line() {
         for (int i = 0; i < 200; i++)
             log.log("TestShell.launchShell()", "Shell Start");
+    }
+
+    @Test
+    void Logger_RunnerMode아닐시_정상Print() {
+        log.setRunner(false);
+        StringBuilder sb = new StringBuilder();
+        sb.append("HAHAHA").append("\r\n");
+
+        ByteArrayOutputStream outContent = getSysoutMessage();
+        assertEquals(sb.toString(), outContent.toString());
+    }
+
+    @Test
+    void Logger_RunnerMode일시_Print금지() {
+        log.setRunner(true);
+
+        ByteArrayOutputStream outContent = getSysoutMessage();
+        assertEquals("", outContent.toString());
+    }
+
+    private static ByteArrayOutputStream getSysoutMessage() {
+        PrintStream originalOut = System.out;
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        log.print("HAHAHA");
+
+        System.setOut(originalOut);
+        return outContent;
     }
 }
