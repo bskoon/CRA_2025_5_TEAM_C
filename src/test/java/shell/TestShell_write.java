@@ -1,27 +1,26 @@
 package shell;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import shell.command.Document;
 import shell.command.WriteCommand;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TestShell_write {
 
-    private static final int MAX_LBA = 99;
     private static final int MAX_BLOCK_SIZE = 100;
     private static final String TEST_VALUE = "0xABCDFFFF";
 
-    @Mock
-    private TestShell mockTestShell;
 
     private ByteArrayOutputStream outputStream;
     private PrintStream originalOut;
@@ -54,7 +53,7 @@ public class TestShell_write {
         writeCommand.execute(args);
 
         // Then
-        verify(mockDocument).write(3, 1, TEST_VALUE );
+        verify(mockDocument).write(3, 1, TEST_VALUE);
 
     }
 
@@ -67,10 +66,9 @@ public class TestShell_write {
         writeCommand.execute(args);
 
         // Then
-        // Then
         String output = outputStream.toString().trim();
         assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).write(3, 1,TEST_VALUE );
+        verify(mockDocument, never()).write(3, 1, TEST_VALUE);
     }
 
     @Test
@@ -82,7 +80,7 @@ public class TestShell_write {
         writeCommand.execute(args);
 
         // Then
-        verify(mockDocument).write(0, MAX_BLOCK_SIZE,TEST_VALUE );
+        verify(mockDocument).write(0, MAX_BLOCK_SIZE, TEST_VALUE);
 
     }
 
@@ -95,9 +93,8 @@ public class TestShell_write {
         writeCommand.execute(args);
 
         // Then
-        // Then
         String output = outputStream.toString().trim();
         assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).write(0, MAX_BLOCK_SIZE,TEST_VALUE );
+        verify(mockDocument, never()).write(0, MAX_BLOCK_SIZE, TEST_VALUE);
     }
 }

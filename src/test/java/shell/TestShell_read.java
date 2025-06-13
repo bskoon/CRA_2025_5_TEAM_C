@@ -15,13 +15,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TestShell_read {
-
-    private static final int MAX_LBA = 99;
     private static final int MAX_BLOCK_SIZE = 100;
-    private static final String TEST_VALUE = "0xABCDFFFF";
-
-    @Mock
-    private TestShell mockTestShell;
 
     private ByteArrayOutputStream outputStream;
     private PrintStream originalOut;
