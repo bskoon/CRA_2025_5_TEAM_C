@@ -10,6 +10,10 @@ public class SSDArgument {
     private String command;
     private final String[] args;
 
+    public SSDArgument(String filename){
+        this(filename.replace(".txt","").substring(2).split("_"));
+    }
+
     public SSDArgument(String[] args) {
         if (args == null || args.length == 0) {
             throw new IllegalArgumentException("명령어 인자가 비어있습니다.");
