@@ -2,6 +2,7 @@ package shell.command;
 
 import shell.util.Logger;
 import shell.util.Utility;
+import static shell.util.ShellConstant.*;
 
 public class WriteCommand implements Command {
     private static final Logger log = Logger.getLogger();
@@ -17,7 +18,7 @@ public class WriteCommand implements Command {
     public WriteCommand(Document document) {
         this.document = document;
         this.lba = 0;
-        this.size = util.MAX_SSD_BLOCK;
+        this.size = MAX_SSD_BLOCK;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package shell.util;
 
 import shell.command.CommandType;
+import static shell.util.ShellConstant.*;
 
 public class Utility {
     private static final Logger log = Logger.getLogger();
@@ -11,28 +12,14 @@ public class Utility {
         return instance;
     }
 
-    private static final int READ_ARG_COUNT = 2;
-    private static final int FULLREAD_ARG_COUNT = 1;
-    private static final int WRITE_ARG_COUNT = 3;
-    private static final int FULLWRITE_ARG_COUNT = 2;
-    private static final int ERASE_ARG_COUNT = 3;
-    private static final int FLUSH_ARG_COUNT = 1;
-    private static final int SCRIPT_ARG_COUNT = 1;
-
-    public static final String SCRIPT_1 = "1_fullwriteandreadcompare";
-    public static final String SCRIPT_2 = "2_partiallbawrite";
-    public static final String SCRIPT_3 = "3_writereadaging";
-    public static final String SCRIPT_4 = "4_eraseandwriteaging";
-
-    public static final int MAX_SSD_BLOCK = 100;
 
     public String getExactCommand(String rawCommand) {
         String lowerCaseCommand = rawCommand.toLowerCase();
         return switch (lowerCaseCommand) {
-            case "1_", SCRIPT_1 -> SCRIPT_1;
-            case "2_", SCRIPT_2 -> SCRIPT_2;
-            case "3_", SCRIPT_3 -> SCRIPT_3;
-            case "4_", SCRIPT_4 -> SCRIPT_4;
+            case "1_", SCENARIO_1 -> SCENARIO_1;
+            case "2_", SCENARIO_2 -> SCENARIO_2;
+            case "3_", SCENARIO_3 -> SCENARIO_3;
+            case "4_", SCENARIO_4 -> SCENARIO_4;
             default -> lowerCaseCommand;
         };
     }
@@ -59,10 +46,10 @@ public class Utility {
             case flush:
                 correctLength = FLUSH_ARG_COUNT;
                 break;
-            case script1:
-            case script2:
-            case script3:
-            case script4:
+            case scenario1:
+            case scenario2:
+            case scenario3:
+            case scenario4:
                 correctLength = SCRIPT_ARG_COUNT;
                 break;
             default:

@@ -2,6 +2,7 @@ package shell.command;
 
 import shell.util.Logger;
 import shell.util.Utility;
+import static shell.util.ShellConstant.*;
 
 public class EraseCommand implements Command {
     private static final Logger log = Logger.getLogger();
@@ -31,10 +32,10 @@ public class EraseCommand implements Command {
         lba = Integer.parseInt(args[1]);
         size = Integer.parseInt(args[2]);
 
-        if (eraseType == CommandType.erase_range)
+        if (eraseType == CommandType.erase_range) {
             size = size - lba + 1;
-
-        size = Math.min(size, util.MAX_SSD_BLOCK - lba);
+        }
+        size = Math.min(size, MAX_SSD_BLOCK - lba);
     }
 
     @Override

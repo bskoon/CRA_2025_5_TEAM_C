@@ -6,21 +6,10 @@ import shell.util.Runner;
 
 import java.util.*;
 
+import static shell.util.ShellConstant.*;
+
 public class TestShell {
     private static final Logger log = Logger.getLogger();
-
-    private static final String READ = "read";
-    private static final String WRITE = "write";
-    private static final String ERASE = "erase";
-    private static final String FULLREAD = "fullread";
-    private static final String FULLWRITE = "fullwrite";
-    private static final String ERASERANGE = "erase_range";
-    private static final String FLUSH = "flush";
-    private static final String SCENARIO_1 = "1_fullwriteandreadcompare";
-    private static final String SCENARIO_2 = "2_partiallbawrite";
-    private static final String SCENARIO_3 = "3_writereadaging";
-    private static final String EXIT = "exit";
-    private static final String HELP = "help";
 
     private Scanner scanner;
     private boolean isRunning;
@@ -52,7 +41,7 @@ public class TestShell {
         executor.setCommand(SCENARIO_1, scenarioCommand);
         executor.setCommand(SCENARIO_2, scenarioCommand);
         executor.setCommand(SCENARIO_3, scenarioCommand);
-
+        executor.setCommand(SCENARIO_4, scenarioCommand);
         return executor;
     }
 

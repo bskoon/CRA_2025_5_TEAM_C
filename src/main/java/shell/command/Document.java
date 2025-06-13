@@ -1,19 +1,15 @@
 package shell.command;
 
+import shell.scenario.ScenarioFactory;
+import shell.scenario.TestScenario;
 import shell.util.Logger;
 import shell.util.SSDCaller;
-import shell.util.TestScenario;
 
 public class Document {
     private static final Logger log = Logger.getLogger();
 
-    private SSDCaller ssdCaller;
+    private SSDCaller ssdCaller = SSDCaller.getInstance();
     private TestScenario testScenario;
-
-    public Document() {
-        ssdCaller = SSDCaller.getInstance();
-        testScenario = new TestScenario(ssdCaller);
-    }
 
     public void read(int lba, int size) {
         for (int idx = 0; idx < size; idx++) {
@@ -24,8 +20,9 @@ public class Document {
     }
 
     public void write(int lba, int size, String updateData) {
-        for (int idx = 0; idx < size; idx++)
+        for (int idx = 0; idx < size; idx++) {
             ssdCaller.writeOnSSD(lba + idx, updateData);
+        }
     }
 
     public void erase(int lba, int size) {
@@ -37,29 +34,14 @@ public class Document {
     }
 
     public void scenario(CommandType type) {
-        String scenarioResult = "";
-        try {
-            switch (type) {
-                case script1:
-                    scenarioResult = testScenario.fullWriteAndReadCompare();
-                    break;
-                case script2:
-                    scenarioResult = testScenario.partialLBAWrite();
-                    break;
-                case script3:
-                    scenarioResult = testScenario.writeReadAging();
-                    break;
-                case script4:
-                    scenarioResult = testScenario.eraseAndWriteAging();
-                    break;
-                default:
-                    scenarioResult = "INVALID ARGUMENT";
-                    break;
-            }
-        } catch (Exception ignored) {
+        TestScenario testScenario = new ScenarioFactory(ssdCaller).getScenario(type);
+        if (testScenario == null) {
+            log.log("Document.scenario()", "Not implemented Scenario");
+            log.print("INVALID ARGUMENT");
         }
 
+        String scenarioResult = testScenario.executeScenario();
         log.log("Document.scenario()", "Result SCENARIO :" + scenarioResult);
-        log.print(scenarioResult);
+        System.out.println(scenarioResult);
     }
 }
