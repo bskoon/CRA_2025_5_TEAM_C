@@ -45,6 +45,8 @@ public class WriteCommand implements Command {
             size = 1;
             updateData = args[2];
         } else if (writeType == CommandType.fullwrite) {
+            lba = 0;
+            size = 100;
             updateData = args[1];
         }
     }
