@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TestShellTest {
+public class TestShell_readwrite {
 
     private static final int MAX_LBA = 99;
     private static final String TEST_VALUE = "0xABCDFFFF";
