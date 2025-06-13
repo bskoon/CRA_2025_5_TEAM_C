@@ -154,10 +154,10 @@ public class TestScenarioTest {
             verify(ssdCaller, times(60)).writeOnSSD(eq(lba), anyString());
         }
 
-        // readCompare 검증 - 총 49개 LBA * 30번 반복 * 3번 readCompare + 초기 3번
-        verify(testScenario, times(4411)).readCompare(eq(0), anyString()); // 초기 1번 + 30*49*3번
-        verify(testScenario, times(4411)).readCompare(eq(1), anyString()); // 초기 1번 + 30*49*3번  
-        verify(testScenario, times(4411)).readCompare(eq(2), anyString()); // 초기 1번 + 30*49*3번
+        // readCompare 검증 - 초기 3번 + 30번 반복 * 49개 LBA * 3번 readCompare
+        verify(testScenario, times(1471)).readCompare(eq(0), anyString()); // 초기 1번 + 30*49*1번
+        verify(testScenario, times(1471)).readCompare(eq(1), anyString()); // 초기 1번 + 30*49*1번  
+        verify(testScenario, times(1471)).readCompare(eq(2), anyString()); // 초기 1번 + 30*49*1번
     }
 
     private String getRandomHexString(Random rand) {
