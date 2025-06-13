@@ -1,81 +1,94 @@
 package ssd.command;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CommandBufferOptimizer {
 
+    private static final int MAX_ERASE_SIZE = 10;
+
     public static List<String> optimize(List<String> bufferCommands) {
         List<Command> parsed = parseCommands(bufferCommands);
-        List<Command> result = new ArrayList<>();
+
+        Map<Integer, Command> writeMap = new HashMap<>();
+        List<Command> eraseList = new ArrayList<>();
 
         for (Command current : parsed) {
-
-            // 중복 Write 제거 (같은 LBA에 대해 최신 값 유지)
-            result.removeIf(existing ->
-                    existing.isWrite() &&
-                            current.isWrite() &&
-                            existing.lba == current.lba
-            );
-
-            // Erase가 이전 Write를 덮는 경우 Write 제거
-            if (current.isErase()) {
-                result.removeIf(existing ->
-                        existing.isWrite() &&
-                                current.covers(existing.lba)
-                );
-            }
-
-            // Write가 이전 Erase의 일부를 덮는 경우:
-            // Erase가 단일 LBA만 지우고, 그 LBA에 Write가 들어오면 해당 Erase 제거
             if (current.isWrite()) {
-                Iterator<Command> it = result.iterator();
-                while (it.hasNext()) {
-                    Command existing = it.next();
-                    if (existing.isErase() && existing.covers(current.lba) && existing.size == 1) {
-                        it.remove(); // 단일 LBA만 지우는 Erase 제거
+                // 중복 write 제거 및 최신화
+                writeMap.put(current.lba, current);
+
+                // 기존 erase 중 current가 완전히 덮는 경우 제거
+                eraseList.removeIf(erase -> erase.covers(current.lba) && isFullyCoveredByWrites(erase, writeMap));
+
+            } else if (current.isErase()) {
+                // erase가 덮는 write 제거
+                for (int i = current.lba; i < current.lba + current.size; i++) {
+                    writeMap.remove(i);
+                }
+
+                // 병합 대상 탐색
+                List<Command> mergeTargets = new ArrayList<>();
+                for (Command e : eraseList) {
+                    if (e.overlapsOrTouches(current)) {
+                        mergeTargets.add(e);
                     }
                 }
-            }
 
-            // Erase 병합 로직
-            if (current.isErase()) {
-                Optional<Command> overlapping = result.stream()
-                        .filter(e -> e.isErase() && e.overlapsOrTouches(current))
-                        .findFirst();
+                // 병합 처리
+                if (!mergeTargets.isEmpty()) {
+                    int minLba = Math.min(current.lba, mergeTargets.stream().mapToInt(e -> e.lba).min().orElse(current.lba));
+                    int maxLba = Math.max(current.lba + current.size,
+                            mergeTargets.stream().mapToInt(e -> e.lba + e.size).max().orElse(current.lba + current.size));
 
-                if (overlapping.isPresent()) {
-                    Command prev = overlapping.get();
-                    int newStart = Math.min(prev.lba, current.lba);
-                    int newEnd = Math.max(prev.lba + prev.size, current.lba + current.size);
-                    prev.lba = newStart;
-                    prev.size = newEnd - newStart;
+                    List<Integer> effectiveLbas = new ArrayList<>();
+                    for (int i = minLba; i < maxLba; i++) {
+                        if (!writeMap.containsKey(i)) {
+                            effectiveLbas.add(i);
+                        }
+                    }
 
-                    // 병합 후 write 제거
-                    result.removeIf(existing ->
-                            existing.isWrite() &&
-                                    prev.covers(existing.lba)
-                    );
-                    continue;
+                    if (effectiveLbas.size() <= MAX_ERASE_SIZE) {
+                        eraseList.removeAll(mergeTargets);
+                        addEraseSegments(effectiveLbas, eraseList);
+                        continue; // current 병합 완료
+                    }
                 }
-            }
 
-            result.add(current);
+                eraseList.add(current);
+            }
         }
 
-        // 최종 번호 재정렬
-        return toCommandStrings(result);
+        List<Command> combined = new ArrayList<>(eraseList);
+        combined.addAll(writeMap.values());
+        combined.sort(Comparator.comparingInt(cmd -> cmd.lba));
+
+        return toCommandStrings(combined);
+    }
+
+    private static boolean isFullyCoveredByWrites(Command erase, Map<Integer, Command> writeMap) {
+        for (int i = erase.lba; i < erase.lba + erase.size; i++) {
+            if (!writeMap.containsKey(i)) return false;
+        }
+        return true;
+    }
+
+    private static void addEraseSegments(List<Integer> lbas, List<Command> result) {
+        for (int i = 0; i < lbas.size(); ) {
+            int start = lbas.get(i);
+            int j = i;
+            while (j + 1 < lbas.size() && lbas.get(j + 1) == lbas.get(j) + 1) j++;
+            result.add(new Command("E", start, lbas.get(j) - start + 1, null));
+            i = j + 1;
+        }
     }
 
     public static Optional<String> fastRead(List<String> bufferCommands, int readLBA) {
         List<Command> parsed = parseCommands(bufferCommands);
         Collections.reverse(parsed);
-
         for (Command cmd : parsed) {
-            if (cmd.isWrite() && cmd.lba == readLBA) {
-                return Optional.of(cmd.value);
-            } else if (cmd.isErase() && cmd.covers(readLBA)) {
-                return Optional.of("0x00000000");
-            }
+            if (cmd.isWrite() && cmd.lba == readLBA) return Optional.of(cmd.value);
+            if (cmd.isErase() && cmd.covers(readLBA)) return Optional.of("0x00000000");
         }
         return Optional.empty();
     }
@@ -85,33 +98,29 @@ public class CommandBufferOptimizer {
         for (String line : buffer) {
             String[] split = line.split("_");
             if (split.length < 4) continue;
-
             String type = split[1];
             int lba = Integer.parseInt(split[2]);
-
             if (type.equals("W")) {
-                String value = split[3];
-                list.add(new Command(type, lba, 0, value));
+                list.add(new Command("W", lba, 0, split[3]));
             } else if (type.equals("E")) {
                 int size = Integer.parseInt(split[3]);
-                list.add(new Command(type, lba, size, null));
+                list.add(new Command("E", lba, size, null));
             }
         }
         return list;
     }
 
     private static List<String> toCommandStrings(List<Command> commands) {
-        List<String> output = new ArrayList<>();
+        List<String> result = new ArrayList<>();
         int index = 1;
         for (Command cmd : commands) {
             if (cmd.isWrite()) {
-                output.add(index + "_W_" + cmd.lba + "_" + cmd.value);
-            } else if (cmd.isErase()) {
-                output.add(index + "_E_" + cmd.lba + "_" + cmd.size);
+                result.add(index++ + "_W_" + cmd.lba + "_" + cmd.value);
+            } else {
+                result.add(index++ + "_E_" + cmd.lba + "_" + cmd.size);
             }
-            index++;
         }
-        return output;
+        return result;
     }
 
     private static class Command {
@@ -140,9 +149,10 @@ public class CommandBufferOptimizer {
         }
 
         boolean overlapsOrTouches(Command other) {
-            return isErase() && other.isErase() &&
-                    (this.lba <= other.lba + other.size - 1 &&
-                            other.lba <= this.lba + this.size - 1);
+            int thisEnd = this.lba + this.size - 1;
+            int otherEnd = other.lba + other.size - 1;
+            return thisEnd + 1 >= other.lba && otherEnd + 1 >= this.lba;
         }
     }
 }
+
