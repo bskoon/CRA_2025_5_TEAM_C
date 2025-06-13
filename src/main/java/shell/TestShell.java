@@ -140,7 +140,7 @@ public class TestShell {
     }
 
     public static void main(String[] args) {
-        if (args != null)
+        if (args.length != 0)
             new Runner(args, initCommandExecutor()).run();
         else {
             TestShell shell = new TestShell();
