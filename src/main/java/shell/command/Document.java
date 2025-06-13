@@ -22,11 +22,13 @@ public class Document {
     public void write(int lba, int size, String updateData) {
         for (int idx = 0; idx < size; idx++) {
             ssdCaller.writeOnSSD(lba + idx, updateData);
+            log.log("Document.write()", "WRITE FINISH - LBA:" + (lba + idx) + "  DATA:" + updateData);
         }
     }
 
     public void erase(int lba, int size) {
         ssdCaller.eraseOnSSD(lba, size);
+        log.log("Document.erase()", "ERASE FINISH - START LBA:" + lba + ", SIZE:" + size);
     }
 
     public void flush() {
