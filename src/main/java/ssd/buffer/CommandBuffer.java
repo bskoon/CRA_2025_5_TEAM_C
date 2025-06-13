@@ -37,7 +37,18 @@ public class CommandBuffer {
     }
 
     public void bufferExecutor() {
-        ssdArgument.toString();
+        if(ssdArgument.getCommand().equals("R")){
+            //TODO : 버퍼에서 읽어서 있는지 체크
+            // 없을때 아래 로직 실행
+            commandExecutor.execute(ssdArgument.getArgs());
+        }else{
+            loadBufferFromFile();
+            if(buffer.size() == 5){
+                flush();
+            }
+            fileManager.get(buffer.size()).write(0,BUFFER_FOLDER_PATH+"/"+ssdArgument.makeFileName(buffer.size()+1));
+            // TODO:버퍼 최적화 알고리즘 돌리기.?
+        }
     }
 
     public List<String> checkFilesOrCreateEmpty(String directoryPath) {
@@ -57,7 +68,7 @@ public class CommandBuffer {
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, prefix + "*")) {
                     for (Path entry : stream) {
                         if (Files.isRegularFile(entry)) {
-                            fileManager.add(new BufferFileIO(entry.getFileName().toString()));  // 찾은 파일명 추가
+                            fileManager.add(new BufferFileIO(BUFFER_FOLDER_PATH+"/"+entry.getFileName().toString()));  // 찾은 파일명 추가
                             found = true;
                             break; // 하나만 존재해야 하므로 바로 break
                         }
@@ -69,7 +80,7 @@ public class CommandBuffer {
                     String emptyFileName = prefix + "empty.txt";
                     Path emptyFilePath = dirPath.resolve(emptyFileName);
                     Files.createFile(emptyFilePath);
-                    fileManager.add(new BufferFileIO(emptyFileName));
+                    fileManager.add(new BufferFileIO(BUFFER_FOLDER_PATH+"/"+emptyFileName));
                 }
             }
 
@@ -91,8 +102,8 @@ public class CommandBuffer {
         // todo: ssd flush 기능 추가
 
         // 파일 + 내부 캐싱 데이터 초기화
-        for (int i = 1; i <= 5; i++) {
-            fileManager.get(i).write(0, BUFFER_FOLDER_PATH + "/" + i + "_empty");
+        for (int i = 0; i < 5; i++) {
+            fileManager.get(i).write(0, BUFFER_FOLDER_PATH + "/" + (i+1) + "_empty.txt");
         }
         buffer.clear();
     }
@@ -100,7 +111,7 @@ public class CommandBuffer {
     public void loadBufferFromFile() {
         buffer.clear();
         for (BufferFileIO file : fileManager) {
-            buffer.add(file.loadCommands());
+            if(file.loadCommands()!=null)buffer.add(file.loadCommands());
         }
     }
 

@@ -23,6 +23,7 @@ public class BufferFileIO extends IOHandler{
 
 
     public String loadCommands() {
+        if(path.contains("empty")) return null;
         File file = new File(path);
         return file.getName();
     }

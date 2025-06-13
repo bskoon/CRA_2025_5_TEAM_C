@@ -90,4 +90,8 @@ public class SSDArgument {
     public String[] getArgs() {
         return args;
     }
+
+    public String makeFileName(int order){
+        return order+"_"+String.join("_",args)+".txt";
+    }
 }
