@@ -1,19 +1,21 @@
 package shell.command;
 
+import shell.util.Logger;
 import shell.util.Utility;
 import static shell.util.ShellConstant.*;
 
 public class EraseCommand implements Command {
+    private static final Logger log = Logger.getLogger();
+
     private Document document;
-    Utility util;
-    
+    Utility util = Utility.getInstance();
+
     int lba;
     int size;
     CommandType eraseType;
 
-    public EraseCommand (Document document) {
+    public EraseCommand(Document document) {
         this.document = document;
-        this.util = Utility.getInstance();
     }
 
     @Override
@@ -54,11 +56,12 @@ public class EraseCommand implements Command {
     public void execute(String[] args) {
         eraseType = CommandType.fromString(args[0]);
         if (!argumentCheck(args)) {
-            System.out.println("INVALID COMMAND");
+            log.print("INVALID COMMAND");
             return;
         }
         setArgument(args);
 
+        log.log("EraseCommand.execute()", "Execute ERASE - LBA:" + lba + "  SIZE:" + size);
         performEraseInChunks(lba, size);
     }
 

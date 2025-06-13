@@ -4,6 +4,7 @@ import shell.command.CommandType;
 import static shell.util.ShellConstant.*;
 
 public class Utility {
+    private static final Logger log = Logger.getLogger();
     private static Utility instance;
 
     public static Utility getInstance() {
@@ -14,22 +15,13 @@ public class Utility {
 
     public String getExactCommand(String rawCommand) {
         String lowerCaseCommand = rawCommand.toLowerCase();
-        switch (lowerCaseCommand) {
-            case "1_":
-            case SCENARIO_1:
-                return SCENARIO_1;
-            case "2_":
-            case SCENARIO_2:
-                return SCENARIO_2;
-            case "3_":
-            case SCENARIO_3:
-                return SCENARIO_3;
-            case "4_":
-            case SCENARIO_4:
-                return SCENARIO_4;
-            default:
-                return lowerCaseCommand;
-        }
+        return switch (lowerCaseCommand) {
+            case "1_", SCENARIO_1 -> SCENARIO_1;
+            case "2_", SCENARIO_2 -> SCENARIO_2;
+            case "3_", SCENARIO_3 -> SCENARIO_3;
+            case "4_", SCENARIO_4 -> SCENARIO_4;
+            default -> lowerCaseCommand;
+        };
     }
 
     public boolean isValidParameterCount(CommandType type, int argLength) {
@@ -61,6 +53,7 @@ public class Utility {
                 correctLength = SCRIPT_ARG_COUNT;
                 break;
             default:
+                log.log("Utility.isValidParameterCount()", "INVALID PARAMETER");
                 break;
         }
         return correctLength == argLength;
@@ -71,12 +64,17 @@ public class Utility {
         try {
             lba = Integer.parseInt(lbaString);
         } catch (NumberFormatException e) {
+            log.log("Utility.isValidLBA()", "INVALID LBA");
             return false;
         }
 
         return lba >= 0 && lba < MAX_SSD_BLOCK;
     }
     public boolean isValidUpdateData(String updateData) {
-        return updateData.matches("0x[0-9A-F]{8}");
+        if (updateData.matches("0x[0-9A-F]{8}")) return true;
+        else {
+            log.log("Utility.isValidUpdateData()", "INVALID DATA");
+            return false;
+        }
     }
 }

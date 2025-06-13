@@ -1,16 +1,14 @@
 package shell.command;
 
-import shell.util.Utility;
+import shell.util.Logger;
 
 public class ScenarioCommand implements Command {
+    private static final Logger log = Logger.getLogger();
+
     private Document document;
-    private Utility util;
 
-    CommandType scenarioName;
-
-    public ScenarioCommand (Document document) {
+    public ScenarioCommand(Document document) {
         this.document = document;
-        this.util = Utility.getInstance();
     }
 
     @Override
@@ -23,10 +21,10 @@ public class ScenarioCommand implements Command {
         // Do Nothing
     }
 
-
     @Override
     public void execute(String[] args) {
         CommandType scriptType = CommandType.fromString(args[0]);
+        log.log("ScenarioCommand.execute()", "Execute SCENARIO - NAME:" + args[0]);
         document.scenario(scriptType);
     }
 }
