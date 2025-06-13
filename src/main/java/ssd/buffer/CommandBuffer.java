@@ -1,6 +1,7 @@
 package ssd.buffer;
 
 import ssd.IO.BufferFileIO;
+import ssd.command.BufferUtil;
 import ssd.command.CommandExecutor;
 
 import java.io.File;
@@ -9,18 +10,13 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static ssd.SSDConstant.BUFFER_FOLDER_PATH;
 
 public class CommandBuffer {
-    // 확인할 접두어 배열
-    private final String[] prefixes = {"1_", "2_", "3_", "4_", "5_"};
     private final List<String> buffer = new ArrayList<>();
-    private final int maxSize = 5;
+    private final int MAX_SIZE = 5;
 
     private final List<BufferFileIO> fileManager;
     private final CommandExecutor commandExecutor;
@@ -37,7 +33,67 @@ public class CommandBuffer {
     }
 
     public void bufferExecutor() {
-        ssdArgument.toString();
+        switch (ssdArgument.getCommand()){
+            case "R":
+                //버퍼에서 읽어서 값 있는지 체크
+                String bufferData =readBuffer(ssdArgument.getLba());
+                if(bufferData !=null){
+                    commandExecutor.getOutputIO().write(0,bufferData);
+                }else{
+                    // 없을때
+                    commandExecutor.execute(ssdArgument.getArgs());
+                }
+                break;
+            case "W":
+            case "E":
+                // 버퍼 갱신
+                loadBufferFromFile();
+                if(buffer.size() >= MAX_SIZE){
+                    flush();
+                }
+                fileManager.get(buffer.size()).write(0,BUFFER_FOLDER_PATH+"/"+ssdArgument.makeFileName(buffer.size()+1));
+                // 버퍼 최적화 알고리즘 돌리기.?
+                rewriteBuffer();
+                break;
+            case "F":
+                flush();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private String readBuffer(int lba) {loadBufferFromFile();
+        List<String> bufferList = new ArrayList<>();
+        for(String command : buffer){
+            String fixedCommand = command.replace(".txt","");
+            bufferList.add(fixedCommand);
+        }
+        BufferUtil util = new BufferUtil();
+        HashMap<Integer,String> result = util.makeMemory(bufferList);
+
+        return result.get(lba);
+    }
+
+    private void rewriteBuffer() {
+        loadBufferFromFile();
+        List<String> bufferList = new ArrayList<>();
+        for(String command : buffer){
+            String fixedCommand = command.replace(".txt","");
+            bufferList.add(fixedCommand);
+        }
+        BufferUtil util = new BufferUtil();
+        List<String> result = util.makeCommand(util.makeMemory(bufferList));
+
+        for(int i=0;i<MAX_SIZE;i++){
+            BufferFileIO io = fileManager.get(i);
+            if(result.size()>i){
+               io.write(0,BUFFER_FOLDER_PATH+"/"+result.get(i)+".txt");
+            }else{
+               io.write(0,BUFFER_FOLDER_PATH+"/"+(i+1)+"_empty.txt");
+            }
+        }
+
     }
 
     public List<String> checkFilesOrCreateEmpty(String directoryPath) {
@@ -57,7 +113,7 @@ public class CommandBuffer {
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, prefix + "*")) {
                     for (Path entry : stream) {
                         if (Files.isRegularFile(entry)) {
-                            fileManager.add(new BufferFileIO(entry.getFileName().toString()));  // 찾은 파일명 추가
+                            fileManager.add(new BufferFileIO(BUFFER_FOLDER_PATH+"/"+entry.getFileName().toString()));  // 찾은 파일명 추가
                             found = true;
                             break; // 하나만 존재해야 하므로 바로 break
                         }
@@ -69,7 +125,7 @@ public class CommandBuffer {
                     String emptyFileName = prefix + "empty.txt";
                     Path emptyFilePath = dirPath.resolve(emptyFileName);
                     Files.createFile(emptyFilePath);
-                    fileManager.add(new BufferFileIO(emptyFileName));
+                    fileManager.add(new BufferFileIO(BUFFER_FOLDER_PATH+"/"+emptyFileName));
                 }
             }
 
@@ -80,19 +136,16 @@ public class CommandBuffer {
         return fileList;
     }
 
-    public void addCommand(String command) {
-        buffer.add(command);
-        if (buffer.size() >= maxSize) {
-            flush();
-        }
-    }
-
     public void flush() {
         // todo: ssd flush 기능 추가
+        for(String commands: buffer){
+            SSDArgument convertedCommand = new SSDArgument(commands.replace(".txt","").substring(2).split("_"));
+            commandExecutor.execute(convertedCommand.getArgs());
+        }
 
         // 파일 + 내부 캐싱 데이터 초기화
-        for (int i = 1; i <= 5; i++) {
-            fileManager.get(i).write(0, BUFFER_FOLDER_PATH + "/" + i + "_empty");
+        for (int i = 0; i < MAX_SIZE; i++) {
+            fileManager.get(i).write(0, BUFFER_FOLDER_PATH + "/" + (i+1) + "_empty.txt");
         }
         buffer.clear();
     }
@@ -100,29 +153,11 @@ public class CommandBuffer {
     public void loadBufferFromFile() {
         buffer.clear();
         for (BufferFileIO file : fileManager) {
-            buffer.add(file.loadCommands());
+            if(file.loadCommands()!=null)buffer.add(file.loadCommands());
         }
     }
 
     public List<String> getBuffer() {
         return new ArrayList<>(buffer); // 외부에 복사본 제공
-    }
-
-    public boolean isEmpty() {
-        return buffer.isEmpty();
-    }
-
-
-    public void errorWrite(int i, String error) {
-    }
-
-    public void flush(List<String> commandList) {
-        Collections.sort(commandList);
-
-        for (String commandData : commandList) {
-            String[] original = commandData.split("_");
-            String[] trimmed = Arrays.copyOfRange(original, 1, original.length);
-            commandExecutor.execute(trimmed);
-        }
     }
 }

@@ -11,7 +11,10 @@ import java.util.Map;
 public class CommandExecutor {
     private final Map<String, Command> commandMap = new HashMap<>();
 
+    private final OutputIO outputIO;
+
     public CommandExecutor(SSDIO ssdio, OutputIO outputIO) {
+        this.outputIO = outputIO;
         commandMap.put("R", new ReadCommand(ssdio, outputIO));
         commandMap.put("W", new WriteCommand(ssdio, outputIO));
         commandMap.put("E", new EraseCommand(ssdio, outputIO));
@@ -26,5 +29,9 @@ public class CommandExecutor {
             throw new RuntimeException("Unknown command: " + args[0]);
 
         command.execute(args);
+    }
+
+    public OutputIO getOutputIO() {
+        return outputIO;
     }
 }
