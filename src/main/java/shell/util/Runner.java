@@ -25,8 +25,7 @@ public class Runner {
 
     private void validCheck() {
         if (!SCRIPT_FILE.exists())
-            throw new RuntimeException();
-
+            throw new RuntimeException("Invalid File Name");
     }
 
     public void run() {
