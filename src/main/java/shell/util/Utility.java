@@ -1,6 +1,7 @@
 package shell.util;
 
 import shell.command.CommandType;
+import static shell.util.ShellConstant.*;
 
 public class Utility {
     private static Utility instance;
@@ -10,33 +11,19 @@ public class Utility {
         return instance;
     }
 
-    private static final int READ_ARG_COUNT = 2;
-    private static final int FULLREAD_ARG_COUNT = 1;
-    private static final int WRITE_ARG_COUNT = 3;
-    private static final int FULLWRITE_ARG_COUNT = 2;
-    private static final int ERASE_ARG_COUNT = 3;
-    private static final int FLUSH_ARG_COUNT = 1;
-    private static final int SCRIPT_ARG_COUNT = 1;
-
-    public static final String SCRIPT_1 = "1_fullwriteandreadcompare";
-    public static final String SCRIPT_2 = "2_partiallbawrite";
-    public static final String SCRIPT_3 = "3_writereadaging";
-    public static final String SCRIPT_4 = "4_eraseandwriteaging";
-
-    public static final int MAX_SSD_BLOCK = 100;
 
     public String getExactCommand(String rawCommand) {
         String lowerCaseCommand = rawCommand.toLowerCase();
         switch (lowerCaseCommand) {
             case "1_":
-            case SCRIPT_1:
-                return SCRIPT_1;
+            case SCENARIO_1:
+                return SCENARIO_1;
             case "2_":
-            case SCRIPT_2:
-                return SCRIPT_2;
+            case SCENARIO_2:
+                return SCENARIO_2;
             case "3_":
-            case SCRIPT_3:
-                return SCRIPT_3;
+            case SCENARIO_3:
+                return SCENARIO_3;
             case "4_":
             case SCRIPT_4:
                 return SCRIPT_4;
