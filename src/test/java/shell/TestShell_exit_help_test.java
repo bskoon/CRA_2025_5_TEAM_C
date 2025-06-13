@@ -4,26 +4,18 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import shell.command.CommandExecutor;
-import shell.command.Document;
-import shell.command.FlushCommand;
 
 import java.io.*;
 import java.util.*;
 
-import static java.lang.System.exit;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TestShell_exit_help_test {
-    private Document mockDocument;
     private ByteArrayOutputStream outputStream;
     private PrintStream originalOut;
     private TestShell testShell;
-
-    @Mock
-    private TestShell mockTestShell;
 
     @BeforeEach
     void setUp() {
@@ -32,10 +24,6 @@ public class TestShell_exit_help_test {
         outputStream = new ByteArrayOutputStream();
         originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
-
-        mockDocument = mock(Document.class);
-
-
     }
 
     @AfterEach
