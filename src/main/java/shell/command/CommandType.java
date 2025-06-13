@@ -3,7 +3,7 @@ package shell.command;
 import static shell.util.ShellConstant.*;
 
 public enum CommandType {
-    read, write, fullread, fullwrite, erase, erase_range, flush, script1, script2, script3, script4;
+    read, write, fullread, fullwrite, erase, erase_range, flush, scenario1, scenario2, scenario3, scenario4;
 
     public static CommandType fromString(String value) {
         if (value == null) {
@@ -18,10 +18,10 @@ public enum CommandType {
             case ERASE -> erase;
             case ERASERANGE -> erase_range;
             case FLUSH -> flush;
-            case SCENARIO_1 -> script1;
-            case SCENARIO_2 -> script2;
-            case SCENARIO_3 -> script3;
-            case SCENARIO_4 -> script4;
+            case SCENARIO_1 -> scenario1;
+            case SCENARIO_2 -> scenario2;
+            case SCENARIO_3 -> scenario3;
+            case SCENARIO_4 -> scenario4;
             default -> throw new RuntimeException("알 수 없는 명령: " + value);
         };
     }
