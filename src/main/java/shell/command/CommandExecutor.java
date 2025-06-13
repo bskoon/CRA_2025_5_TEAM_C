@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class CommandExecutor {
     private Map<String, Command> commandMap = new HashMap<>();
-    private Utility util = Utility.getLogger();
+    private Utility util = Utility.getInstance();
 
     public void setCommand(String key, Command command) {
         commandMap.put(key, command);

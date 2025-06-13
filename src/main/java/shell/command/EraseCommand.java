@@ -12,7 +12,7 @@ public class EraseCommand implements Command {
 
     public EraseCommand (Document document) {
         this.document = document;
-        this.util = Utility.getLogger();
+        this.util = Utility.getInstance();
     }
 
     @Override

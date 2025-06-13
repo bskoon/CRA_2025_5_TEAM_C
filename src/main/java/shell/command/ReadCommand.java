@@ -12,7 +12,7 @@ public class ReadCommand implements Command {
 
     public ReadCommand (Document document) {
         this.document = document;
-        this.util = Utility.getLogger();
+        this.util = Utility.getInstance();
 
         this.lba = 0;
         this.size = util.MAX_SSD_BLOCK;

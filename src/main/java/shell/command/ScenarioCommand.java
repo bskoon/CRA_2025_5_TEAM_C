@@ -10,7 +10,7 @@ public class ScenarioCommand implements Command {
 
     public ScenarioCommand (Document document) {
         this.document = document;
-        this.util = Utility.getLogger();
+        this.util = Utility.getInstance();
     }
 
     @Override

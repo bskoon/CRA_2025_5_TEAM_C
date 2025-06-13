@@ -8,7 +8,7 @@ public class FlushCommand implements Command {
 
     public FlushCommand (Document document) {
         this.document = document;
-        this.util = Utility.getLogger();
+        this.util = Utility.getInstance();
     }
 
     @Override

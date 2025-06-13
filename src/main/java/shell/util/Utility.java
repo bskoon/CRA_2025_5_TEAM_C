@@ -5,7 +5,7 @@ import shell.command.CommandType;
 public class Utility {
     private static Utility instance;
 
-    public static Utility getLogger() {
+    public static Utility getInstance() {
         if (instance == null) instance = new Utility();
         return instance;
     }
@@ -21,11 +21,13 @@ public class Utility {
     public static final String SCRIPT_1 = "1_fullwriteandreadcompare";
     public static final String SCRIPT_2 = "2_partiallbawrite";
     public static final String SCRIPT_3 = "3_writereadaging";
+    public static final String SCRIPT_4 = "4_eraseandwriteaging";
 
     public static final int MAX_SSD_BLOCK = 100;
 
     public String getExactCommand(String rawCommand) {
-        switch (rawCommand) {
+        String lowerCaseCommand = rawCommand.toLowerCase();
+        switch (lowerCaseCommand) {
             case "1_":
             case SCRIPT_1:
                 return SCRIPT_1;
@@ -35,8 +37,11 @@ public class Utility {
             case "3_":
             case SCRIPT_3:
                 return SCRIPT_3;
+            case "4_":
+            case SCRIPT_4:
+                return SCRIPT_4;
             default:
-                return rawCommand.toLowerCase();
+                return lowerCaseCommand;
         }
     }
 

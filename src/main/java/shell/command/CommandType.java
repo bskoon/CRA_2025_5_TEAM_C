@@ -18,8 +18,8 @@ public enum CommandType {
             case "flush" -> flush;
             case "1_fullwriteandreadcompare" -> script1;
             case "2_partiallbawrite" -> script2;
-            case "3_writereadaging" -> script3;
-            case "4_writereadaging" -> script4;
+            case "3_writereadaginig" -> script3;
+            case "4_eraseandwriteaging" -> script4;
             default -> throw new RuntimeException("알 수 없는 명령: " + value);
         };
     }

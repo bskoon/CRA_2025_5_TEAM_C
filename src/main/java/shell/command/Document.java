@@ -8,7 +8,7 @@ public class Document {
     private TestScenario testScenario;
 
     public Document() {
-        ssdCaller = SSDCaller.getSSDCaller();
+        ssdCaller = SSDCaller.getInstance();
         testScenario = new TestScenario(ssdCaller);
     }
 
