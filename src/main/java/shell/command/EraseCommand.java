@@ -1,13 +1,24 @@
 package shell.command;
 
+import shell.util.Utility;
+
 public class EraseCommand implements Command {
-    private static final int MAX_LBA = 99;
     private Document document;
+    Utility util;
+
     public EraseCommand (Document document) {
         this.document = document;
+        this.util = Utility.getLogger();
     }
-    public boolean isValidLBA(int lba) {
-        return lba >= 0 && lba <= MAX_LBA;
+
+    @Override
+    public boolean argumentCheck(String[] args) {
+
+    }
+
+    @Override
+    public void setArgument(String[] args) {
+
     }
 
     @Override

@@ -1,29 +1,28 @@
 package shell.command;
 
+import shell.util.Utility;
+
 public class FlushCommand implements Command {
-    private static final int FLUSH_ARG_COUNT = 1;
     Document document;
+    Utility util;
 
     public FlushCommand (Document document) {
         this.document = document;
+        this.util = Utility.getLogger();
     }
 
-    public boolean isArgumentValid(int argLength) {
-        if (!isValidParameter(argLength)) return false;
-        return true;
+    @Override
+    public boolean argumentCheck(String[] args) {
+        return false;
     }
 
-    private boolean isValidParameter(int argLength) {
-        return argLength == FLUSH_ARG_COUNT;
+    @Override
+    public void setArgument(String[] args) {
+        // Do Nothing
     }
 
     @Override
     public void execute(String[] args) {
-        if (!isArgumentValid(args.length)) {
-            System.out.println("INVALID COMMAND");
-            return;
-        }
-
         document.flush();
     }
 }

@@ -1,48 +1,46 @@
 package shell.command;
 
-public class ReadCommand implements Command {
-    private static final int READ_ARG_COUNT = 2;
-    private static final int FULLREAD_ARG_COUNT = 1;
-    private static final int MAX_SSD_BLOCK = 100;
+import shell.util.Utility;
 
+public class ReadCommand implements Command {
     private Document document;
+    Utility util;
+
+    int lba;
+    int size;
+    CommandType readType;
 
     public ReadCommand (Document document) {
         this.document = document;
+        this.util = Utility.getLogger();
+
+        this.lba = 0;
+        this.size = util.MAX_SSD_BLOCK;
     }
 
-    public boolean isArgumentValid(int argLength, boolean isFull, int lba) {
-        if (!isValidParameter(argLength, isFull)) return false;
-        if (!isValidLBA(lba)) return false;
+    @Override
+    public boolean argumentCheck(String[] args) {
+        if (readType == CommandType.fullread)  return true;
+        if (!util.isValidLBA(args[1])) return false;
         return true;
     }
 
-    public boolean isValidParameter(int argLength, boolean isFull) {
-        if (isFull) return argLength == FULLREAD_ARG_COUNT;
-        return argLength == READ_ARG_COUNT;
-    }
-
-    public boolean isValidLBA(int lba) {
-        return lba >= 0 && lba < MAX_SSD_BLOCK;
+    @Override
+    public void setArgument(String[] args) {
+        if (readType == CommandType.read) {
+            lba = Integer.parseInt(args[1]);
+            size = 1;
+        }
     }
 
     @Override
     public void execute(String[] args) {
-        boolean isFull = args[0].equals("fullread");
-
-        int lba = 0;
-        int size = MAX_SSD_BLOCK;
-
-        if (!isFull) {
-            lba = Integer.parseInt(args[1]);
-            size = 1;
-        }
-
-        if (!isArgumentValid(args.length, isFull, lba)) {
+        readType = CommandType.fromString(args[0]);
+        if (!argumentCheck(args)) {
             System.out.println("INVALID COMMAND");
             return;
         }
-
+        setArgument(args);
 
         document.read(lba, size);
     }
