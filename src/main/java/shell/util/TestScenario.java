@@ -14,6 +14,11 @@ public class TestScenario {
         this.rand = new Random();
     }
 
+    public TestScenario(SSDCaller ssdCaller, Random random) {
+        this.ssdCaller = ssdCaller;
+        this.rand = random;
+    }
+
     public String fullWriteAndReadCompare() throws IOException {
         for(int i=0;i<20;i++){
             for(int j=0;j<5;j++){
@@ -52,7 +57,7 @@ public class TestScenario {
         return "";
     }
 
-    private String readCompare(int i, String s) throws IOException {
+    public String readCompare(int i, String s) throws IOException {
         String result = ssdCaller.readOnSSD(i);
 
         if(!result.equals(s)) return "FAIL";
