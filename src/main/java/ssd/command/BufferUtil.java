@@ -34,6 +34,12 @@ public class BufferUtil {
                 if(mem.get(i).equals("0x00000000")){
                     if(eraseStart == -1){
                         eraseStart =i;
+                    }else{
+                        if(i-eraseStart==9){
+                            result.add(commandOrder+"_E_"+eraseStart+"_"+(i-eraseStart+1));
+                            commandOrder++;
+                            eraseStart = -1;
+                        }
                     }
                 }
             }else{
@@ -49,7 +55,7 @@ public class BufferUtil {
 
         for(Integer lba : mem.keySet()){
             if(!mem.get(lba).equals("0x00000000")){
-                result.add(commandOrder+"_W_"+mem.get(lba));
+                result.add(commandOrder+"_W_"+lba+"_"+mem.get(lba));
                 commandOrder++;
             }
         }
