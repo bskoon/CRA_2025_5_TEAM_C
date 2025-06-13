@@ -8,8 +8,6 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.util.List;
 
-import static shell.TestShell.initCommandExecutor;
-
 public class Runner {
     private File SCRIPT_FILE;
 
@@ -51,9 +49,5 @@ public class Runner {
 
         System.setOut(originalOut);
         return outContent.toString().replace("\r\n", "");
-    }
-
-    public static void main(String[] args) {
-        new Runner(new String[]{"shell_scripts.txt"}, initCommandExecutor()).run();
     }
 }
