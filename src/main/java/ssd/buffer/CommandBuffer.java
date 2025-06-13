@@ -135,13 +135,6 @@ public class CommandBuffer {
         return fileList;
     }
 
-    public void addCommand(String command) {
-        buffer.add(command);
-        if (buffer.size() >= maxSize) {
-            flush();
-        }
-    }
-
     public void flush() {
         // todo: ssd flush 기능 추가
         for(String commands: buffer){
@@ -165,23 +158,5 @@ public class CommandBuffer {
 
     public List<String> getBuffer() {
         return new ArrayList<>(buffer); // 외부에 복사본 제공
-    }
-
-    public boolean isEmpty() {
-        return buffer.isEmpty();
-    }
-
-
-    public void errorWrite(int i, String error) {
-    }
-
-    public void flush(List<String> commandList) {
-        Collections.sort(commandList);
-
-        for (String commandData : commandList) {
-            String[] original = commandData.split("_");
-            String[] trimmed = Arrays.copyOfRange(original, 1, original.length);
-            commandExecutor.execute(trimmed);
-        }
     }
 }
