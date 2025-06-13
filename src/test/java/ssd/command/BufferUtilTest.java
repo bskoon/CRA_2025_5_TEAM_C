@@ -350,4 +350,20 @@ class BufferUtilTest {
         assertTrue(optimized.contains("1_E_89_10"));
         assertTrue(optimized.contains("2_W_99_0x56785678"));
     }
+
+    @Test
+    void tc1() {
+        List<String> commands = List.of(
+                "1_E_0_3",
+                "2_E_3_3",
+                "3_E_6_3",
+                "4_E_9_3"
+        );
+
+        List<String> optimized = bufferUtil.makeCommand(bufferUtil.makeMemory(commands));
+
+        assertEquals(2, optimized.size());
+        assertTrue(optimized.contains("1_E_0_10"));
+        assertTrue(optimized.contains("2_E_10_2"));
+    }
 }
