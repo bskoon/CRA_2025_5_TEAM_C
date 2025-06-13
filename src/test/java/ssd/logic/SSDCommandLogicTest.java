@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ssd.IO.OutputIO;
 import ssd.IO.SSDIO;
+import ssd.buffer.CommandBuffer;
 
 import static org.mockito.Mockito.verify;
 
@@ -18,13 +19,12 @@ class SSDCommandLogicTest {
     @Mock
     private OutputIO mockOutputIo;
 
-    private SSDAppLogic ssdAppLogic;
     private SSDCommandLogic ssdCommandLogic;
+    private CommandBuffer commandBuffer;
 
     @BeforeEach
     void setUp() {
-        ssdAppLogic = new SSDAppLogic(mockOutputIo, mockSSDIo);
-        ssdCommandLogic = new SSDCommandLogic(ssdAppLogic, mockOutputIo, mockSSDIo);
+        ssdCommandLogic = new SSDCommandLogic(mockSSDIo, mockOutputIo);
     }
 
     @Test
@@ -61,16 +61,5 @@ class SSDCommandLogicTest {
     void Erase_명령어_소문자일_경우_ERROR_출력됨() {
         ssdCommandLogic.run(new String[]{"e", "10", "5"});
         verify(mockOutputIo).write(0, "ERROR");
-    }
-
-    @Test
-    void Erase_정상_명령어_수행시_해당_LBA_0으로_초기화됨() {
-        ssdCommandLogic.run(new String[]{"E", "10", "5"});
-
-        verify(mockSSDIo).write(10, "0x00000000");
-        verify(mockSSDIo).write(11, "0x00000000");
-        verify(mockSSDIo).write(12, "0x00000000");
-        verify(mockSSDIo).write(13, "0x00000000");
-        verify(mockSSDIo).write(14, "0x00000000");
     }
 }

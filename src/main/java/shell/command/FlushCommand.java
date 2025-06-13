@@ -2,13 +2,11 @@ package shell.command;
 
 import shell.util.Utility;
 
-public class ScenarioCommand implements Command {
-    private Document document;
-    private Utility util;
+public class FlushCommand implements Command {
+    Document document;
+    Utility util;
 
-    CommandType scenarioName;
-
-    public ScenarioCommand (Document document) {
+    public FlushCommand (Document document) {
         this.document = document;
         this.util = Utility.getInstance();
     }
@@ -23,10 +21,8 @@ public class ScenarioCommand implements Command {
         // Do Nothing
     }
 
-
     @Override
     public void execute(String[] args) {
-        CommandType scriptType = CommandType.fromString(args[0]);
-        document.scenario(scriptType);
+        document.flush();
     }
 }

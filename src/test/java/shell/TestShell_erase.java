@@ -1,31 +1,37 @@
 package shell;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.mockito.InOrder;
 import org.mockito.junit.jupiter.MockitoExtension;
+import shell.command.Document;
+import shell.command.EraseCommand;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
 public class TestShell_erase {
-    EraseCommand eraseCommand;
+    private EraseCommand eraseCommand;
+    private Document mockDocument;
     private ByteArrayOutputStream outputStream;
     private PrintStream originalOut;
 
     @BeforeEach
     void setup() {
         // Arrange
-        eraseCommand = Mockito.spy(new EraseCommand());
+        outputStream = new ByteArrayOutputStream();
         originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
+
+        mockDocument = mock(Document.class);
+        eraseCommand = new EraseCommand(mockDocument);
     }
 
     @AfterEach
@@ -36,136 +42,98 @@ public class TestShell_erase {
 
     @Test
     void Erase_size_미변경_케이스_테스트(){
-        int lba = 98;
-        int size = 1;
-        int realsize = 1;
+        // Given
+        String[] args = {"erase", "98", "1"};
 
-        // preprocess 결과를 stub
-        doReturn(realsize).when(eraseCommand).calErasedBufferSize(lba, size);
+        // When
+        eraseCommand.execute(args);
 
-        // Act
-        eraseCommand.callSsdEraseProcess(lba, size);
-
-        // Assert
-        verify(eraseCommand).generateCommand("E", lba, String.valueOf(realsize));
+        // Then
+        verify(mockDocument).erase(98, 1);
     }
 
     @Test
     void Erase_size_변경_케이스_테스트(){
-        int lba = 98;
-        int size = 3;
-        int realsize = 2;
+        String[] args = {"erase", "98", "3"};
 
-        // preprocess 결과를 stub
-        doReturn(realsize).when(eraseCommand).calErasedBufferSize(lba, size);
+        // When
+        eraseCommand.execute(args);
 
-        // Act
-        eraseCommand.callSsdEraseProcess(lba, size);
-
-        // Assert
-        verify(eraseCommand).generateCommand("E", lba, String.valueOf(realsize));
+        // Then
+        verify(mockDocument).erase(98, 2);
     }
 
     @Test
     void Erase_Range_size_미변경_케이스_테스트(){
-        int startlba = 98;
-        int endlba = 99;
-        int realsize = 2;
+        // Given
+        String[] args = {"erase_range", "98", "99"}; // startLBA = 98, endLBA = 99 → size = 2
 
-        // preprocess 결과를 stub
-        doReturn(realsize).when(eraseCommand).calErasedRangedBufferSize(startlba, endlba);
+        // When
+        eraseCommand.execute(args);
 
-        // Act
-        eraseCommand.callSsdEraseRangeProcess(startlba, endlba);
-
-        // Assert
-        verify(eraseCommand).generateCommand("E", startlba, String.valueOf(realsize));
+        // Then
+        verify(mockDocument).erase(98, 2);
     }
 
     @Test
     void Erase_최대_사이즈_초과시_나눠서_보내는지_테스트(){
-        int lba = 80;
-        int size = 15;
-        int nextlba = 90;
-        int nextsize = 5;
-        int returnSize = 10;
-        int nextReturnSize = 5;
+        // Given
+        String[] args = {"erase", "80", "15"};
 
-        // 각 청크 사이즈에 대해 calErasedBufferSize stub
-        doReturn(returnSize).when(eraseCommand).calErasedBufferSize(lba, size);
-        doReturn(nextReturnSize).when(eraseCommand).calErasedBufferSize(nextlba, nextsize);
+        // When
+        eraseCommand.execute(args);
 
-        // Act
-        eraseCommand.callSsdEraseProcess(lba, size);
+        // Then
+        InOrder inOrder = inOrder(mockDocument);
+        inOrder.verify(mockDocument).erase(80, 10); // 첫 chunk
+        inOrder.verify(mockDocument).erase(90, 5);  // 두 번째 chunk
 
-        // Assert
-        // 각각의 chunk에 대해 generateCommand가 호출되었는지 검증
-        verify(eraseCommand).generateCommand("E", 80, String.valueOf(returnSize));  // 첫 청크
-        verify(eraseCommand).generateCommand("E", 90, String.valueOf(nextReturnSize));  // 두 번째 청크
+        // 정확히 두 번만 호출되었는지 확인 (불필요한 호출 방지)
+        verify(mockDocument, times(2)).erase(anyInt(), anyInt());
     }
 
     @Test
     void Erase_Range_최대_사이즈_초과시_나눠서_보내는지_테스트(){
-        int startlba = 80;
-        int endlba = 95;
-        int nextlba = 90;
-        int returnSize = 10;
-        int nextReturnSize = 5;
+        // Given
+        String[] args = {"erase_range", "80", "95"}; // size = 16
 
-        // preprocess 결과를 stub
-        doReturn(returnSize).when(eraseCommand).calErasedRangedBufferSize(startlba, endlba);
-        doReturn(nextReturnSize).when(eraseCommand).calErasedRangedBufferSize(startlba, nextlba);
+        // When
+        eraseCommand.execute(args);
 
-        // Act
-        eraseCommand.callSsdEraseRangeProcess(startlba, endlba);
+        // Then
+        InOrder inOrder = inOrder(mockDocument);
+        inOrder.verify(mockDocument).erase(80, 10); // 첫 chunk
+        inOrder.verify(mockDocument).erase(90, 6);  // 두 번째 chunk
 
-        // Assert
-        verify(eraseCommand).generateCommand("E", startlba, String.valueOf(returnSize));
-        verify(eraseCommand).generateCommand("E", nextlba, String.valueOf(nextReturnSize));  // 두 번째 청크
+        // 정확히 두 번만 호출되었는지 검증
+        verify(mockDocument, times(2)).erase(anyInt(), anyInt());
     }
 
     @Test
     void Erase_lba_범위_벗어나는_케이스_테스트(){
-        // Arrange
-        int lba = 100;
-        int size = 3;
+        // Given
+        String[] args = {"erase", "100", "3"}; // LBA = 100 → 범위 초과
 
-        doAnswer(invocation -> {
-            int l = invocation.getArgument(0);
-            int s = invocation.getArgument(1);
-            if (l > 99 || l < 0) {
-                System.out.println("INVALID COMMAND");
-            }
-            return null;
-        }).when(eraseCommand).callSsdEraseProcess(anyInt(), anyInt());
+        // When
+        eraseCommand.execute(args);
 
-        // Act
-        eraseCommand.callSsdEraseProcess(lba, size);
-
-        // Assert
+        // Then
         String output = outputStream.toString().trim();
         assertTrue(output.contains("INVALID COMMAND"));
+        verify(mockDocument, never()).erase(anyInt(), anyInt()); // 실제 호출 없음
     }
 
     @Test
     void Erase_range_lba_벗어나는_케이스_테스트(){
-        int startlba = 80;
-        int endlba = 100;
+        // Given
+        String[] args = {"erase_range", "80", "100"}; // endLBA = 100 → 유효 범위 초과
 
-        doAnswer(invocation -> {
-            int s = invocation.getArgument(0);
-            int e = invocation.getArgument(1);
-            if (s > 99 || s < 0 || e > 99 | e < 0) {
-                System.out.println("INVALID COMMAND");
-            }
-            return null;
-        }).when(eraseCommand).callSsdEraseProcess(anyInt(), anyInt());
+        // When
+        eraseCommand.execute(args);
 
-        // Act
-        eraseCommand.callSsdEraseRangeProcess(startlba, endlba);
-
-        // Assert
+        // Then
         String output = outputStream.toString().trim();
         assertTrue(output.contains("INVALID COMMAND"));
+        verify(mockDocument, never()).erase(anyInt(), anyInt()); // 문서 조작은 없어야 함
     }
 }
