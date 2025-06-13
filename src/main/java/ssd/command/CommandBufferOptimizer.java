@@ -1,7 +1,6 @@
 package ssd.command;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CommandBufferOptimizer {
 
@@ -35,11 +34,13 @@ public class CommandBufferOptimizer {
                     }
                 }
 
-                // 병합 처리
+                // 병합 처리 (현재 명령 포함해서 병합 후 쪼개기)
                 if (!mergeTargets.isEmpty()) {
-                    int minLba = Math.min(current.lba, mergeTargets.stream().mapToInt(e -> e.lba).min().orElse(current.lba));
-                    int maxLba = Math.max(current.lba + current.size,
-                            mergeTargets.stream().mapToInt(e -> e.lba + e.size).max().orElse(current.lba + current.size));
+                    List<Command> allMerging = new ArrayList<>(mergeTargets);
+                    allMerging.add(current); // ✅ 현재 명령 포함
+
+                    int minLba = allMerging.stream().mapToInt(e -> e.lba).min().orElse(current.lba);
+                    int maxLba = allMerging.stream().mapToInt(e -> e.lba + e.size).max().orElse(current.lba + current.size);
 
                     List<Integer> effectiveLbas = new ArrayList<>();
                     for (int i = minLba; i < maxLba; i++) {
@@ -48,11 +49,9 @@ public class CommandBufferOptimizer {
                         }
                     }
 
-                    if (effectiveLbas.size() <= MAX_ERASE_SIZE) {
-                        eraseList.removeAll(mergeTargets);
-                        addEraseSegments(effectiveLbas, eraseList);
-                        continue; // current 병합 완료
-                    }
+                    eraseList.removeAll(mergeTargets); // current는 아직 eraseList에 없음
+                    addEraseSegments(effectiveLbas, eraseList);
+                    continue;
                 }
 
                 eraseList.add(current);
@@ -78,7 +77,14 @@ public class CommandBufferOptimizer {
             int start = lbas.get(i);
             int j = i;
             while (j + 1 < lbas.size() && lbas.get(j + 1) == lbas.get(j) + 1) j++;
-            result.add(new Command("E", start, lbas.get(j) - start + 1, null));
+
+            int length = lbas.get(j) - start + 1;
+            while (length > MAX_ERASE_SIZE) {
+                result.add(new Command("E", start, MAX_ERASE_SIZE, null));
+                start += MAX_ERASE_SIZE;
+                length -= MAX_ERASE_SIZE;
+            }
+            result.add(new Command("E", start, length, null));
             i = j + 1;
         }
     }
@@ -155,4 +161,3 @@ public class CommandBufferOptimizer {
         }
     }
 }
-

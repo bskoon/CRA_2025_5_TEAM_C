@@ -2,7 +2,6 @@ package ssd;
 
 import ssd.IO.OutputIO;
 import ssd.IO.SSDIO;
-import ssd.buffer.CommandBuffer;
 import ssd.logic.SSDCommandLogic;
 
 import static ssd.SSDConstant.OUTPUT_FILE_PATH;
