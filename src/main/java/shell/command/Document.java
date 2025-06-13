@@ -14,7 +14,7 @@ public class Document {
     public void read(int lba, int size) {
         for (int idx = 0; idx < size; idx++) {
             String readVal = ssdCaller.readOnSSD(lba + idx);
-            log.log("Document.read()", "Return READ - LBA:" + lba + "  DATA:" + readVal);
+            log.log("Document.read()", "Return READ - LBA:" + (lba + idx) + "  DATA:" + readVal);
             log.print("LBA " + String.format("%02d", lba + idx) + ": " + readVal);
         }
     }
