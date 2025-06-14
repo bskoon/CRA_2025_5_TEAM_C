@@ -22,7 +22,7 @@ public class WriteCommand implements Command {
     }
 
     @Override
-    public boolean argumentCheck(String[] args) {
+    public boolean isVaildArgument(String[] args) {
         if (writeType == CommandType.write) {
             if (!util.isValidLBA(args[1])) {
                 return false;
@@ -52,7 +52,7 @@ public class WriteCommand implements Command {
     @Override
     public void execute(String[] args) {
         writeType = CommandType.fromString(args[0]);
-        if (!argumentCheck(args)) {
+        if (!isVaildArgument(args)) {
             log.print("INVALID COMMAND");
             return;
         }

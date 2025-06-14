@@ -1,7 +1,7 @@
 package shell.command;
 
 public interface Command {
-    boolean argumentCheck(String[] args);
+    boolean isVaildArgument(String[] args);
     void setArgument(String[] args);
     void execute(String[] args);
 }

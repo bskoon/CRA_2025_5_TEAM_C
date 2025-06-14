@@ -22,7 +22,7 @@ public class ReadCommand implements Command {
     }
 
     @Override
-    public boolean argumentCheck(String[] args) {
+    public boolean isVaildArgument(String[] args) {
         if (readType == CommandType.fullread)  return true;
         if (!util.isValidLBA(args[1])) return false;
         return true;
@@ -39,7 +39,7 @@ public class ReadCommand implements Command {
     @Override
     public void execute(String[] args) {
         readType = CommandType.fromString(args[0]);
-        if (!argumentCheck(args)) {
+        if (!isVaildArgument(args)) {
             log.print("INVALID COMMAND");
             return;
         }

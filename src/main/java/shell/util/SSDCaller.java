@@ -19,29 +19,6 @@ public class SSDCaller {
         if (instance == null) instance = new SSDCaller();
         return instance;
     }
-/*
-    public String readOnSSD(int lba) {
-        List<String> readArgument = generateArgument("R", Integer.toString(lba));
-        callSSD(readArgument);
-        return readSSDData();
-    }
-
-    public void writeOnSSD(int lba, String hexValue) {
-        List<String> writeArgument = generateArgument("W",Integer.toString(lba),hexValue);
-        callSSD(writeArgument);
-    }
-
-    public void eraseOnSSD(int lba, int size) {
-        List<String> eraseArgument = generateArgument("E",Integer.toString(lba),Integer.toString(size));
-        callSSD(eraseArgument);
-    }
-
-    public void flushSSD() {
-        List<String> flushArgument = generateArgument("F");
-        callSSD(flushArgument);
-    }
-
- */
 
     public String readSSDData() {
         String result = readRawSSDOutputData();

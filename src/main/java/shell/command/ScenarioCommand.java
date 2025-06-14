@@ -12,7 +12,7 @@ public class ScenarioCommand implements Command {
     }
 
     @Override
-    public boolean argumentCheck(String[] args) {
+    public boolean isVaildArgument(String[] args) {
         return false;
     }
 

@@ -12,7 +12,7 @@ public class FlushCommand implements Command {
     }
 
     @Override
-    public boolean argumentCheck(String[] args) {
+    public boolean isVaildArgument(String[] args) {
         return true;
     }
 
@@ -23,7 +23,7 @@ public class FlushCommand implements Command {
 
     @Override
     public void execute(String[] args) {
-        if (!argumentCheck(args)) { }
+        if (!isVaildArgument(args)) { }
         setArgument(args);
 
         log.log("FlushCommand.execute()", "Execute FLUSH");

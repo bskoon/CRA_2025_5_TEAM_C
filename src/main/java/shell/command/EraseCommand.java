@@ -19,7 +19,7 @@ public class EraseCommand implements Command {
     }
 
     @Override
-    public boolean argumentCheck(String[] args) {
+    public boolean isVaildArgument(String[] args) {
         if (!util.isValidLBA(args[1])) return false;
         if (eraseType == CommandType.erase_range) {
             if (!util.isValidLBA(args[2])) return false;
@@ -55,7 +55,7 @@ public class EraseCommand implements Command {
     @Override
     public void execute(String[] args) {
         eraseType = CommandType.fromString(args[0]);
-        if (!argumentCheck(args)) {
+        if (!isVaildArgument(args)) {
             log.print("INVALID COMMAND");
             return;
         }
