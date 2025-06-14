@@ -2,7 +2,6 @@ package shell;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import shell.command.Document;
 import shell.command.ReadCommand;
@@ -10,11 +9,10 @@ import shell.command.ReadCommand;
 import java.io.*;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TestShell_read {
+public class CommandTest_read {
     private static final int MAX_BLOCK_SIZE = 100;
 
     private ByteArrayOutputStream outputStream;

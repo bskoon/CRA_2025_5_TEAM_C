@@ -12,12 +12,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-public class TestShell_flush {
+public class CommandTest_flush {
     private FlushCommand flushCommand;
     private Document mockDocument;
     private ByteArrayOutputStream outputStream;

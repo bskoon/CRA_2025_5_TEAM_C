@@ -3,6 +3,7 @@ package shell;
 import shell.command.*;
 import shell.util.Logger;
 import shell.util.Runner;
+import shell.util.Utility;
 
 import java.util.*;
 
@@ -10,39 +11,17 @@ import static shell.util.ShellConstant.*;
 
 public class TestShell {
     private static final Logger log = Logger.getLogger();
+    private static final Utility util = Utility.getInstance();
 
     private Scanner scanner;
     private boolean isRunning;
 
     private CommandExecutor executor;
 
-    public TestShell() {
+    public TestShell(CommandExecutor executor) {
         this.scanner = new Scanner(System.in);
         this.isRunning = true;
-        executor = initCommandExecutor();
-    }
-
-    private static CommandExecutor initCommandExecutor() {
-        Document document = new Document();
-        Command readCommand = new ReadCommand(document);
-        Command writeCommand = new WriteCommand(document);
-        Command eraseCommand = new EraseCommand(document);
-        Command flushCommand = new FlushCommand(document);
-        Command scenarioCommand = new ScenarioCommand(document);
-
-        CommandExecutor executor = new CommandExecutor();
-        executor.setCommand(READ, readCommand);
-        executor.setCommand(WRITE, writeCommand);
-        executor.setCommand(ERASE, eraseCommand);
-        executor.setCommand(FULLREAD, readCommand);
-        executor.setCommand(FULLWRITE, writeCommand);
-        executor.setCommand(ERASERANGE, eraseCommand);
-        executor.setCommand(FLUSH, flushCommand);
-        executor.setCommand(SCENARIO_1, scenarioCommand);
-        executor.setCommand(SCENARIO_2, scenarioCommand);
-        executor.setCommand(SCENARIO_3, scenarioCommand);
-        executor.setCommand(SCENARIO_4, scenarioCommand);
-        return executor;
+        this.executor = executor;
     }
 
     private void launchShell() {
@@ -127,10 +106,11 @@ public class TestShell {
 
     public static void main(String[] args) {
         try {
+            CommandExecutor executor = util.getCommandExecutor();
             if (args.length != 0)
-                new Runner(args, initCommandExecutor()).run();
+                new Runner(args, executor).run();
             else {
-                TestShell shell = new TestShell();
+                TestShell shell = new TestShell(executor);
                 shell.launchShell();
             }
         } catch (Exception e) {

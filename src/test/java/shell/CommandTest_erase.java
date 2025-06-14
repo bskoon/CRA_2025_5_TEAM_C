@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-public class TestShell_erase {
+public class CommandTest_erase {
     private EraseCommand eraseCommand;
     private Document mockDocument;
     private ByteArrayOutputStream outputStream;

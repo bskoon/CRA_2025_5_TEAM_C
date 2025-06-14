@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TestShell_write {
+public class CommandTest_write {
 
     private static final int MAX_BLOCK_SIZE = 100;
     private static final String TEST_VALUE = "0xABCDFFFF";

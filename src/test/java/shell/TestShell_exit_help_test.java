@@ -3,6 +3,7 @@ package shell;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import shell.util.Utility;
 
 import java.io.*;
 
@@ -10,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TestShell_exit_help_test {
+    private Utility util = Utility.getInstance();
     private ByteArrayOutputStream outputStream;
     private PrintStream originalOut;
     private TestShell testShell;
@@ -17,7 +19,7 @@ public class TestShell_exit_help_test {
     @BeforeEach
     void setUp() {
         // 테스트용 TestShell_exit_help_test 인스턴스 생성
-        testShell = new TestShell();
+        testShell = new TestShell(util.getCommandExecutor());
         outputStream = new ByteArrayOutputStream();
         originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
@@ -50,9 +52,9 @@ public class TestShell_exit_help_test {
         assertTrue(output.contains("Exiting TestShell..."));
     }
 
-    private static void changePrivateToPublicMethod(PrintStream originalOut) {
+    private void changePrivateToPublicMethod(PrintStream originalOut) {
         try {
-            TestShell testShell = new TestShell();
+            TestShell testShell = new TestShell(util.getCommandExecutor());
             java.lang.reflect.Method helpMethod = TestShell.class.getDeclaredMethod("help");
             helpMethod.setAccessible(true);
             helpMethod.invoke(testShell);

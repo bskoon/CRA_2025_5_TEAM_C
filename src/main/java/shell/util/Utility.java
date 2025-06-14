@@ -1,6 +1,7 @@
 package shell.util;
 
-import shell.command.CommandType;
+import shell.command.*;
+
 import static shell.util.ShellConstant.*;
 
 public class Utility {
@@ -10,6 +11,29 @@ public class Utility {
     public static Utility getInstance() {
         if (instance == null) instance = new Utility();
         return instance;
+    }
+
+    public CommandExecutor getCommandExecutor() {
+        Document document = new Document();
+        Command readCommand = new ReadCommand(document);
+        Command writeCommand = new WriteCommand(document);
+        Command eraseCommand = new EraseCommand(document);
+        Command flushCommand = new FlushCommand(document);
+        Command scenarioCommand = new ScenarioCommand(document);
+
+        CommandExecutor executor = new CommandExecutor();
+        executor.setCommand(READ, readCommand);
+        executor.setCommand(WRITE, writeCommand);
+        executor.setCommand(ERASE, eraseCommand);
+        executor.setCommand(FULLREAD, readCommand);
+        executor.setCommand(FULLWRITE, writeCommand);
+        executor.setCommand(ERASERANGE, eraseCommand);
+        executor.setCommand(FLUSH, flushCommand);
+        executor.setCommand(SCENARIO_1, scenarioCommand);
+        executor.setCommand(SCENARIO_2, scenarioCommand);
+        executor.setCommand(SCENARIO_3, scenarioCommand);
+        executor.setCommand(SCENARIO_4, scenarioCommand);
+        return executor;
     }
 
 
