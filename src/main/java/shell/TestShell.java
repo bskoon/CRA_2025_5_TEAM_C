@@ -22,7 +22,7 @@ public class TestShell {
         executor = initCommandExecutor();
     }
 
-    public static CommandExecutor initCommandExecutor() {
+    private static CommandExecutor initCommandExecutor() {
         Document document = new Document();
         Command readCommand = new ReadCommand(document);
         Command writeCommand = new WriteCommand(document);
@@ -43,10 +43,6 @@ public class TestShell {
         executor.setCommand(SCENARIO_3, scenarioCommand);
         executor.setCommand(SCENARIO_4, scenarioCommand);
         return executor;
-    }
-
-    public boolean isRunning() {
-        return this.isRunning;
     }
 
     private void launchShell() {
@@ -140,5 +136,9 @@ public class TestShell {
         } catch (Exception e) {
             log.log("TestShell.main()", "Shell Start Fail caused by Exception");
         }
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 }

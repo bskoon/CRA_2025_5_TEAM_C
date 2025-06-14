@@ -5,6 +5,8 @@ import shell.util.SSDCaller;
 import java.io.IOException;
 import java.util.Random;
 
+import static shell.util.ShellConstant.WRITECOMMAND;
+
 public class Scenario3 extends TestScenario {
     public Scenario3(SSDCaller ssdCaller) {
         super(ssdCaller);
@@ -18,26 +20,21 @@ public class Scenario3 extends TestScenario {
     public String executeScenario() {
         try {
             for (int i = 0; i < 200; i++) {
-                if (!writeReadAgingOnce()) return "FAIL";
+                String hexString = getRandomHexString(rand);
+                ssdCaller.callSSD(WRITECOMMAND, "0", hexString);
+                String result = readCompare("0", hexString);
+                if (result.equals(FAIL)) return FAIL;
+
+                hexString = getRandomHexString(rand);
+                ssdCaller.callSSD(WRITECOMMAND, "99", hexString);
+                result = readCompare("99", hexString);
+                if(result.equals(FAIL)) return FAIL;
             }
         } catch (Exception e) {
             logger.log("Scenario3.executeScenario()", "Exception while execute scenario");
-            return "FAIL";
+            return FAIL;
         }
 
-        return "PASS";
-    }
-
-    private boolean writeReadAgingOnce() throws IOException {
-        String hexString = getRandomHexString(rand);
-        ssdCaller.writeOnSSD(0, hexString);
-        String result = readCompare(0,hexString);
-        if(result.equals("FAIL")) return false;
-        hexString = getRandomHexString(rand);
-        ssdCaller.writeOnSSD(99,hexString);
-        result = readCompare(99,hexString);
-        if(result.equals("FAIL")) return false;
-
-        return true;
+        return PASS;
     }
 }

@@ -16,26 +16,32 @@ public class Scenario4 extends TestScenario {
     @Override
     public String executeScenario() {
         try {
-            ssdCaller.eraseOnSSD(0, 3);
-            for (int i = 0; i < 3; i++) {
-                String result = readCompare(i, "0x00000000");
-                if (result.equals("FAIL")) return result;
+            ssdCaller.callSSD("E", "0", "3");
+            for (int lba = 0; lba < 3; lba++) {
+                String result = readCompare(Integer.toString(lba), "0x00000000");
+                if (result.equals(FAIL)) return FAIL;
             }
+
             for (int i = 0; i < 30; i++) {
                 for (int lba = 2; lba <= 98; lba += 2) {
-                    ssdCaller.writeOnSSD(lba, "0xABCD1234");
-                    ssdCaller.writeOnSSD(lba, "0x1234ABCD");
-                    ssdCaller.eraseOnSSD(lba, 3);
-                    for (int j = 0; j < 3; j++) {
-                        String result = readCompare(j, "0x00000000");
-                        if (result.equals("FAIL")) return result;
+                    String firstData = "0xABCD1234";
+                    String overwriteData = "0x1234ABCD";
+                    int eraseSize = 3;
+
+                    ssdCaller.callSSD("W", Integer.toString(lba), firstData);
+                    ssdCaller.callSSD("W", Integer.toString(lba), overwriteData);
+                    ssdCaller.callSSD("E", Integer.toString(lba), Integer.toString(eraseSize));
+
+                    for (int idx = 0; idx < eraseSize; idx++) {
+                        String result = readCompare(Integer.toString(lba + idx), "0x00000000");
+                        if (result.equals(FAIL)) return FAIL;
                     }
                 }
             }
         } catch (Exception e) {
             logger.log("Scenario1.executeScenario()", "Exception while execute scenario");
-            return "FAIL";
+            return FAIL;
         }
-        return "PASS";
+        return PASS;
     }
 }

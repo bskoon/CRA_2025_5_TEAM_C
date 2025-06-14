@@ -60,21 +60,22 @@ public class Utility {
     }
 
     public boolean isValidLBA(String lbaString) {
-        int lba;
         try {
-            lba = Integer.parseInt(lbaString);
+            int lba = Integer.parseInt(lbaString);
+            return lba >= 0 && lba < MAX_SSD_BLOCK;
         } catch (NumberFormatException e) {
             log.log("Utility.isValidLBA()", "INVALID LBA");
-            return false;
         }
-
-        return lba >= 0 && lba < MAX_SSD_BLOCK;
+        return false;
     }
+
     public boolean isValidUpdateData(String updateData) {
-        if (updateData.matches("0x[0-9A-F]{8}")) return true;
+        if (updateData.matches("0x[0-9A-F]{8}")) {
+            return true;
+        }
         else {
             log.log("Utility.isValidUpdateData()", "INVALID DATA");
-            return false;
         }
+        return false;
     }
 }
