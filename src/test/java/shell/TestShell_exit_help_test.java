@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TestShell_exit_help_test {
-    private Utility util = Utility.getInstance();
+    private final Utility util = Utility.getInstance();
     private ByteArrayOutputStream outputStream;
     private PrintStream originalOut;
     private TestShell testShell;

@@ -32,14 +32,17 @@ public class TestShell {
         while (isRunning) {
             System.out.print("> ");
             String shellCommand = scanner.nextLine().trim();
-            log.log("TestShell.launchShell()", "Command - " + shellCommand);
             String[] commandParameters = shellCommand.split("\\s+");
+            log.log("TestShell.launchShell()", "Command - " + shellCommand);
 
-            if (commandParameters.length == 0) continue;
-            if (commandParameters[0].trim().isEmpty()) continue;
+            if (isInputEmpty(commandParameters)) continue;
 
             executeCommand(commandParameters);
         }
+    }
+
+    private boolean isInputEmpty(String[] commandParameters) {
+        return commandParameters.length == 0 || commandParameters[0].trim().isEmpty();
     }
 
     private void executeCommand(String[] commandParameters) {
