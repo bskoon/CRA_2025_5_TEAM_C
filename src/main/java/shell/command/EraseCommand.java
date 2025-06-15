@@ -7,15 +7,15 @@ import static shell.util.ShellConstant.*;
 public class EraseCommand implements Command {
     private static final Logger log = Logger.getLogger();
 
-    private Document document;
+    private CommandLibrary commandLibrary;
     Utility util = Utility.getInstance();
 
     int lba;
     int size;
     CommandType eraseType;
 
-    public EraseCommand(Document document) {
-        this.document = document;
+    public EraseCommand(CommandLibrary commandLibrary) {
+        this.commandLibrary = commandLibrary;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class EraseCommand implements Command {
 
         while (size > 0) {
             int chunk = Math.min(size, MAX_CHUNK);
-            document.erase(lba, chunk);
+            commandLibrary.erase(lba, chunk);
             lba += chunk;
             size -= chunk;
         }

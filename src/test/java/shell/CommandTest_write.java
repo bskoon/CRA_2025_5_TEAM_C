@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import shell.command.Document;
+import shell.command.CommandLibrary;
 import shell.command.WriteCommand;
 
 import java.io.ByteArrayOutputStream;
@@ -25,7 +25,7 @@ public class CommandTest_write {
     private ByteArrayOutputStream outputStream;
     private PrintStream originalOut;
     private Map<Integer, String> testData; // 테스트 데이터 추가
-    private Document mockDocument;
+    private CommandLibrary mockCommandLibrary;
     private WriteCommand writeCommand;
 
     @BeforeEach
@@ -34,8 +34,8 @@ public class CommandTest_write {
         originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
 
-        mockDocument = mock(Document.class);
-        writeCommand = new WriteCommand(mockDocument);
+        mockCommandLibrary = mock(CommandLibrary.class);
+        writeCommand = new WriteCommand(mockCommandLibrary);
     }
 
     @AfterEach
@@ -53,7 +53,7 @@ public class CommandTest_write {
         writeCommand.execute(args);
 
         // Then
-        verify(mockDocument).write(3, 1, TEST_VALUE);
+        verify(mockCommandLibrary).write(3, 1, TEST_VALUE);
 
     }
 
@@ -69,7 +69,7 @@ public class CommandTest_write {
         // Then
         String output = outputStream.toString().trim();
         assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).write(3, 1,TEST_VALUE );
+        verify(mockCommandLibrary, never()).write(3, 1,TEST_VALUE );
     }
 
     @Test
@@ -83,7 +83,7 @@ public class CommandTest_write {
         // Then
         String output = outputStream.toString().trim();
         assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).write(3, 1, TEST_VALUE);
+        verify(mockCommandLibrary, never()).write(3, 1, TEST_VALUE);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class CommandTest_write {
         writeCommand.execute(args);
 
         // Then
-        verify(mockDocument).write(0, MAX_BLOCK_SIZE, TEST_VALUE);
+        verify(mockCommandLibrary).write(0, MAX_BLOCK_SIZE, TEST_VALUE);
 
     }
 
@@ -110,6 +110,6 @@ public class CommandTest_write {
         // Then
         String output = outputStream.toString().trim();
         assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).write(0, MAX_BLOCK_SIZE, TEST_VALUE);
+        verify(mockCommandLibrary, never()).write(0, MAX_BLOCK_SIZE, TEST_VALUE);
     }
 }

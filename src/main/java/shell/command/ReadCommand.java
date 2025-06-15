@@ -7,15 +7,15 @@ import static shell.util.ShellConstant.*;
 public class ReadCommand implements Command {
     private static final Logger log = Logger.getLogger();
 
-    private Document document;
+    private CommandLibrary commandLibrary;
     Utility util = Utility.getInstance();
 
     int lba;
     int size;
     CommandType readType;
 
-    public ReadCommand (Document document) {
-        this.document = document;
+    public ReadCommand (CommandLibrary commandLibrary) {
+        this.commandLibrary = commandLibrary;
         this.lba = 0;
         this.size = MAX_SSD_BLOCK;
     }
@@ -45,6 +45,6 @@ public class ReadCommand implements Command {
         setArgument(args);
 
         log.log("ReadCommand.execute()", "Execute READ - LBA:" + lba + "  SIZE:" + size);
-        document.read(lba, size);
+        commandLibrary.read(lba, size);
     }
 }

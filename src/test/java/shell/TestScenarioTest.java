@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import shell.command.CommandType;
-import shell.command.Document;
+import shell.command.CommandLibrary;
 import shell.command.ScenarioCommand;
 import shell.scenario.*;
 import shell.util.SSDCaller;
@@ -25,7 +25,7 @@ public class TestScenarioTest {
     SSDCaller ssdCaller;
 
     @Mock
-    Document mockDocument;
+    CommandLibrary mockCommandLibrary;
 
     ScenarioCommand scenarioCommand;
     Random random;
@@ -34,7 +34,7 @@ public class TestScenarioTest {
 
     @BeforeEach
     void setUp() {
-        scenarioCommand = new ScenarioCommand(mockDocument);
+        scenarioCommand = new ScenarioCommand(mockCommandLibrary);
         scenarioFactory = new ScenarioFactory(ssdCaller);
         random = new Random(1234);
     }

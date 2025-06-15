@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.junit.jupiter.MockitoExtension;
-import shell.command.Document;
+import shell.command.CommandLibrary;
 import shell.command.EraseCommand;
 
 import java.io.ByteArrayOutputStream;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class CommandTest_erase {
     private EraseCommand eraseCommand;
-    private Document mockDocument;
+    private CommandLibrary mockCommandLibrary;
     private ByteArrayOutputStream outputStream;
     private PrintStream originalOut;
 
@@ -30,8 +30,8 @@ public class CommandTest_erase {
         originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
 
-        mockDocument = mock(Document.class);
-        eraseCommand = new EraseCommand(mockDocument);
+        mockCommandLibrary = mock(CommandLibrary.class);
+        eraseCommand = new EraseCommand(mockCommandLibrary);
     }
 
     @AfterEach
@@ -49,7 +49,7 @@ public class CommandTest_erase {
         eraseCommand.execute(args);
 
         // Then
-        verify(mockDocument).erase(98, 1);
+        verify(mockCommandLibrary).erase(98, 1);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class CommandTest_erase {
         eraseCommand.execute(args);
 
         // Then
-        verify(mockDocument).erase(98, 1);
+        verify(mockCommandLibrary).erase(98, 1);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class CommandTest_erase {
         eraseCommand.execute(args);
 
         // Then
-        verify(mockDocument).erase(98, 2);
+        verify(mockCommandLibrary).erase(98, 2);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class CommandTest_erase {
         eraseCommand.execute(args);
 
         // Then
-        verify(mockDocument).erase(96, 3);
+        verify(mockCommandLibrary).erase(96, 3);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class CommandTest_erase {
         eraseCommand.execute(args);
 
         // Then
-        verify(mockDocument).erase(0, 2);
+        verify(mockCommandLibrary).erase(0, 2);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class CommandTest_erase {
         eraseCommand.execute(args);
 
         // Then
-        verify(mockDocument).erase(98, 2);
+        verify(mockCommandLibrary).erase(98, 2);
     }
 
     @Test
@@ -118,12 +118,12 @@ public class CommandTest_erase {
         eraseCommand.execute(args);
 
         // Then
-        InOrder inOrder = inOrder(mockDocument);
-        inOrder.verify(mockDocument).erase(80, 10); // 첫 chunk
-        inOrder.verify(mockDocument).erase(90, 5);  // 두 번째 chunk
+        InOrder inOrder = inOrder(mockCommandLibrary);
+        inOrder.verify(mockCommandLibrary).erase(80, 10); // 첫 chunk
+        inOrder.verify(mockCommandLibrary).erase(90, 5);  // 두 번째 chunk
 
         // 정확히 두 번만 호출되었는지 확인 (불필요한 호출 방지)
-        verify(mockDocument, times(2)).erase(anyInt(), anyInt());
+        verify(mockCommandLibrary, times(2)).erase(anyInt(), anyInt());
     }
 
     @Test
@@ -135,12 +135,12 @@ public class CommandTest_erase {
         eraseCommand.execute(args);
 
         // Then
-        InOrder inOrder = inOrder(mockDocument);
-        inOrder.verify(mockDocument).erase(66, 10); // 첫 chunk
-        inOrder.verify(mockDocument).erase(76, 5);  // 두 번째 chunk
+        InOrder inOrder = inOrder(mockCommandLibrary);
+        inOrder.verify(mockCommandLibrary).erase(66, 10); // 첫 chunk
+        inOrder.verify(mockCommandLibrary).erase(76, 5);  // 두 번째 chunk
 
         // 정확히 두 번만 호출되었는지 확인 (불필요한 호출 방지)
-        verify(mockDocument, times(2)).erase(anyInt(), anyInt());
+        verify(mockCommandLibrary, times(2)).erase(anyInt(), anyInt());
     }
 
     @Test
@@ -152,12 +152,12 @@ public class CommandTest_erase {
         eraseCommand.execute(args);
 
         // Then
-        InOrder inOrder = inOrder(mockDocument);
-        inOrder.verify(mockDocument).erase(80, 10); // 첫 chunk
-        inOrder.verify(mockDocument).erase(90, 6);  // 두 번째 chunk
+        InOrder inOrder = inOrder(mockCommandLibrary);
+        inOrder.verify(mockCommandLibrary).erase(80, 10); // 첫 chunk
+        inOrder.verify(mockCommandLibrary).erase(90, 6);  // 두 번째 chunk
 
         // 정확히 두 번만 호출되었는지 검증
-        verify(mockDocument, times(2)).erase(anyInt(), anyInt());
+        verify(mockCommandLibrary, times(2)).erase(anyInt(), anyInt());
     }
 
     @Test
@@ -169,12 +169,12 @@ public class CommandTest_erase {
         eraseCommand.execute(args);
 
         // Then
-        InOrder inOrder = inOrder(mockDocument);
-        inOrder.verify(mockDocument).erase(80, 10); // 첫 chunk
-        inOrder.verify(mockDocument).erase(90, 6);  // 두 번째 chunk
+        InOrder inOrder = inOrder(mockCommandLibrary);
+        inOrder.verify(mockCommandLibrary).erase(80, 10); // 첫 chunk
+        inOrder.verify(mockCommandLibrary).erase(90, 6);  // 두 번째 chunk
 
         // 정확히 두 번만 호출되었는지 검증
-        verify(mockDocument, times(2)).erase(anyInt(), anyInt());
+        verify(mockCommandLibrary, times(2)).erase(anyInt(), anyInt());
     }
 
     @Test
@@ -188,7 +188,7 @@ public class CommandTest_erase {
         // Then
         String output = outputStream.toString().trim();
         assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).erase(anyInt(), anyInt()); // 실제 호출 없음
+        verify(mockCommandLibrary, never()).erase(anyInt(), anyInt()); // 실제 호출 없음
     }
 
 
@@ -203,6 +203,6 @@ public class CommandTest_erase {
         // Then
         String output = outputStream.toString().trim();
         assertTrue(output.contains("INVALID COMMAND"));
-        verify(mockDocument, never()).erase(anyInt(), anyInt()); // 문서 조작은 없어야 함
+        verify(mockCommandLibrary, never()).erase(anyInt(), anyInt()); // 문서 조작은 없어야 함
     }
 }

@@ -14,12 +14,12 @@ public class Utility {
     }
 
     public CommandExecutor getCommandExecutor() {
-        Document document = new Document();
-        Command readCommand = new ReadCommand(document);
-        Command writeCommand = new WriteCommand(document);
-        Command eraseCommand = new EraseCommand(document);
-        Command flushCommand = new FlushCommand(document);
-        Command scenarioCommand = new ScenarioCommand(document);
+        CommandLibrary commandLibrary = new CommandLibrary();
+        Command readCommand = new ReadCommand(commandLibrary);
+        Command writeCommand = new WriteCommand(commandLibrary);
+        Command eraseCommand = new EraseCommand(commandLibrary);
+        Command flushCommand = new FlushCommand(commandLibrary);
+        Command scenarioCommand = new ScenarioCommand(commandLibrary);
 
         CommandExecutor executor = new CommandExecutor();
         executor.setCommand(READ, readCommand);

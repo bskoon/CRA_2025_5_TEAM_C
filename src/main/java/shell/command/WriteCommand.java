@@ -7,7 +7,7 @@ import static shell.util.ShellConstant.*;
 public class WriteCommand implements Command {
     private static final Logger log = Logger.getLogger();
 
-    private Document document;
+    private CommandLibrary commandLibrary;
     private Utility util = Utility.getInstance();
 
     int lba;
@@ -15,8 +15,8 @@ public class WriteCommand implements Command {
     String updateData;
     CommandType writeType;
 
-    public WriteCommand(Document document) {
-        this.document = document;
+    public WriteCommand(CommandLibrary commandLibrary) {
+        this.commandLibrary = commandLibrary;
         this.lba = 0;
         this.size = MAX_SSD_BLOCK;
     }
@@ -72,6 +72,6 @@ public class WriteCommand implements Command {
         setArgument(args);
 
         log.log("WriteCommand.execute()", "Execute WRITE - LBA:" + lba + "  SIZE:" + size + "  DATA:" + updateData);
-        document.write(lba, size, updateData);
+        commandLibrary.write(lba, size, updateData);
     }
 }

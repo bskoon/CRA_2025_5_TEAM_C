@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import shell.command.Document;
+import shell.command.CommandLibrary;
 import shell.command.FlushCommand;
 
 import java.io.ByteArrayOutputStream;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class CommandTest_flush {
     private FlushCommand flushCommand;
-    private Document mockDocument;
+    private CommandLibrary mockCommandLibrary;
     private ByteArrayOutputStream outputStream;
     private PrintStream originalOut;
 
@@ -29,8 +29,8 @@ public class CommandTest_flush {
         originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
 
-        mockDocument = mock(Document.class);
-        flushCommand = new FlushCommand(mockDocument);
+        mockCommandLibrary = mock(CommandLibrary.class);
+        flushCommand = new FlushCommand(mockCommandLibrary);
     }
 
     @AfterEach
@@ -48,6 +48,6 @@ public class CommandTest_flush {
         flushCommand.execute(args);
 
         // Then
-        verify(mockDocument).flush();
+        verify(mockCommandLibrary).flush();
     }
 }

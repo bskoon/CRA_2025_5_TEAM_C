@@ -10,7 +10,7 @@ import static shell.util.ShellConstant.WRITECOMMAND;
 import static shell.util.ShellConstant.ERASECOMMAND;
 import static shell.util.ShellConstant.FLUSHCOMMAND;
 
-public class Document {
+public class CommandLibrary {
     private static final Logger log = Logger.getLogger();
 
     private SSDCaller ssdCaller = SSDCaller.getInstance();

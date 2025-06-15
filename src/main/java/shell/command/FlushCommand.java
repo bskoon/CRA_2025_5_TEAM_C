@@ -5,10 +5,10 @@ import shell.util.Logger;
 public class FlushCommand implements Command {
     private static final Logger log = Logger.getLogger();
 
-    Document document;
+    CommandLibrary commandLibrary;
 
-    public FlushCommand(Document document) {
-        this.document = document;
+    public FlushCommand(CommandLibrary commandLibrary) {
+        this.commandLibrary = commandLibrary;
     }
 
     @Override
@@ -27,6 +27,6 @@ public class FlushCommand implements Command {
         setArgument(args);
 
         log.log("FlushCommand.execute()", "Execute FLUSH");
-        document.flush();
+        commandLibrary.flush();
     }
 }

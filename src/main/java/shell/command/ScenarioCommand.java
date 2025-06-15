@@ -5,10 +5,10 @@ import shell.util.Logger;
 public class ScenarioCommand implements Command {
     private static final Logger log = Logger.getLogger();
 
-    private Document document;
+    private CommandLibrary commandLibrary;
 
-    public ScenarioCommand(Document document) {
-        this.document = document;
+    public ScenarioCommand(CommandLibrary commandLibrary) {
+        this.commandLibrary = commandLibrary;
     }
 
     @Override
@@ -25,6 +25,6 @@ public class ScenarioCommand implements Command {
     public void execute(String[] args) {
         CommandType scriptType = CommandType.fromString(args[0]);
         log.log("ScenarioCommand.execute()", "Execute SCENARIO - NAME:" + args[0]);
-        document.scenario(scriptType);
+        commandLibrary.scenario(scriptType);
     }
 }
