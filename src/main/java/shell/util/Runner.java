@@ -31,23 +31,40 @@ public class Runner {
     }
 
     public void run() {
+        List<String> scenarioList = readScriptFile();
+        if (scenarioList == null) return;
+
+        executeEachScenario(scenarioList);
+    }
+
+    private List<String> readScriptFile() {
         List<String> scenarioList;
-        log.log("Runner.run()", "Load Script File");
+        log.log("Runner.readScenarioFile()", "Load Script File");
         try {
             scenarioList = Files.readAllLines(SCRIPT_FILE.toPath());
         } catch (Exception e) {
-            log.log("Runner.run()", "Exception occur while read Runner file");
-            return;
+            log.log("Runner.readScenarioFile()", "Exception occur while read Runner file");
+            return null;
         }
+        return scenarioList;
+    }
 
+    private void executeEachScenario(List<String> scenarioList) {
         for (String s : scenarioList) {
             System.out.print(s + "   ___   Run...");
-            log.log("Runner.run()", "Run Script - " + s);
+            log.log("Runner.executeEachScenario()", "Run Script - " + s);
             System.out.println(getPassFail(s));
         }
     }
 
     private String getPassFail(String ScenarioName) {
+        ByteArrayOutputStream outContent = executeScenarioWithNoSysOut(ScenarioName);
+        String outString = outContent.toString().replace("\r\n", "");
+        log.log("Runner.getPassFail()", "Script Result : " + outString);
+        return outString;
+    }
+
+    private ByteArrayOutputStream executeScenarioWithNoSysOut(String ScenarioName) {
         PrintStream originalOut = System.out;
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
@@ -55,8 +72,6 @@ public class Runner {
         executor.executeCommand(new String[]{ScenarioName});
 
         System.setOut(originalOut);
-        String outString = outContent.toString().replace("\r\n", "");
-        log.log("Runner.getPassFail()", "Script Result : " + outString);
-        return outString;
+        return outContent;
     }
 }
