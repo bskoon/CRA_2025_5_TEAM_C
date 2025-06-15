@@ -3,7 +3,23 @@ package shell.command;
 import static shell.util.ShellConstant.*;
 
 public enum CommandType {
-    read, write, fullread, fullwrite, erase, erase_range, flush, scenario1, scenario2, scenario3, scenario4;
+    read(2),
+    write(3),
+    fullread(1),
+    fullwrite(2),
+    erase(3),
+    erase_range(3),
+    flush(1),
+    scenario1(1),
+    scenario2(1),
+    scenario3(1),
+    scenario4(1);
+
+    private final int argCount;
+
+    CommandType(int argCount) {
+        this.argCount = argCount;
+    }
 
     public static CommandType fromString(String value) {
         if (value == null) {
@@ -24,5 +40,9 @@ public enum CommandType {
             case SCENARIO_4 -> scenario4;
             default -> throw new RuntimeException("알 수 없는 명령: " + value);
         };
+    }
+
+    public int getArgCount() {
+        return argCount;
     }
 }

@@ -49,38 +49,11 @@ public class Utility {
     }
 
     public boolean isValidParameterCount(CommandType type, int argLength) {
-        int correctLength = 0;
-        switch (type) {
-            case read:
-                correctLength = READ_ARG_COUNT;
-                break;
-            case write:
-                correctLength = WRITE_ARG_COUNT;
-                break;
-            case fullread:
-                correctLength = FULLREAD_ARG_COUNT;
-                break;
-            case fullwrite:
-                correctLength = FULLWRITE_ARG_COUNT;
-                break;
-            case erase:
-            case erase_range:
-                correctLength = ERASE_ARG_COUNT;
-                break;
-            case flush:
-                correctLength = FLUSH_ARG_COUNT;
-                break;
-            case scenario1:
-            case scenario2:
-            case scenario3:
-            case scenario4:
-                correctLength = SCRIPT_ARG_COUNT;
-                break;
-            default:
-                log.log("Utility.isValidParameterCount()", "INVALID PARAMETER");
-                break;
+        if (type == null) {
+            log.log("Utility.isValidParameterCount()", "NULL CommandType");
+            return false;
         }
-        return correctLength == argLength;
+        return type.getArgCount() == argLength;
     }
 
     public boolean isValidLBA(String lbaString) {
