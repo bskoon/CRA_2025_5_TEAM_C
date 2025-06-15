@@ -1,24 +1,32 @@
 package shell.command;
 
+import shell.scenario.*;
+import shell.util.SSDCaller;
+
+import java.util.function.Function;
+
 import static shell.util.ShellConstant.*;
 
 public enum CommandType {
-    read(2),
-    write(3),
-    fullread(1),
-    fullwrite(2),
-    erase(3),
-    erase_range(3),
-    flush(1),
-    scenario1(1),
-    scenario2(1),
-    scenario3(1),
-    scenario4(1);
+    read(2, null),
+    write(3, null),
+    fullread(1, null),
+    fullwrite(2, null),
+    erase(3, null),
+    erase_range(3, null),
+    flush(1, null),
+    scenario1(1, Scenario1::new),
+    scenario2(1, Scenario2::new),
+    scenario3(1, Scenario3::new),
+    scenario4(1, Scenario4::new);
 
     private final int argCount;
+    private final Function<SSDCaller, TestScenario> testScenario;
 
-    CommandType(int argCount) {
+
+    CommandType(int argCount, Function<SSDCaller, TestScenario> testScenario) {
         this.argCount = argCount;
+        this.testScenario = testScenario;
     }
 
     public static CommandType fromString(String value) {
@@ -44,5 +52,9 @@ public enum CommandType {
 
     public int getArgCount() {
         return argCount;
+    }
+
+    public TestScenario getScenario(SSDCaller caller) {
+        return testScenario.apply(caller);
     }
 }

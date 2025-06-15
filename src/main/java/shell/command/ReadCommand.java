@@ -16,7 +16,6 @@ public class ReadCommand implements Command {
 
     public ReadCommand (Document document) {
         this.document = document;
-
         this.lba = 0;
         this.size = MAX_SSD_BLOCK;
     }
