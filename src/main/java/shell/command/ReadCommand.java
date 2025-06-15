@@ -33,6 +33,10 @@ public class ReadCommand implements Command {
             lba = Integer.parseInt(args[1]);
             size = 1;
         }
+        else if (readType == CommandType.fullread) {
+            lba = 0;
+            size = MAX_SSD_BLOCK;
+        }
     }
 
     @Override
