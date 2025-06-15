@@ -29,7 +29,7 @@ public abstract class TestScenario {
 
     public String readCompare(String lba, String expectedData) {
         ssdCaller.callSSD(READCOMMAND, lba);
-        String result = ssdCaller.readSSDData();
+        String result = ssdCaller.getReadOutput();
 
         if (result.equals(expectedData)) return PASS;
         return FAIL;

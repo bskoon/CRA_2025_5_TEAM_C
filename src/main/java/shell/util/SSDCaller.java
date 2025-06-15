@@ -20,27 +20,6 @@ public class SSDCaller {
         return instance;
     }
 
-    public String readSSDData() {
-        String result = readRawSSDOutputData();
-
-        return result.replace("\n","").trim();
-    }
-
-    private String readRawSSDOutputData() {
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get(OUTPUT_FILE))) {
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line).append(System.lineSeparator());  // 각 줄마다 줄바꿈 추가
-            }
-
-            return stringBuilder.toString();
-        } catch (Exception e){
-            throw new RuntimeException(e);
-        }
-    }
-
     public void callSSD(String... args) {
         List<String> executableCommand = generateExecutableCommand(args);
         ProcessBuilder processBuilder = new ProcessBuilder(executableCommand);
@@ -59,5 +38,26 @@ public class SSDCaller {
         baseExecuteCommand.addAll(Arrays.asList(args));
 
         return baseExecuteCommand;
+    }
+
+    public String getReadOutput() {
+        String result = readRawSSDOutputData();
+
+        return result.replace("\n","").trim();
+    }
+
+    private String readRawSSDOutputData() {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(OUTPUT_FILE))) {
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append(System.lineSeparator());  // 각 줄마다 줄바꿈 추가
+            }
+
+            return stringBuilder.toString();
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 }
