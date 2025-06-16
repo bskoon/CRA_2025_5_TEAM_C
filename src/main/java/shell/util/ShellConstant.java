@@ -15,6 +15,14 @@ public class ShellConstant {
     public static final String EXIT = "exit";
     public static final String HELP = "help";
 
+    public static final int READ_ARG_COUNT = 2;
+    public static final int FULLREAD_ARG_COUNT = 1;
+    public static final int WRITE_ARG_COUNT = 3;
+    public static final int FULLWRITE_ARG_COUNT = 2;
+    public static final int ERASE_ARG_COUNT = 3;
+    public static final int FLUSH_ARG_COUNT = 1;
+    public static final int SCENARIO_ARG_COUNT = 1;
+
     public static final String READCOMMAND = "R";
     public static final String WRITECOMMAND = "W";
     public static final String ERASECOMMAND = "E";

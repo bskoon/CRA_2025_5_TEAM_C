@@ -57,9 +57,7 @@ public class TestShell {
 
         if (commandParameters[0].equals(EXIT)) exit();
         else if (commandParameters[0].equals(HELP)) help();
-        else {
-            executor.executeCommand(commandParameters);
-        }
+        else executor.executeCommand(commandParameters);
     }
 
     private void exit() {

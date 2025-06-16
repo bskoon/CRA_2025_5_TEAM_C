@@ -8,17 +8,17 @@ import java.util.function.Function;
 import static shell.util.ShellConstant.*;
 
 public enum CommandType {
-    read(2, null),
-    write(3, null),
-    fullread(1, null),
-    fullwrite(2, null),
-    erase(3, null),
-    erase_range(3, null),
-    flush(1, null),
-    scenario1(1, Scenario1::new),
-    scenario2(1, Scenario2::new),
-    scenario3(1, Scenario3::new),
-    scenario4(1, Scenario4::new);
+    read(READ_ARG_COUNT, null),
+    write(WRITE_ARG_COUNT, null),
+    fullread(FULLREAD_ARG_COUNT, null),
+    fullwrite(FULLWRITE_ARG_COUNT, null),
+    erase(ERASE_ARG_COUNT, null),
+    erase_range(ERASE_ARG_COUNT, null),
+    flush(FLUSH_ARG_COUNT, null),
+    scenario1(SCENARIO_ARG_COUNT, Scenario1::new),
+    scenario2(SCENARIO_ARG_COUNT, Scenario2::new),
+    scenario3(SCENARIO_ARG_COUNT, Scenario3::new),
+    scenario4(SCENARIO_ARG_COUNT, Scenario4::new);
 
     private final int argCount;
     private final Function<SSDCaller, TestScenario> testScenario;

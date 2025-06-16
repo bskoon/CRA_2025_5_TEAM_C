@@ -58,13 +58,12 @@ public class Runner {
     }
 
     private String getPassFail(String ScenarioName) {
-        ByteArrayOutputStream outContent = executeScenarioWithNoSysOut(ScenarioName);
-        String outString = outContent.toString().replace("\r\n", "");
+        String outString = executeScenarioWithNoSysOut(ScenarioName);
         log.log("Runner.getPassFail()", "Script Result : " + outString);
         return outString;
     }
 
-    private ByteArrayOutputStream executeScenarioWithNoSysOut(String ScenarioName) {
+    private String executeScenarioWithNoSysOut(String ScenarioName) {
         PrintStream originalOut = System.out;
         ByteArrayOutputStream outContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
@@ -72,6 +71,6 @@ public class Runner {
         executor.executeCommand(new String[]{ScenarioName});
 
         System.setOut(originalOut);
-        return outContent;
+        return outContent.toString().replace("\r\n", "");
     }
 }
