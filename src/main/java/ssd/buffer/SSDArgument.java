@@ -3,7 +3,7 @@ package ssd.buffer;
 import ssd.common.SSDConstant;
 import ssd.common.ValidCheck;
 
-import static shell.util.ShellConstant.*;
+import static ssd.common.SSDConstant.*;
 
 public class SSDArgument {
     private int lba;
