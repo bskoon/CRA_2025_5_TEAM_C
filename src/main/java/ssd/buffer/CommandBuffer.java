@@ -64,11 +64,11 @@ public class CommandBuffer {
     }
 
     private void writeOrEraseProcess() {
-        if(loadBufferFromFile().size() >= MAX_SIZE){
+        if(currentBufferStatusList().size() >= MAX_SIZE){
             flushProcess();
         }
-        int index = loadBufferFromFile().size();
-        fileManager.get(index).write(0,ssdArgument.makeFileName(index+1));
+        int lastBufferIndex = currentBufferStatusList().size();
+        fileManager.get(lastBufferIndex).write(0,ssdArgument.makeFileName(lastBufferIndex+1));
         // 버퍼 최적화 알고리즘 돌리기.?
         rewriteBuffer();
     }
@@ -88,7 +88,7 @@ public class CommandBuffer {
 
     public void flushProcess() {
         // ssd flush 기능 추가
-        for(String commands: loadBufferFromFile()){
+        for(String commands: currentBufferStatusList()){
             SSDArgument convertedCommand = new SSDArgument(commands);
             commandExecutor.execute(convertedCommand.getArgs());
         }
@@ -140,14 +140,14 @@ public class CommandBuffer {
 
     private List<String> makeBufferList() {
         List<String> bufferList = new ArrayList<>();
-        for(String command : loadBufferFromFile()){
+        for(String command : currentBufferStatusList()){
             String fixedCommand = command.replace(".txt","");
             bufferList.add(fixedCommand);
         }
         return bufferList;
     }
 
-    private List<String> loadBufferFromFile() {
+    private List<String> currentBufferStatusList() {
         List<String> buffer = new ArrayList<>();
         for (BufferFileIO file : fileManager) {
             String command = file.loadCommands();
