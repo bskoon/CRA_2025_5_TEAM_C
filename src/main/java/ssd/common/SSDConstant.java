@@ -1,4 +1,4 @@
-package ssd;
+package ssd.common;
 
 public class SSDConstant {
     public static String SSD_FILE_PATH = "ssd_nand.txt";

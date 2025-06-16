@@ -12,7 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static ssd.SSDConstant.BUFFER_FOLDER_PATH;
+import static shell.util.ShellConstant.*;
+import static ssd.common.SSDConstant.BUFFER_FOLDER_PATH;
 
 public class CommandBuffer {
     private final int MAX_SIZE = 5;
@@ -30,14 +31,14 @@ public class CommandBuffer {
 
     public void bufferExecutor() {
         switch (ssdArgument.getCommand()){
-            case "R":
+            case READ:
                 readProcess();
                 break;
-            case "W":
-            case "E":
+            case WRITE:
+            case ERASE:
                 writeOrEraseProcess();
                 break;
-            case "F":
+            case FLUSH:
                 flushProcess();
                 break;
             default:
