@@ -2,17 +2,11 @@ package shell.scenario;
 
 import shell.util.SSDCaller;
 
-import java.util.Random;
-
 import static shell.util.ShellConstant.MAX_SSD_BLOCK;
 
 public class Scenario4 extends TestScenario {
     public Scenario4(SSDCaller ssdCaller) {
         super(ssdCaller);
-    }
-
-    public Scenario4(SSDCaller ssdCaller, Random random) {
-        super(ssdCaller, random);
     }
 
     @Override

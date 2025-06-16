@@ -2,8 +2,7 @@ package ssd.command;
 
 import ssd.IO.OutputIO;
 import ssd.IO.SSDIO;
-import ssd.SSDConstant;
-import ssd.buffer.CommandBuffer;
+import ssd.common.SSDConstant;
 import ssd.common.ValidCheck;
 
 public class EraseCommand implements Command {

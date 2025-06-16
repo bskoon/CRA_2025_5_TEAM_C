@@ -14,43 +14,13 @@ public class CommandBufferOptimizer {
 
         for (Command current : parsed) {
             if (current.isWrite()) {
-                // 중복 write 제거 및 최신화
-                writeMap.put(current.lba, current);
-
-                // 기존 erase 중 current가 완전히 덮는 경우 제거
-                eraseList.removeIf(erase -> erase.covers(current.lba) && isFullyCoveredByWrites(erase, writeMap));
-
+                removeDuplicateWrite(current, writeMap, eraseList);
             } else if (current.isErase()) {
-                // erase가 덮는 write 제거
-                for (int i = current.lba; i < current.lba + current.size; i++) {
-                    writeMap.remove(i);
-                }
+                eraseWritePoint(current, writeMap);
+                List<Command> mergeTargets = findMergeTarget(current, eraseList);
 
-                // 병합 대상 탐색
-                List<Command> mergeTargets = new ArrayList<>();
-                for (Command e : eraseList) {
-                    if (e.overlapsOrTouches(current)) {
-                        mergeTargets.add(e);
-                    }
-                }
-
-                // 병합 처리 (현재 명령 포함해서 병합 후 쪼개기)
                 if (!mergeTargets.isEmpty()) {
-                    List<Command> allMerging = new ArrayList<>(mergeTargets);
-                    allMerging.add(current); // ✅ 현재 명령 포함
-
-                    int minLba = allMerging.stream().mapToInt(e -> e.lba).min().orElse(current.lba);
-                    int maxLba = allMerging.stream().mapToInt(e -> e.lba + e.size).max().orElse(current.lba + current.size);
-
-                    List<Integer> effectiveLbas = new ArrayList<>();
-                    for (int i = minLba; i < maxLba; i++) {
-                        if (!writeMap.containsKey(i)) {
-                            effectiveLbas.add(i);
-                        }
-                    }
-
-                    eraseList.removeAll(mergeTargets); // current는 아직 eraseList에 없음
-                    addEraseSegments(effectiveLbas, eraseList);
+                    mergeEraseList(current, mergeTargets, writeMap, eraseList);
                     continue;
                 }
 
@@ -63,6 +33,41 @@ public class CommandBufferOptimizer {
         combined.sort(Comparator.comparingInt(cmd -> cmd.lba));
 
         return toCommandStrings(combined);
+    }
+
+    private static void removeDuplicateWrite(Command current, Map<Integer, Command> writeMap, List<Command> eraseList) {
+        writeMap.put(current.lba, current);
+        eraseList.removeIf(erase -> erase.covers(current.lba) && isFullyCoveredByWrites(erase, writeMap));
+    }
+
+    private static void eraseWritePoint(Command current, Map<Integer, Command> writeMap) {
+        for (int i = current.lba; i < current.lba + current.size; i++)
+            writeMap.remove(i);
+    }
+
+    private static List<Command> findMergeTarget(Command current, List<Command> eraseList) {
+        List<Command> mergeTargets = new ArrayList<>();
+        for (Command e : eraseList)
+            if (e.overlapsOrTouches(current)) mergeTargets.add(e);
+        return mergeTargets;
+    }
+
+    private static void mergeEraseList(Command current, List<Command> mergeTargets, Map<Integer, Command> writeMap, List<Command> eraseList) {
+        List<Command> allMerging = new ArrayList<>(mergeTargets);
+        allMerging.add(current);
+
+        int minLba = allMerging.stream().mapToInt(e -> e.lba).min().orElse(current.lba);
+        int maxLba = allMerging.stream().mapToInt(e -> e.lba + e.size).max().orElse(current.lba + current.size);
+
+        List<Integer> effectiveLbas = new ArrayList<>();
+        for (int i = minLba; i < maxLba; i++) {
+            if (!writeMap.containsKey(i)) {
+                effectiveLbas.add(i);
+            }
+        }
+
+        eraseList.removeAll(mergeTargets);
+        addEraseSegments(effectiveLbas, eraseList);
     }
 
     private static boolean isFullyCoveredByWrites(Command erase, Map<Integer, Command> writeMap) {
