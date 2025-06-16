@@ -3,6 +3,8 @@ package ssd.buffer;
 import ssd.common.SSDConstant;
 import ssd.common.ValidCheck;
 
+import static shell.util.ShellConstant.*;
+
 public class SSDArgument {
     private int lba;
     private int size;
@@ -25,10 +27,10 @@ public class SSDArgument {
         ValidCheck.validateCommandType(command);
 
         switch (command) {
-            case "R" -> handleRead();
-            case "W" -> handleWrite();
-            case "E" -> handleErase();
-            case "F" -> handleFlush();
+            case READ -> handleRead();
+            case WRITE -> handleWrite();
+            case ERASE -> handleErase();
+            case FLUSH -> handleFlush();
             default -> throw new IllegalArgumentException("알 수 없는 명령어: " + command);
         }
     }
