@@ -22,9 +22,6 @@ public class CommandBuffer {
     private SSDArgument ssdArgument;
 
     public CommandBuffer(CommandExecutor executor, SSDArgument ssdArgument) {
-        File logDir = new File(BUFFER_FOLDER_PATH);
-        if (!logDir.exists()) logDir.mkdirs();
-
         foundOrCreateCommand();
 
         this.commandExecutor = executor;
@@ -103,6 +100,8 @@ public class CommandBuffer {
         fileManager = new ArrayList<>();
         String[] prefixes = {"1_", "2_", "3_", "4_", "5_"};
 
+        File logDir = new File(BUFFER_FOLDER_PATH);
+        if (!logDir.exists()) logDir.mkdirs();
         try {
             for (String prefix : prefixes) {
                 boolean found = foundCommandFile(prefix);
