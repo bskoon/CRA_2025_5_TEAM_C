@@ -2,25 +2,23 @@ package shell;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import shell.command.Document;
+import shell.command.CommandLibrary;
 import shell.command.ReadCommand;
 
 import java.io.*;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class TestShell_read {
+public class CommandTest_read {
     private static final int MAX_BLOCK_SIZE = 100;
 
     private ByteArrayOutputStream outputStream;
     private PrintStream originalOut;
     private Map<Integer, String> testData; // 테스트 데이터 추가
-    private Document mockDocument;
+    private CommandLibrary mockCommandLibrary;
     private ReadCommand readCommand;
 
     @BeforeEach
@@ -29,8 +27,8 @@ public class TestShell_read {
         originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
 
-        mockDocument = mock(Document.class);
-        readCommand = new ReadCommand(mockDocument);
+        mockCommandLibrary = mock(CommandLibrary.class);
+        readCommand = new ReadCommand(mockCommandLibrary);
     }
 
     @AfterEach
@@ -48,7 +46,7 @@ public class TestShell_read {
         readCommand.execute(readArgs);
 
         // Then
-        verify(mockDocument).read(3, 1 );
+        verify(mockCommandLibrary).read(3, 1 );
 
     }
 
@@ -61,7 +59,7 @@ public class TestShell_read {
         readCommand.execute(readArgs);
 
         // Then
-        verify(mockDocument, never()).read(anyInt(), anyInt() );
+        verify(mockCommandLibrary, never()).read(anyInt(), anyInt() );
 
     }
 
@@ -74,7 +72,7 @@ public class TestShell_read {
         readCommand.execute(readArgs);
 
         // Then
-        verify(mockDocument).read(0, MAX_BLOCK_SIZE );
+        verify(mockCommandLibrary).read(0, MAX_BLOCK_SIZE );
 
     }
 }

@@ -1,26 +1,22 @@
 package shell.scenario;
 
 import shell.command.CommandType;
+import shell.util.Logger;
 import shell.util.SSDCaller;
 
 public class ScenarioFactory {
     SSDCaller ssdCaller;
+    private Logger log = Logger.getLogger();
+
     public ScenarioFactory(SSDCaller ssdCaller) {
         this.ssdCaller = ssdCaller;
     }
 
     public TestScenario getScenario(CommandType type) {
-        switch (type) {
-            case scenario1:
-                return new Scenario1(ssdCaller);
-            case scenario2:
-                return new Scenario2(ssdCaller);
-            case scenario3:
-                return new Scenario3(ssdCaller);
-            case scenario4:
-                return new Scenario4(ssdCaller);
-            default:
-                return null;
+        if (type == null) {
+            log.log("ScenarioFactory.getScenario()", "Not Implemented Scenario");
+            return null;
         }
+        return type.getScenario(ssdCaller);
     }
 }

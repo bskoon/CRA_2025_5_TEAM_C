@@ -1,6 +1,7 @@
 package shell.util;
 
-import shell.command.CommandType;
+import shell.command.*;
+
 import static shell.util.ShellConstant.*;
 
 public class Utility {
@@ -10,6 +11,29 @@ public class Utility {
     public static Utility getInstance() {
         if (instance == null) instance = new Utility();
         return instance;
+    }
+
+    public CommandExecutor getCommandExecutor() {
+        CommandLibrary commandLibrary = new CommandLibrary();
+        Command readCommand = new ReadCommand(commandLibrary);
+        Command writeCommand = new WriteCommand(commandLibrary);
+        Command eraseCommand = new EraseCommand(commandLibrary);
+        Command flushCommand = new FlushCommand(commandLibrary);
+        Command scenarioCommand = new ScenarioCommand(commandLibrary);
+
+        CommandExecutor executor = new CommandExecutor();
+        executor.setCommand(READ, readCommand);
+        executor.setCommand(WRITE, writeCommand);
+        executor.setCommand(ERASE, eraseCommand);
+        executor.setCommand(FULLREAD, readCommand);
+        executor.setCommand(FULLWRITE, writeCommand);
+        executor.setCommand(ERASERANGE, eraseCommand);
+        executor.setCommand(FLUSH, flushCommand);
+        executor.setCommand(SCENARIO_1, scenarioCommand);
+        executor.setCommand(SCENARIO_2, scenarioCommand);
+        executor.setCommand(SCENARIO_3, scenarioCommand);
+        executor.setCommand(SCENARIO_4, scenarioCommand);
+        return executor;
     }
 
 
@@ -25,56 +49,30 @@ public class Utility {
     }
 
     public boolean isValidParameterCount(CommandType type, int argLength) {
-        int correctLength = 0;
-        switch (type) {
-            case read:
-                correctLength = READ_ARG_COUNT;
-                break;
-            case write:
-                correctLength = WRITE_ARG_COUNT;
-                break;
-            case fullread:
-                correctLength = FULLREAD_ARG_COUNT;
-                break;
-            case fullwrite:
-                correctLength = FULLWRITE_ARG_COUNT;
-                break;
-            case erase:
-            case erase_range:
-                correctLength = ERASE_ARG_COUNT;
-                break;
-            case flush:
-                correctLength = FLUSH_ARG_COUNT;
-                break;
-            case scenario1:
-            case scenario2:
-            case scenario3:
-            case scenario4:
-                correctLength = SCRIPT_ARG_COUNT;
-                break;
-            default:
-                log.log("Utility.isValidParameterCount()", "INVALID PARAMETER");
-                break;
+        if (type == null) {
+            log.log("Utility.isValidParameterCount()", "NULL CommandType");
+            return false;
         }
-        return correctLength == argLength;
+        return type.getArgCount() == argLength;
     }
 
     public boolean isValidLBA(String lbaString) {
-        int lba;
         try {
-            lba = Integer.parseInt(lbaString);
+            int lba = Integer.parseInt(lbaString);
+            return lba >= 0 && lba < MAX_SSD_BLOCK;
         } catch (NumberFormatException e) {
             log.log("Utility.isValidLBA()", "INVALID LBA");
-            return false;
         }
-
-        return lba >= 0 && lba < MAX_SSD_BLOCK;
+        return false;
     }
+
     public boolean isValidUpdateData(String updateData) {
-        if (updateData.matches("0x[0-9A-F]{8}")) return true;
+        if (updateData.matches("0x[0-9A-F]{8}")) {
+            return true;
+        }
         else {
             log.log("Utility.isValidUpdateData()", "INVALID DATA");
-            return false;
         }
+        return false;
     }
 }

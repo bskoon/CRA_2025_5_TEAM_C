@@ -1,6 +1,7 @@
 package shell.scenario;
 
 import shell.util.SSDCaller;
+import static shell.util.ShellConstant.WRITECOMMAND;
 
 import java.util.Random;
 
@@ -18,17 +19,20 @@ public class Scenario1 extends TestScenario {
         try {
             for (int i = 0; i < 20; i++) {
                 for (int j = 0; j < 5; j++) {
+                    String lba = Integer.toString(i*5 + j);
                     String hexString = getRandomHexString(rand);
-                    ssdCaller.writeOnSSD(i * 5 + j, hexString);
-                    String result = readCompare(i * 5 + j, hexString);
-                    if (result.equals("FAIL")) return result;
+
+                    ssdCaller.callSSD(WRITECOMMAND, lba, hexString);
+                    String result = readCompare(lba, hexString);
+
+                    if (result.equals(FAIL)) return result;
                 }
             }
         } catch (Exception e) {
             logger.log("Scenario1.executeScenario()", "Exception while execute scenario");
-            return "FAIL";
+            return FAIL;
         }
 
-        return "PASS";
+        return PASS;
     }
 }
