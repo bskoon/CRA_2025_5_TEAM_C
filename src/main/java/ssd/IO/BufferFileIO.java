@@ -15,9 +15,9 @@ public class BufferFileIO extends IOHandler{
         try {
             File file = new File(path);
             file.delete();
-            File newFile = new File(newData);
+            File newFile = new File(BUFFER_FOLDER_PATH+"/"+newData);
             newFile.createNewFile();
-            path = newData;
+            path = BUFFER_FOLDER_PATH+"/"+newData;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
