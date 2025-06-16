@@ -108,7 +108,10 @@ public class TestScenarioTest {
         // 2부터 98까지 짝수 총 49개 LBA에 대해 각각 30번씩 erase
         for (int lba = 2; lba <= 98; lba += 2) {
             verify(ssdCaller, times(60)).callSSD(eq("W"), eq(Integer.toString(lba)), anyString());
-            verify(ssdCaller, times(30)).callSSD(eq("E"), eq(Integer.toString(lba)), eq("3"));
+            if (lba == 98)
+                verify(ssdCaller, times(30)).callSSD(eq("E"), eq(Integer.toString(lba)), eq("2"));
+            else
+                verify(ssdCaller, times(30)).callSSD(eq("E"), eq(Integer.toString(lba)), eq("3"));
 
             if (lba == 2)
                 verify(testScenario, times(31)).readCompare(eq(Integer.toString(lba)), anyString()); // 초기 1번 + 30

@@ -4,6 +4,8 @@ import shell.util.SSDCaller;
 
 import java.util.Random;
 
+import static shell.util.ShellConstant.MAX_SSD_BLOCK;
+
 public class Scenario4 extends TestScenario {
     public Scenario4(SSDCaller ssdCaller) {
         super(ssdCaller);
@@ -26,7 +28,7 @@ public class Scenario4 extends TestScenario {
                 for (int lba = 2; lba <= 98; lba += 2) {
                     String firstData = "0xABCD1234";
                     String overwriteData = "0x1234ABCD";
-                    int eraseSize = 3;
+                    int eraseSize = Math.min(3, MAX_SSD_BLOCK - lba);
 
                     ssdCaller.callSSD("W", Integer.toString(lba), firstData);
                     ssdCaller.callSSD("W", Integer.toString(lba), overwriteData);
