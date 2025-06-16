@@ -4,8 +4,8 @@ import ssd.IO.OutputIO;
 import ssd.IO.SSDIO;
 import ssd.logic.SSDCommandLogic;
 
-import static ssd.SSDConstant.OUTPUT_FILE_PATH;
-import static ssd.SSDConstant.SSD_FILE_PATH;
+import static ssd.common.SSDConstant.OUTPUT_FILE_PATH;
+import static ssd.common.SSDConstant.SSD_FILE_PATH;
 
 public class SSD {
     public static void main(String[] args) {

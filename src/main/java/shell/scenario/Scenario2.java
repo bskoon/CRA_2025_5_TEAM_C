@@ -2,17 +2,11 @@ package shell.scenario;
 
 import shell.util.SSDCaller;
 
-import java.util.Random;
-
 import static shell.util.ShellConstant.WRITECOMMAND;
 
 public class Scenario2 extends TestScenario {
     public Scenario2(SSDCaller ssdCaller) {
         super(ssdCaller);
-    }
-
-    public Scenario2(SSDCaller ssdCaller, Random random) {
-        super(ssdCaller, random);
     }
 
     @Override

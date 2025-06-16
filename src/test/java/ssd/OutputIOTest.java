@@ -15,7 +15,7 @@ import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ssd.SSDConstant.*;
+import static ssd.common.SSDConstant.*;
 
 class OutputIOTest {
     @TempDir

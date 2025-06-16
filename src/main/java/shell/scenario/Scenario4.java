@@ -2,15 +2,9 @@ package shell.scenario;
 
 import shell.util.SSDCaller;
 
-import java.util.Random;
-
 public class Scenario4 extends TestScenario {
     public Scenario4(SSDCaller ssdCaller) {
         super(ssdCaller);
-    }
-
-    public Scenario4(SSDCaller ssdCaller, Random random) {
-        super(ssdCaller, random);
     }
 
     @Override

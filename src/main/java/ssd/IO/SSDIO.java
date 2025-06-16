@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static ssd.SSDConstant.*;
+import static ssd.common.SSDConstant.*;
 
 public class SSDIO extends IOHandler {
 

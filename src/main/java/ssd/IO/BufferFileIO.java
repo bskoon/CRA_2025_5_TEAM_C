@@ -2,7 +2,7 @@ package ssd.IO;
 
 import java.io.*;
 
-import static ssd.SSDConstant.BUFFER_FOLDER_PATH;
+import static ssd.common.SSDConstant.BUFFER_FOLDER_PATH;
 
 public class BufferFileIO extends IOHandler{
 

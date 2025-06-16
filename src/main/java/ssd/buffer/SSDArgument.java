@@ -1,6 +1,6 @@
 package ssd.buffer;
 
-import ssd.SSDConstant;
+import ssd.common.SSDConstant;
 import ssd.common.ValidCheck;
 
 public class SSDArgument {

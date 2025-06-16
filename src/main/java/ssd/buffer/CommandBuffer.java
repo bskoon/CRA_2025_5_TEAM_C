@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static ssd.SSDConstant.BUFFER_FOLDER_PATH;
+import static ssd.common.SSDConstant.BUFFER_FOLDER_PATH;
 
 public class CommandBuffer {
     private final int MAX_SIZE = 5;
