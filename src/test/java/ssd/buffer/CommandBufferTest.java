@@ -17,7 +17,7 @@ class CommandBufferTest {
     CommandBuffer commandBuffer;
 
     @Test
-    void write_6회시_flush_함수를_부르는지_테스트() {
+    void write_6회시_flush_Process_함수를_부르는지_테스트() {
         commandBuffer = spy(new CommandBuffer(commandExecutor,new SSDArgument(new String[]{"W","0","0x12341234"})));
         commandBuffer.bufferExecutor();
 
@@ -32,11 +32,11 @@ class CommandBufferTest {
         commandBuffer.setSsdArgument(new SSDArgument(new String[]{"W","5","0x12341234"}));
         commandBuffer.bufferExecutor();
 
-        verify(commandBuffer,atLeastOnce()).flush();
+        verify(commandBuffer,atLeastOnce()).flushProcess();
     }
 
     @Test
-    void erase_6회시_flush_함수를_부르는지_테스트() {
+    void erase_6회시_flush_Process_함수를_부르는지_테스트() {
         commandBuffer = spy(new CommandBuffer(commandExecutor,new SSDArgument(new String[]{"E","0","10"})));
         commandBuffer.bufferExecutor();
 
@@ -51,6 +51,6 @@ class CommandBufferTest {
         commandBuffer.setSsdArgument(new SSDArgument(new String[]{"E","50","10"}));
         commandBuffer.bufferExecutor();
 
-        verify(commandBuffer,atLeastOnce()).flush();
+        verify(commandBuffer,atLeastOnce()).flushProcess();
     }
 }
