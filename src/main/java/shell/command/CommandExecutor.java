@@ -19,11 +19,9 @@ public class CommandExecutor {
     public void executeCommand(String[] args) {
         try {
             args[0] = util.getExactCommand(args[0]);
-            CommandType type = CommandType.fromString(args[0]);
-            if (!util.isValidParameterCount(type, args.length)) {
-                log.print("INVALID COMMAND");
-                return;
-            }
+
+            if (!isValidArgumentCount(args)) return;
+
             Command command = commandMap.get(args[0]);
 
             if (command != null) {
@@ -35,5 +33,14 @@ public class CommandExecutor {
         } catch (Exception e) {
             log.log("CommandExecutor.executeCommand()", "Exception Occur on executeCommand()");
         }
+    }
+
+    private boolean isValidArgumentCount(String[] args) {
+        CommandType type = CommandType.fromString(args[0]);
+        if (!util.isValidParameterCount(type, args.length)) {
+            log.print("INVALID COMMAND");
+            return false;
+        }
+        return true;
     }
 }

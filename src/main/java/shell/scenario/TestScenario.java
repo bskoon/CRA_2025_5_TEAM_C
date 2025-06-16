@@ -3,10 +3,14 @@ package shell.scenario;
 import shell.util.SSDCaller;
 import shell.util.Logger;
 
-import java.io.IOException;
 import java.util.Random;
 
+import static shell.util.ShellConstant.READCOMMAND;
+
 public abstract class TestScenario {
+    protected static final String PASS = "PASS";
+    protected static final String FAIL = "FAIL";
+
     protected SSDCaller ssdCaller;
     protected Random rand;
     protected Logger logger;
@@ -23,17 +27,16 @@ public abstract class TestScenario {
         this.logger = Logger.getLogger();
     }
 
-    public String readCompare(int i, String s) throws IOException {
-        String result = ssdCaller.readOnSSD(i);
+    public String readCompare(String lba, String expectedData) {
+        ssdCaller.callSSD(READCOMMAND, lba);
+        String result = ssdCaller.getReadOutput();
 
-        if(!result.equals(s)) return "FAIL";
-        return "PASS";
+        if (result.equals(expectedData)) return PASS;
+        return FAIL;
     }
 
     protected String getRandomHexString(Random rand) {
-        // 32비트 난수 생성 (0 ~ 0xFFFFFFFF)
-        int randomValue = rand.nextInt(); // 기본적으로 -2^31 ~ 2^31-1 범위의 값
-        // 16진수로 출력
+        int randomValue = rand.nextInt();
         return "0x"+String.format("%08X", randomValue);
     }
 

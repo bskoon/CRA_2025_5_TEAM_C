@@ -31,36 +31,63 @@ public class Logger {
         if (!logDir.exists()) logDir.mkdirs();
     }
 
+    public void setRunner(boolean runner) {
+        isRunner = runner;
+    }
+
+    public void print(String message) {
+        if (!isRunner) System.out.println(message);
+    }
+
     public void log(String classMethodName, String message) {
-        checkLogSizeAndRoll();
+        rollLogIfSizeOver();
         checkOldLog2Zip();
-        writeData2LogFile(getLogString(classMethodName, message));
+
+        String logMessage = getLogString(classMethodName, message);
+        writeData2LogFile(logMessage);
     }
 
-    private static void checkLogSizeAndRoll() {
+    private void rollLogIfSizeOver() {
         File logFile = new File(LOG_FILE);
-        if (logFile.exists() && logFile.length() > MAX_LOG_SIZE) {
-            String timeStr = fileDateFormat.format(new Date());
-            String rolledName = LOG_FOLDER + "/until_" + timeStr + ".log";
-            File rolledFile = new File(rolledName);
-            logFile.renameTo(rolledFile);
+        if (isLogSizeOver(logFile)) {
+            String rolledName = setRolledLogFileName();
+            logFile.renameTo(new File(rolledName));
         }
     }
 
-    private static void checkOldLog2Zip() {
-        File[] rolledLogs = new File(LOG_FOLDER).listFiles((dir, name) -> name.endsWith(".log"));
-        if (rolledLogs != null && rolledLogs.length >= 2) {
-            Arrays.sort(rolledLogs, Comparator.comparingLong(File::lastModified));
+    private boolean isLogSizeOver(File logFile) {
+        return logFile.exists() && logFile.length() > MAX_LOG_SIZE;
+    }
 
-            for (int i = 0; i < rolledLogs.length - 1; i++) {
-                File f = rolledLogs[i];
-                File zipped = new File(f.getAbsolutePath().replace(".log", ".zip"));
-                f.renameTo(zipped);
-            }
+    private String setRolledLogFileName() {
+        String timeStr = fileDateFormat.format(new Date());
+        String rolledName = LOG_FOLDER + "/until_" + timeStr + ".log";
+        return rolledName;
+    }
+
+    private void checkOldLog2Zip() {
+        File[] logList = new File(LOG_FOLDER).listFiles((dir, name)
+                                                            -> name.endsWith(".log"));
+        if (hasOldLog(logList)) {
+            zipOldLogs(logList);
         }
     }
 
-    private static void writeData2LogFile(String logLine) {
+    private boolean hasOldLog(File[] rolledLogs) {
+        return rolledLogs != null && rolledLogs.length >= 2;
+    }
+
+    private void zipOldLogs(File[] rolledLogs) {
+        Arrays.sort(rolledLogs, Comparator.comparingLong(File::lastModified));
+
+        for (int i = 0; i < rolledLogs.length - 1; i++) {
+            File f = rolledLogs[i];
+            File zipped = new File(f.getAbsolutePath().replace(".log", ".zip"));
+            f.renameTo(zipped);
+        }
+    }
+
+    private void writeData2LogFile(String logLine) {
         try (BufferedWriter br = new BufferedWriter(new FileWriter(LOG_FILE, true))) {
             br.write(logLine);
             br.newLine();
@@ -69,26 +96,18 @@ public class Logger {
         }
     }
 
-    private static String getLogString(String classMethodName, String message) {
+    private String getLogString(String classMethodName, String message) {
         String timestamp = logDateFormat.format(new Date());
         String fixedMethodName = formatMethodName(classMethodName);
         return String.format("[%s] %s : %s", timestamp, fixedMethodName, message);
     }
 
-    private static String formatMethodName(String input) {
+    private String formatMethodName(String input) {
         int width = 40;
         if (input.length() >= width) {
             return input.substring(0, width);
         } else {
             return String.format("%-" + width + "s", input);  // 왼쪽 정렬 + 공백 채움
         }
-    }
-
-    public void print(String message) {
-        if (!isRunner) System.out.println(message);
-    }
-
-    public void setRunner(boolean runner) {
-        isRunner = runner;
     }
 }

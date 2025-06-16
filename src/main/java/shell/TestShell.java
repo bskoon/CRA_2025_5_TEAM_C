@@ -3,6 +3,7 @@ package shell;
 import shell.command.*;
 import shell.util.Logger;
 import shell.util.Runner;
+import shell.util.Utility;
 
 import java.util.*;
 
@@ -10,43 +11,21 @@ import static shell.util.ShellConstant.*;
 
 public class TestShell {
     private static final Logger log = Logger.getLogger();
+    private static final Utility util = Utility.getInstance();
 
     private Scanner scanner;
     private boolean isRunning;
 
     private CommandExecutor executor;
 
-    public TestShell() {
+    public TestShell(CommandExecutor executor) {
         this.scanner = new Scanner(System.in);
         this.isRunning = true;
-        executor = initCommandExecutor();
-    }
-
-    public static CommandExecutor initCommandExecutor() {
-        Document document = new Document();
-        Command readCommand = new ReadCommand(document);
-        Command writeCommand = new WriteCommand(document);
-        Command eraseCommand = new EraseCommand(document);
-        Command flushCommand = new FlushCommand(document);
-        Command scenarioCommand = new ScenarioCommand(document);
-
-        CommandExecutor executor = new CommandExecutor();
-        executor.setCommand(READ, readCommand);
-        executor.setCommand(WRITE, writeCommand);
-        executor.setCommand(ERASE, eraseCommand);
-        executor.setCommand(FULLREAD, readCommand);
-        executor.setCommand(FULLWRITE, writeCommand);
-        executor.setCommand(ERASERANGE, eraseCommand);
-        executor.setCommand(FLUSH, flushCommand);
-        executor.setCommand(SCENARIO_1, scenarioCommand);
-        executor.setCommand(SCENARIO_2, scenarioCommand);
-        executor.setCommand(SCENARIO_3, scenarioCommand);
-        executor.setCommand(SCENARIO_4, scenarioCommand);
-        return executor;
+        this.executor = executor;
     }
 
     public boolean isRunning() {
-        return this.isRunning;
+        return isRunning;
     }
 
     private void launchShell() {
@@ -55,27 +34,30 @@ public class TestShell {
         log.log("TestShell.launchShell()", "Start Shell");
 
         while (isRunning) {
-            System.out.print("> ");
-            String shellCommand = scanner.nextLine().trim();
-            log.log("TestShell.launchShell()", "Command - " + shellCommand);
-            String[] commandParameters = shellCommand.split("\\s+");
-
-            if (commandParameters.length == 0) continue;
-            if (commandParameters[0].trim().isEmpty()) continue;
-
+            String[] commandParameters = getCommandFromShell(scanner);
+            if (isInputEmpty(commandParameters)) continue;
             executeCommand(commandParameters);
         }
     }
 
+    private String[] getCommandFromShell(Scanner scanner) {
+        System.out.print("> ");
+        String shellCommand = scanner.nextLine().trim();
+        String[] commandParameters = shellCommand.split("\\s+");
+        log.log("TestShell.launchShell()", "Command - " + shellCommand);
+        return commandParameters;
+    }
+
+    private boolean isInputEmpty(String[] commandParameters) {
+        return commandParameters.length == 0 || commandParameters[0].trim().isEmpty();
+    }
+
     private void executeCommand(String[] commandParameters) {
         log.log("TestShell.executeCommand()", "Command Execute Start");
-        if (commandParameters[0].equals(EXIT)) {
-            exit();
-        } else if (commandParameters[0].equals(HELP)) {
-            help();
-        } else {
-            executor.executeCommand(commandParameters);
-        }
+
+        if (commandParameters[0].equals(EXIT)) exit();
+        else if (commandParameters[0].equals(HELP)) help();
+        else executor.executeCommand(commandParameters);
     }
 
     private void exit() {
@@ -96,9 +78,9 @@ public class TestShell {
         System.out.println("김범석 bskoon");
         System.out.println("김상윤 huihihet");
         System.out.println("김창지 Chang-ji");
-        System.out.println("최재형 jae637");
         System.out.println("김태엽 taeyeob-kim-09");
         System.out.println("노웅규 nohog94");
+        System.out.println("최재형 jae637");
         System.out.println();
         System.out.println("사용 가능한 명령어:");
         System.out.println();
@@ -121,6 +103,20 @@ public class TestShell {
         System.out.println("  - 설명: LBA 0번부터 99번까지 모든 데이터를 읽어 출력합니다.");
         System.out.println("  - 사용법: fullread");
         System.out.println();
+        System.out.println("• erase");
+        System.out.println("  - 설명: SSD의 특정 LBA부터 SIZE만큼 데이터를 지웁니다.");
+        System.out.println("  - 사용법: erase [LBA] [SIZE]");
+        System.out.println("  - 예시: erase 5 24");
+        System.out.println();
+        System.out.println("• erase_range");
+        System.out.println("  - 설명: SSD의 START_LBA부터 END_LBA까지 데이터를 지웁니다..");
+        System.out.println("  - 사용법: erase_range [START_LBA] [END_LBA]");
+        System.out.println("  - 예시: erase_range 3 19");
+        System.out.println();
+        System.out.println("• flush");
+        System.out.println("  - 설명: SSD Buffer에 임시 기록중인 데이터를 모두 SSD에 반영합니다.");
+        System.out.println("  - 사용법: flush");
+        System.out.println();
         System.out.println("• exit");
         System.out.println("  - 설명: TestShell을 종료합니다.");
         System.out.println();
@@ -131,10 +127,11 @@ public class TestShell {
 
     public static void main(String[] args) {
         try {
+            CommandExecutor executor = util.getCommandExecutor();
             if (args.length != 0)
-                new Runner(args, initCommandExecutor()).run();
+                new Runner(args, executor).run();
             else {
-                TestShell shell = new TestShell();
+                TestShell shell = new TestShell(executor);
                 shell.launchShell();
             }
         } catch (Exception e) {
